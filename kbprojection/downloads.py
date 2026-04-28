@@ -4,14 +4,18 @@ import requests
 from pathlib import Path
 from typing import Optional
 
+from .settings import get_download_timeout_seconds
+
 def download_file(url: str, destination: Path) -> Path:
     """
     Downloads a file from a URL to a destination path.
     """
     print(f"[Download] Downloading {url} to {destination}...")
     destination.parent.mkdir(parents=True, exist_ok=True)
-    
-    with requests.get(url, stream=True) as r:
+
+    timeout_seconds = get_download_timeout_seconds()
+
+    with requests.get(url, stream=True, timeout=timeout_seconds) as r:
         r.raise_for_status()
         with open(destination, 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192):

@@ -1,10 +1,10 @@
 import random
-import tempfile
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Set, Union
 
 from ..models import NLIProblem, NLILabel
+from ..settings import get_default_dataset_dir
 
 
 class DatasetLoader(ABC):
@@ -23,11 +23,8 @@ class DatasetLoader(ABC):
         if data_dir:
             self.data_dir = Path(data_dir)
         else:
-            self.data_dir = (
-                Path(tempfile.gettempdir())
-                / "kbprojection_data"
-                / self.__class__.__name__.lower().replace("loader", "")
-            )
+            dataset_name = self.__class__.__name__.lower().replace("loader", "")
+            self.data_dir = get_default_dataset_dir(dataset_name)
         self.data_dir.mkdir(parents=True, exist_ok=True)
         
         # In-memory storage: split -> {id -> NLIProblem}
@@ -154,10 +151,14 @@ class DatasetLoader(ABC):
         if split not in self._loaded_splits:
             self.load(splits=[split])
 
-        key = str(key)
-        if key not in self._data[split]:
-            raise KeyError(f"Key {key} not found in {self.__class__.__name__} {split}")
-        return self._data[split][key]
+        raw_key = str(key)
+        normalized_key = self.normalize_problem_id(raw_key)
+        if normalized_key not in self._data[split]:
+            message = f"Key {raw_key!r} not found in {self.__class__.__name__} {split}"
+            if normalized_key != raw_key:
+                message += f" after normalization to {normalized_key!r}"
+            raise KeyError(message)
+        return self._data[split][normalized_key]
 
     def random_problem(
         self,
@@ -189,6 +190,10 @@ class DatasetLoader(ABC):
     # -------------------------------------------------------------------------
     # Helper for label parsing (common across loaders)
     # -------------------------------------------------------------------------
+
+    def normalize_problem_id(self, key: str) -> str:
+        """Normalizes caller-provided problem IDs before lookup."""
+        return str(key).strip()
 
     @staticmethod
     def _parse_label(label: str) -> NLILabel:

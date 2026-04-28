@@ -1,0 +1,83 @@
+[
+  {
+    "id": "icl_example_1",
+    "premises": ["A lion is slowly walking"],
+    "hypothesis": "A lion is slowly moving around",
+    "gold_label": "entailment",
+    "dataset": "prompt_examples",
+    "split": "icl",
+    "kb_raw": ["isa_wn(walk, move around)"]
+  },
+  {
+    "id": "icl_example_2",
+    "premises": ["A man is strumming a guitar"],
+    "hypothesis": "A man is playing guitar",
+    "gold_label": "entailment",
+    "dataset": "prompt_examples",
+    "split": "icl",
+    "kb_raw": ["isa_wn(strum, play)"]
+  },
+  {
+    "id": "icl_example_3",
+    "premises": ["A man is playing the drum"],
+    "hypothesis": "A man is practicing the drum",
+    "gold_label": "entailment",
+    "dataset": "prompt_examples",
+    "split": "icl",
+    "kb_raw": ["isa_wn(play drum, practice drum)"]
+  },
+  {
+    "id": "icl_example_4",
+    "premises": ["A dog in a field."],
+    "hypothesis": "A dog is in grass.",
+    "gold_label": "entailment",
+    "dataset": "prompt_examples",
+    "split": "icl",
+    "kb_raw": ["isa_wn(field, grass)"]
+  },
+  {
+    "id": "icl_example_5",
+    "premises": ["A toddler eats dirt."],
+    "hypothesis": "A baby is eating dirt.",
+    "gold_label": "entailment",
+    "dataset": "prompt_examples",
+    "split": "icl",
+    "kb_raw": ["isa_wn(toddler, baby)"]
+  },
+  {
+    "id": "icl_example_6",
+    "premises": ["A man vaults over a high bar."],
+    "hypothesis": "A man jumps.",
+    "gold_label": "entailment",
+    "dataset": "prompt_examples",
+    "split": "icl",
+    "kb_raw": ["isa_wn(vault, jump)"]
+  },
+  {
+    "id": "icl_example_7",
+    "premises": ["A dog is eating a doll"],
+    "hypothesis": "A dog is biting a doll",
+    "gold_label": "entailment",
+    "dataset": "prompt_examples",
+    "split": "icl",
+    "kb_raw": ["isa_wn(eat, bite)"]
+  },
+  {
+    "id": "icl_example_8",
+    "premises": ["A lemur is hanging on a cord"],
+    "hypothesis": "A lemur is hanging on a rope",
+    "gold_label": "entailment",
+    "dataset": "prompt_examples",
+    "split": "icl",
+    "kb_raw": ["isa_wn(cord, rope)"]
+  },
+  {
+    "id": "icl_example_9",
+    "premises": ["The window is open."],
+    "hypothesis": "The window is closed.",
+    "gold_label": "contradiction",
+    "dataset": "prompt_examples",
+    "split": "icl",
+    "kb_raw": ["disj(open, closed)"]
+  }
+]

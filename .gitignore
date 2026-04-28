@@ -148,9 +148,17 @@ Thumbs.db
 
 # Data
 data/
+kbprojection_data/
 
-# Notebooks
-*.ipynb
+# Runtime caches and generated experiment artifacts
+.kbprojection/
+.notebook-runtime/
+.tmp_langpro_raw/
+cache_contradiction_analysis/
+results/
+contradiction_results.json
+debug_boy_branches*
+last_problem.pl
 
 # Debug scripts
 debug_*.py

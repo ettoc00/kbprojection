@@ -19,6 +19,9 @@ class SNLILoader(DatasetLoader):
     def __init__(self, data_dir: Optional[Union[str, Path]] = None):
         super().__init__(data_dir)
 
+    def normalize_problem_id(self, key: str) -> str:
+        return str(key).strip().replace(" ", "_")
+
     def _get_splits(self) -> List[str]:
         return self.SPLITS
 

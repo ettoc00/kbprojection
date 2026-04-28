@@ -1,5 +1,11 @@
+import re
 from typing import List, Set
 from .loaders.base import DatasetLoader
+
+
+def sanitize_filename_part(value: str) -> str:
+    return re.sub(r"[^A-Za-z0-9._-]+", "_", str(value)).strip("_")
+
 
 def get_smallest_problems(dataset: DatasetLoader, split: str = "test", limit: int = 2000, label_filter: Set[str] = {"entailment"}) -> List[str]:
     """

@@ -1,6 +1,8 @@
+import asyncio
 import json
 from pathlib import Path
-from typing import List, Set, Optional, Union, Iterator
+from typing import AsyncIterator, List, Set, Optional, Iterator
+from .async_runtime import AsyncRunContext
 from .models import ExperimentResult, ExperimentStepStatus, ExperimentStatus, NLIProblem, NLILabel, ProblemConfig, TestMode, LangProResult
 from .loaders.base import DatasetLoader
 from .langpro import langpro_api_call
@@ -19,10 +21,12 @@ def _save_cache_result(cache_path: Path, result: ExperimentResult):
         print(f"[Warning] Failed to save cache to {cache_path}: {e}")
 
 
-def process_single_problem(
+async def process_single_problem(
     prob: NLIProblem,
     config: Optional[ProblemConfig] = None,
-    cache_file: Optional[Path] = None
+    cache_file: Optional[Path] = None,
+    context: Optional[AsyncRunContext] = None,
+    baseline_no_kb: Optional[LangProResult] = None,
 ) -> ExperimentResult:
     """
     Process a single NLI problem through the KB injection pipeline.
@@ -52,8 +56,12 @@ def process_single_problem(
     exp_result = ExperimentResult(problem=prob, prover_calls=[])
 
     # ----- Step 1: No-KB baseline -----
-    log("  [no-KB] Calling LangPro...")
-    lp_res_no_kb = langpro_api_call(prob.premises, prob.hypothesis, report=False)
+    if baseline_no_kb is None:
+        log("  [no-KB] Calling LangPro...")
+        lp_res_no_kb = await langpro_api_call(prob.premises, prob.hypothesis, report=False, context=context)
+    else:
+        log("  [no-KB] Reusing provided LangPro baseline.")
+        lp_res_no_kb = baseline_no_kb
 
     exp_result.pred_no_kb = lp_res_no_kb.label
     exp_result.prover_calls.append(lp_res_no_kb)
@@ -62,7 +70,7 @@ def process_single_problem(
     if lp_res_no_kb.error:
         log("  [no-KB] Call failed.")
         exp_result.status_no_kb = ExperimentStepStatus.ERROR
-        exp_result.final_status = ExperimentStatus.ERROR_NO_KB
+        exp_result.final_status = ExperimentStatus.BASELINE_PROVER_FAILED
         if cache_file:
             _save_cache_result(cache_file, exp_result)
         return exp_result
@@ -72,7 +80,7 @@ def process_single_problem(
     # Early exit if only testing no-KB
     if test_mode == "no_kb":
         if lp_res_no_kb.label == prob.gold_label:
-            exp_result.final_status = ExperimentStatus.ALREADY_CORRECT
+            exp_result.final_status = ExperimentStatus.BASELINE_SOLVED
         else:
             exp_result.final_status = ExperimentStatus.UNKNOWN # Or a specific WRONG status
         if cache_file:
@@ -81,24 +89,25 @@ def process_single_problem(
 
     if lp_res_no_kb.label == prob.gold_label:
         log("  [no-KB] Already correct.")
-        exp_result.final_status = ExperimentStatus.ALREADY_CORRECT
+        exp_result.final_status = ExperimentStatus.BASELINE_SOLVED
         if cache_file:
             _save_cache_result(cache_file, exp_result)
         return exp_result
 
     if lp_res_no_kb.label != NLILabel.NEUTRAL:
         log("  [no-KB] Wrong and not neutral.")
-        exp_result.final_status = ExperimentStatus.STILL_WRONG # Should be distinct if needed
+        exp_result.final_status = ExperimentStatus.KB_NOT_SOLVED
         if cache_file:
             _save_cache_result(cache_file, exp_result)
         return exp_result
 
     # ----- Step 2: Generate KB -----
     try:
-        kb_raw = call_llm(config.llm_provider, config.model, config.prompt_style, prob)
+        kb_raw = await call_llm(config.llm_provider, config.model, config.prompt_style, prob, context=context)
     except Exception as e:
         log(f"  [KB] LLM Call failed: {e}")
-        exp_result.final_status = ExperimentStatus.LLM_ERROR
+        exp_result.llm_error = str(e)
+        exp_result.final_status = ExperimentStatus.KB_GENERATION_FAILED
         if cache_file:
             _save_cache_result(cache_file, exp_result)
         return exp_result
@@ -108,17 +117,31 @@ def process_single_problem(
 
     if not kb_raw:
         log("  [KB] Empty KB.")
-        exp_result.final_status = ExperimentStatus.LLM_ERROR # Treat empty as error-like or just empty
+        exp_result.final_status = ExperimentStatus.KB_GENERATION_EMPTY
         if cache_file:
             _save_cache_result(cache_file, exp_result)
         return exp_result
 
     # ----- Step 3: Test with RAW KB (if requested) -----
     raw_kb_fixed = False
+    lp_res_raw: Optional[LangProResult] = None
+    raw_task = None
     if test_mode in ("raw_kb", "both"):
         log("  [raw-KB] Calling LangPro with raw (unfiltered) KB...")
-        lp_res_raw = langpro_api_call(prob.premises, prob.hypothesis, kb=kb_raw)
-        
+        raw_task = asyncio.create_task(
+            langpro_api_call(prob.premises, prob.hypothesis, kb=kb_raw, context=context)
+        )
+
+    # ----- Step 4: Filter KB -----
+    kb_results = pipeline_filter_kb_injections(
+        kb_raw,
+        prob.premises,
+        prob.hypothesis,
+        post_process=config.post_process
+    )
+
+    if raw_task is not None:
+        lp_res_raw = await raw_task
         if lp_res_raw.error:
             log("  [raw-KB] Call failed.")
             exp_result.status_with_raw_kb = ExperimentStepStatus.ERROR
@@ -130,62 +153,54 @@ def process_single_problem(
             
             if lp_res_raw.label == prob.gold_label:
                 raw_kb_fixed = True
-                log(f"  [raw-KB] ✔ RAW LLM KB fixed it!")
-        
+            log("  [raw-KB] RAW LLM KB solved it.")
+
         # If only testing raw KB, we're done
         if test_mode == "raw_kb":
             if exp_result.pred_with_raw_kb == prob.gold_label:
-                exp_result.final_status = ExperimentStatus.FIXED_RAW_KB
+                exp_result.final_status = ExperimentStatus.RAW_KB_SOLVED
                 exp_result.fixed_by = "raw_kb"
             else:
-                exp_result.final_status = ExperimentStatus.STILL_WRONG_RAW_KB
+                exp_result.final_status = ExperimentStatus.RAW_KB_NOT_SOLVED
             if cache_file:
                 _save_cache_result(cache_file, exp_result)
             return exp_result
 
-    # ----- Step 4: Filter KB -----
-    kb_results = pipeline_filter_kb_injections(
-        kb_raw,
-        prob.premises,
-        prob.hypothesis,
-        post_process=config.post_process
-    )
-    
     kb_strings = [res.relation for res in kb_results]
     
     exp_result.kb_filtered = kb_strings
     exp_result.kb_details = kb_results
 
-    log(f"  [KB filtered] {kb_strings}")
+    log(f"  [KB normalised] {kb_strings}")
 
     if not kb_strings:
-        log("  [KB] All KB filtered out.")
-        exp_result.final_status = ExperimentStatus.EMPTY_KB_AFTER_FILTER
-        # If raw KB fixed it but filtered is empty, raw_kb was the fixer
+        log("  [KB] All KB removed during normalisation.")
+        exp_result.final_status = ExperimentStatus.KB_NORMALISATION_EMPTY
+        # If raw KB solved it but normalised KB is empty, raw_kb was the solver.
         if raw_kb_fixed:
             exp_result.fixed_by = "raw_kb"
-            exp_result.final_status = ExperimentStatus.FIXED_RAW_KB
+            exp_result.final_status = ExperimentStatus.RAW_KB_SOLVED
         if cache_file:
             _save_cache_result(cache_file, exp_result)
         return exp_result
 
-    # ----- Step 5: Test with FILTERED KB -----
-    # Check if filtered KB is identical to raw KB
+    # ----- Step 5: Test with NORMALISED KB -----
+    # Check if normalised KB is identical to raw KB
     kb_identical = set(kb_strings) == set(kb_raw)
     if kb_identical and test_mode in ("raw_kb", "both"):
-        # Filtered KB is same as raw KB - reuse the raw KB result
-        log("  [KB] Filtered KB identical to raw KB - reusing raw KB result.")
+        # Normalised KB is same as raw KB - reuse the raw KB result
+        log("  [KB] Normalised KB identical to raw KB - reusing raw KB result.")
         exp_result.pred_with_kb = exp_result.pred_with_raw_kb
         exp_result.status_with_kb = exp_result.status_with_raw_kb
         filtered_kb_fixed = raw_kb_fixed
     else:
-        log("  [KB] Calling LangPro with filtered KB...")
-        lp_res_with_kb = langpro_api_call(prob.premises, prob.hypothesis, kb=kb_strings)
+        log("  [KB] Calling LangPro with normalised KB...")
+        lp_res_with_kb = await langpro_api_call(prob.premises, prob.hypothesis, kb=kb_strings, context=context)
         
         if lp_res_with_kb.error:
             log("  [KB] Call failed.")
             exp_result.status_with_kb = ExperimentStepStatus.ERROR
-            exp_result.final_status = ExperimentStatus.ERROR_WITH_KB
+            exp_result.final_status = ExperimentStatus.NORMALISED_KB_PROVER_FAILED
             if cache_file:
                 _save_cache_result(cache_file, exp_result)
             return exp_result
@@ -195,41 +210,45 @@ def process_single_problem(
         exp_result.prover_calls.append(lp_res_with_kb)
         filtered_kb_fixed = lp_res_with_kb.label == prob.gold_label
     
-    log(f"  [KB] Predicted: {exp_result.pred_with_kb.value}")
+    if exp_result.pred_with_kb is not None:
+        log(f"  [KB] Predicted: {exp_result.pred_with_kb.value}")
+    else:
+        log("  [KB] No normalised-KB prediction available.")
 
     # Determine fixed_by based on what worked
-    # Note: "both" only applies when filtering actually changed the KB
+    # Note: "both" only applies when normalisation actually changed the KB
     if filtered_kb_fixed and raw_kb_fixed:
         if kb_identical:
-            # Filtering was a no-op, so credit goes to raw KB only
+            # Normalisation was a no-op, so credit goes to raw KB only
             exp_result.fixed_by = "raw_kb"
-            log(f"  [KB] ✔ RAW LLM KB fixed it (filtering made no changes).")
+            exp_result.final_status = ExperimentStatus.RAW_KB_SOLVED
+            log("  [KB] RAW LLM KB solved it (normalisation made no changes).")
         else:
             exp_result.fixed_by = "both"
-            log(f"  [KB] ✔ BOTH raw LLM KB and processed KB fixed it!")
-        exp_result.final_status = ExperimentStatus.FIXED
+            exp_result.final_status = ExperimentStatus.NORMALISED_KB_SOLVED
+            log("  [KB] BOTH raw LLM KB and normalised KB solved it.")
     elif filtered_kb_fixed:
-        exp_result.fixed_by = "filtered_kb"
+        exp_result.fixed_by = "normalised_kb"
         if test_mode in ("raw_kb", "both"):
-            log(f"  [KB] ✔ PROCESSED KB fixed it! (raw LLM KB did NOT)")
+            log("  [KB] NORMALISED KB solved it (raw LLM KB did not).")
         else:
-            log(f"  [KB] ✔ PROCESSED KB fixed it! (raw KB not tested)")
-        exp_result.final_status = ExperimentStatus.FIXED
+            log("  [KB] NORMALISED KB solved it (raw KB not tested).")
+        exp_result.final_status = ExperimentStatus.NORMALISED_KB_SOLVED
     elif raw_kb_fixed:
         exp_result.fixed_by = "raw_kb"
-        log(f"  [KB] ✘ Processed KB did NOT fix it, but RAW LLM KB did!")
-        exp_result.final_status = ExperimentStatus.FIXED_RAW_KB
+        log("  [KB] Normalised KB did not solve it, but RAW LLM KB did.")
+        exp_result.final_status = ExperimentStatus.RAW_KB_SOLVED
     else:
-        log("  [KB] ✘ Neither raw nor processed KB fixed it.")
-        exp_result.final_status = ExperimentStatus.STILL_WRONG
+        log("  [KB] Neither raw nor normalised KB solved it.")
+        exp_result.final_status = ExperimentStatus.KB_NOT_SOLVED
         
-    # ----- Step 6: Ablation (if requested and something fixed it) -----
+    # ----- Step 6: Ablation (if requested and something solved it) -----
     if exp_result.fixed_by and config.run_ablation:
-        # Run ablation on whichever KB fixed it
-        if exp_result.fixed_by in ("filtered_kb", "both") and len(kb_strings) > 1:
-            log("  [ablation] Running ablation on filtered KB to find minimal sufficient subsets...")
-            essential_kb, all_minimals, ablation_results = _run_ablation(
-                prob, kb_strings, prob.gold_label, config.verbose
+        # Run ablation on whichever KB solved it
+        if exp_result.fixed_by in ("normalised_kb", "both") and len(kb_strings) > 1:
+            log("  [ablation] Running ablation on normalised KB to find minimal sufficient subsets...")
+            essential_kb, all_minimals, ablation_results = await _run_ablation(
+                prob, kb_strings, prob.gold_label, config.verbose, context=context
             )
             exp_result.essential_kb = essential_kb
             exp_result.ablation_subsets = all_minimals
@@ -243,11 +262,12 @@ def process_single_problem(
     return exp_result
 
 
-def _run_ablation(
+async def _run_ablation(
     prob: NLIProblem,
     kb_list: List[str],
     gold_label: NLILabel,
-    verbose: bool = True
+    verbose: bool = True,
+    context: Optional[AsyncRunContext] = None,
 ) -> tuple:
     """
     Find all minimal sufficient KB subsets using breadth-first search.
@@ -271,13 +291,13 @@ def _run_ablation(
         """Count total tokens across all KB entries in subset."""
         return sum(len(s.split()) for s in subset)
     
-    def test_subset(subset: List[str]) -> Optional[NLILabel]:
+    async def test_subset(subset: List[str]) -> Optional[NLILabel]:
         """Test a KB subset and return the resulting label, or None on error."""
         if not subset:
             # Empty subset - call LangPro with no KB
-            res = langpro_api_call(prob.premises, prob.hypothesis, report=False)
+            res = await langpro_api_call(prob.premises, prob.hypothesis, report=False, context=context)
         else:
-            res = langpro_api_call(prob.premises, prob.hypothesis, kb=subset)
+            res = await langpro_api_call(prob.premises, prob.hypothesis, kb=subset, context=context)
         
         if res.error:
             return None
@@ -298,7 +318,7 @@ def _run_ablation(
                 continue
             
             # Test this subset
-            result_label = test_subset(list(subset_tuple))
+            result_label = await test_subset(list(subset_tuple))
             ablation_log[subset_tuple] = result_label
             
             if result_label is None:
@@ -331,7 +351,7 @@ def _run_ablation(
     
     return best, all_minimals, ablation_log_str
 
-def process_kb_examples(
+async def process_kb_examples(
     dataset: DatasetLoader,
     config: Optional[ProblemConfig] = None,
     split: str = "dev",
@@ -340,7 +360,7 @@ def process_kb_examples(
     max_checked: Optional[int] = 500,
     problem_ids: Optional[List[str]] = None,
     cache_dir: Optional[Path] = None
-) -> Iterator[ExperimentResult]:
+) -> AsyncIterator[ExperimentResult]:
     """
     Iterates through dataset examples and yields experiment results for ALL processed problems,
     regardless of outcome.
@@ -423,8 +443,11 @@ def process_kb_examples(
                     checked_count += 1
                     print(f"\n[kb-processor] #{checked_count} | Key: {prob.id} | Gold: {prob.gold_label.value} [CACHED]")
                     
-                    if cached_result.final_status.startswith("fixed"):
-                        print(f"  [KB] ✔ KB FIXED IT ({cached_result.fixed_by})")
+                    if cached_result.final_status in {
+                        ExperimentStatus.NORMALISED_KB_SOLVED,
+                        ExperimentStatus.RAW_KB_SOLVED,
+                    }:
+                        print(f"  [KB] KB solved it ({cached_result.fixed_by})")
                     
                     yielded_count += 1
                     yield cached_result
@@ -437,7 +460,7 @@ def process_kb_examples(
         print(f"\n[kb-processor] #{checked_count} | Key: {prob.id} | Gold: {prob.gold_label.value}")
 
         # Delegate to single-problem processor
-        exp_result = process_single_problem(
+        exp_result = await process_single_problem(
             prob,
             config=config,
             cache_file=cache_file
@@ -447,7 +470,7 @@ def process_kb_examples(
         yield exp_result
 
 
-def collect_kb_helpful_examples_random(
+async def collect_kb_helpful_examples_random(
     dataset: DatasetLoader,
     config: Optional[ProblemConfig] = None,
     split: str = "dev",
@@ -456,10 +479,10 @@ def collect_kb_helpful_examples_random(
     max_checked: Optional[int] = 500,
     problem_ids: Optional[List[str]] = None,
     cache_dir: Optional[Path] = None
-) -> Iterator[ExperimentResult]:
+) -> AsyncIterator[ExperimentResult]:
     """
     Wrapper around process_kb_examples that ONLY yields results where KB was helpful
-    (i.e., final_status starts with "fixed").
+    (i.e., final_status is a solved KB outcome).
     """
     matches_found = 0
     
@@ -476,8 +499,11 @@ def collect_kb_helpful_examples_random(
         cache_dir=cache_dir
     )
     
-    for result in generator:
-        if result.final_status.startswith("fixed"):
+    async for result in generator:
+        if result.final_status in {
+            ExperimentStatus.NORMALISED_KB_SOLVED,
+            ExperimentStatus.RAW_KB_SOLVED,
+        }:
             matches_found += 1
             yield result
             

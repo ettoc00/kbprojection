@@ -1,0 +1,500 @@
+{
+  "files": {
+    "gpt54": "C:\\Users\\douwe\\AppData\\Local\\kbprojection\\results\\sick_full__icl__openrouter__openai_gpt-5.4.json",
+    "mini": "C:\\Users\\douwe\\AppData\\Local\\kbprojection\\results\\sick_full__icl__openrouter__openai_gpt-5.4-mini.json",
+    "opus": "C:\\Users\\douwe\\AppData\\Local\\kbprojection\\results\\sick_full__icl__openrouter__anthropic_claude-opus-4.7.json"
+  },
+  "status_counts": {
+    "gpt54": {
+      "baseline_solved": 7659,
+      "kb_generation_empty": 655,
+      "kb_normalisation_empty": 33,
+      "kb_not_solved": 939,
+      "normalised_kb_solved": 621,
+      "raw_kb_solved": 20
+    },
+    "mini": {
+      "baseline_solved": 7659,
+      "kb_generation_empty": 488,
+      "kb_normalisation_empty": 130,
+      "kb_not_solved": 1014,
+      "normalised_kb_solved": 50,
+      "raw_kb_solved": 586
+    },
+    "opus": {
+      "baseline_solved": 7659,
+      "kb_generation_empty": 457,
+      "kb_normalisation_empty": 38,
+      "kb_not_solved": 1077,
+      "normalised_kb_prover_failed": 3,
+      "normalised_kb_solved": 41,
+      "raw_kb_solved": 652
+    }
+  },
+  "status_counts_zero_filled": {
+    "gpt54": {
+      "baseline_solved": 7659,
+      "baseline_prover_failed": 0,
+      "kb_generation_failed": 0,
+      "kb_generation_empty": 655,
+      "kb_normalisation_empty": 33,
+      "raw_kb_solved": 20,
+      "raw_kb_not_solved": 0,
+      "normalised_kb_solved": 621,
+      "normalised_kb_not_solved": 0,
+      "normalised_kb_prover_failed": 0,
+      "kb_not_solved": 939,
+      "unknown": 0
+    },
+    "mini": {
+      "baseline_solved": 7659,
+      "baseline_prover_failed": 0,
+      "kb_generation_failed": 0,
+      "kb_generation_empty": 488,
+      "kb_normalisation_empty": 130,
+      "raw_kb_solved": 586,
+      "raw_kb_not_solved": 0,
+      "normalised_kb_solved": 50,
+      "normalised_kb_not_solved": 0,
+      "normalised_kb_prover_failed": 0,
+      "kb_not_solved": 1014,
+      "unknown": 0
+    },
+    "opus": {
+      "baseline_solved": 7659,
+      "baseline_prover_failed": 0,
+      "kb_generation_failed": 0,
+      "kb_generation_empty": 457,
+      "kb_normalisation_empty": 38,
+      "raw_kb_solved": 652,
+      "raw_kb_not_solved": 0,
+      "normalised_kb_solved": 41,
+      "normalised_kb_not_solved": 0,
+      "normalised_kb_prover_failed": 3,
+      "kb_not_solved": 1077,
+      "unknown": 0
+    }
+  },
+  "kb_not_solved_breakdown": {
+    "gpt54": {
+      "total": 939,
+      "early_no_kb_wrong_non_neutral_no_generated_kb": 78,
+      "generated_kb_available": 861,
+      "normalised_kb_available": 861
+    },
+    "mini": {
+      "total": 1014,
+      "early_no_kb_wrong_non_neutral_no_generated_kb": 78,
+      "generated_kb_available": 936,
+      "normalised_kb_available": 936
+    },
+    "opus": {
+      "total": 1077,
+      "early_no_kb_wrong_non_neutral_no_generated_kb": 78,
+      "generated_kb_available": 999,
+      "normalised_kb_available": 999
+    }
+  },
+  "mini_vs_gpt54_subset_table": [
+    {
+      "status": "raw_kb_solved",
+      "mini_count": 586,
+      "full_count": 20,
+      "overlap": 10,
+      "only_mini": 576,
+      "only_full": 10,
+      "only_mini_examples": [
+        "dev:211",
+        "dev:384",
+        "dev:1412",
+        "dev:2089",
+        "dev:2404"
+      ],
+      "only_full_examples": [
+        "dev:4114",
+        "test:3058",
+        "test:3979",
+        "test:5622",
+        "test:5703"
+      ]
+    },
+    {
+      "status": "normalised_kb_solved",
+      "mini_count": 50,
+      "full_count": 621,
+      "overlap": 42,
+      "only_mini": 8,
+      "only_full": 579,
+      "only_mini_examples": [
+        "test:52",
+        "test:2174",
+        "test:3792",
+        "test:7010",
+        "test:7014"
+      ],
+      "only_full_examples": [
+        "dev:211",
+        "dev:384",
+        "dev:1412",
+        "dev:2089",
+        "dev:2404"
+      ]
+    },
+    {
+      "status": "kb_not_solved",
+      "mini_count": 1014,
+      "full_count": 939,
+      "overlap": 810,
+      "only_mini": 204,
+      "only_full": 129,
+      "only_mini_examples": [
+        "dev:219",
+        "dev:2772",
+        "dev:3373",
+        "dev:4330",
+        "dev:4505"
+      ],
+      "only_full_examples": [
+        "dev:816",
+        "dev:1192",
+        "dev:1236",
+        "dev:2058",
+        "dev:3123"
+      ]
+    },
+    {
+      "status": "kb_generation_empty",
+      "mini_count": 488,
+      "full_count": 655,
+      "overlap": 422,
+      "only_mini": 66,
+      "only_full": 233,
+      "only_mini_examples": [
+        "dev:816",
+        "dev:1236",
+        "dev:4114",
+        "dev:8786",
+        "test:158"
+      ],
+      "only_full_examples": [
+        "dev:219",
+        "dev:2772",
+        "dev:3373",
+        "dev:4330",
+        "dev:6971"
+      ]
+    },
+    {
+      "status": "kb_normalisation_empty",
+      "mini_count": 130,
+      "full_count": 33,
+      "overlap": 17,
+      "only_mini": 113,
+      "only_full": 16,
+      "only_mini_examples": [
+        "dev:1192",
+        "dev:2058",
+        "dev:3123",
+        "dev:3711",
+        "dev:7311"
+      ],
+      "only_full_examples": [
+        "test:196",
+        "test:322",
+        "test:453",
+        "test:677",
+        "test:891"
+      ]
+    }
+  ],
+  "pairwise_model_outcomes": {
+    "gpt54_vs_mini": {
+      "kb_solved_overlap": 580,
+      "kb_solved_only_gpt54": 61,
+      "kb_solved_only_mini": 56,
+      "raw_overlap": 10,
+      "raw_only_gpt54": 10,
+      "raw_only_mini": 576,
+      "normalised_overlap": 42,
+      "normalised_only_gpt54": 579,
+      "normalised_only_mini": 8
+    },
+    "gpt54_vs_opus": {
+      "kb_solved_overlap": 621,
+      "kb_solved_only_gpt54": 20,
+      "kb_solved_only_opus": 72,
+      "raw_overlap": 19,
+      "raw_only_gpt54": 1,
+      "raw_only_opus": 633,
+      "normalised_overlap": 32,
+      "normalised_only_gpt54": 589,
+      "normalised_only_opus": 9
+    },
+    "mini_vs_opus": {
+      "kb_solved_overlap": 592,
+      "kb_solved_only_mini": 44,
+      "kb_solved_only_opus": 101,
+      "raw_overlap": 539,
+      "raw_only_mini": 47,
+      "raw_only_opus": 113,
+      "normalised_overlap": 18,
+      "normalised_only_mini": 32,
+      "normalised_only_opus": 23
+    }
+  },
+  "baseline_sets_equal": {
+    "gpt54_vs_mini": true,
+    "gpt54_vs_opus": true
+  },
+  "gpt54_opus_kb_not_solved": {
+    "overlap": 872,
+    "different_kb_count": 353,
+    "difference_breakdown": {
+      "different_both": 326,
+      "different_raw_only": 27,
+      "same_after_normalisation": 27,
+      "same_raw_and_normalised_sets": 519
+    },
+    "different_kb_examples": [
+      "dev:1584",
+      "dev:2058",
+      "dev:2166",
+      "dev:2795",
+      "dev:3123",
+      "dev:3880",
+      "dev:5938",
+      "dev:8576",
+      "dev:8727",
+      "dev:8786"
+    ]
+  },
+  "oracle_upper_bounds": {
+    "all_files_unique_completed_keys": {
+      "gpt54": 9927,
+      "mini": 9927,
+      "opus": 9927
+    },
+    "common_keys": 9927,
+    "baseline_solved": 7659,
+    "any_model_raw_kb_solved": 700,
+    "any_model_normalised_kb_solved": 637,
+    "any_model_any_kb_solved": 745,
+    "baseline_plus_any_model_any_kb_solved": 8404,
+    "unique_any_kb_by_model": {
+      "gpt54": 8,
+      "mini": 32,
+      "opus": 48
+    }
+  },
+  "examples": {
+    "mini_normalised_only_vs_gpt54": {
+      "test:52": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(kids, children)"
+        ],
+        "normalised_kb": [
+          "isa_wn(kids, children)",
+          "isa_wn(kid, children)"
+        ],
+        "premises": [
+          "Kids in red shirts are playing in the leaves"
+        ],
+        "hypothesis": "Children in red shirts are playing in the leaves"
+      },
+      "test:2174": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "neutral",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(glass, made)"
+        ],
+        "normalised_kb": [
+          "isa_wn(made, glass)",
+          "isa_wn(make, glass)"
+        ],
+        "premises": [
+          "The woman is cracking two eggs into a bowl made of glass"
+        ],
+        "hypothesis": "The woman is cracking two eggs into a glass bowl"
+      },
+      "test:3792": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(brush, vegetable brush)"
+        ],
+        "normalised_kb": [
+          "isa_wn(brush, vegetable brush)",
+          "isa_wn(vegetable brush, brush)"
+        ],
+        "premises": [
+          "A woman is scrubbing a zucchini with a brush for vegetables"
+        ],
+        "hypothesis": "A woman is scrubbing a zucchini with a vegetable brush"
+      }
+    },
+    "gpt54_normalised_only_vs_mini": {
+      "dev:211": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(tree, plant)"
+        ],
+        "normalised_kb": [
+          "isa_wn(tree, plant)"
+        ],
+        "premises": [
+          "Two dogs are playing by a tree"
+        ],
+        "hypothesis": "Two dogs are playing by a plant"
+      },
+      "dev:384": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(grass, field)"
+        ],
+        "normalised_kb": [
+          "isa_wn(grass, field)"
+        ],
+        "premises": [
+          "A white and tan dog is running through the tall and green grass"
+        ],
+        "hypothesis": "A white and tan dog is running through a field"
+      },
+      "dev:1412": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(saw, cut)",
+          "isa_wn(log, wood)"
+        ],
+        "normalised_kb": [
+          "isa_wn(saw, cut)",
+          "isa_wn(log, wood)"
+        ],
+        "premises": [
+          "Men are sawing logs"
+        ],
+        "hypothesis": "Men are cutting wood"
+      }
+    },
+    "opus_raw_only_vs_gpt54": {
+      "dev:211": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(tree, plant)"
+        ],
+        "normalised_kb": [
+          "isa_wn(tree, plant)"
+        ],
+        "premises": [
+          "Two dogs are playing by a tree"
+        ],
+        "hypothesis": "Two dogs are playing by a plant"
+      },
+      "dev:384": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(grass, field)"
+        ],
+        "normalised_kb": [
+          "isa_wn(grass, field)"
+        ],
+        "premises": [
+          "A white and tan dog is running through the tall and green grass"
+        ],
+        "hypothesis": "A white and tan dog is running through a field"
+      },
+      "dev:1412": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(saw, cut)",
+          "isa_wn(log, wood)"
+        ],
+        "normalised_kb": [
+          "isa_wn(saw, cut)",
+          "isa_wn(log, wood)"
+        ],
+        "premises": [
+          "Men are sawing logs"
+        ],
+        "hypothesis": "Men are cutting wood"
+      }
+    },
+    "gpt54_normalised_only_vs_opus": {
+      "dev:211": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(tree, plant)"
+        ],
+        "normalised_kb": [
+          "isa_wn(tree, plant)"
+        ],
+        "premises": [
+          "Two dogs are playing by a tree"
+        ],
+        "hypothesis": "Two dogs are playing by a plant"
+      },
+      "dev:384": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(grass, field)"
+        ],
+        "normalised_kb": [
+          "isa_wn(grass, field)"
+        ],
+        "premises": [
+          "A white and tan dog is running through the tall and green grass"
+        ],
+        "hypothesis": "A white and tan dog is running through a field"
+      },
+      "dev:1412": {
+        "gold": "entailment",
+        "pred_no_kb": "neutral",
+        "pred_raw": "entailment",
+        "pred_norm": "entailment",
+        "raw_kb": [
+          "isa_wn(saw, cut)",
+          "isa_wn(log, wood)"
+        ],
+        "normalised_kb": [
+          "isa_wn(saw, cut)",
+          "isa_wn(log, wood)"
+        ],
+        "premises": [
+          "Men are sawing logs"
+        ],
+        "hypothesis": "Men are cutting wood"
+      }
+    }
+  }
+}
