@@ -286,16 +286,32 @@ def _parse_response_model_text(text: str, response_model: Any) -> Any:
 
 
 KB_PATTERN = re.compile(r"^\s*(isa_wn|disj)\s*\(\s*[^,]+\s*,\s*[^)]+\s*\)\s*$", re.MULTILINE)
-KB_RELATION_PREFIX = re.compile(r"^\s*(isa_wn|disj)\s*\(")
+KB_RELATION_PREFIX = re.compile(r"^\s*(isa_wn|disj|entails)\s*\(")
+RELATION_PATTERN = re.compile(
+    r"\b(isa_wn|disj|entails)\s*\(\s*([^,{}()]+?)\s*,\s*([^{}()]+?)\s*\)"
+)
+
+
+def _normalize_relation(predicate: str, arg1: str, arg2: str) -> str:
+    normalized_predicate = "isa_wn" if predicate == "entails" else predicate
+    return f"{normalized_predicate}({arg1.strip()}, {arg2.strip()})"
+
+
+def _extract_relations_from_line(line: str) -> List[str]:
+    return [
+        _normalize_relation(match.group(1), match.group(2), match.group(3))
+        for match in RELATION_PATTERN.finditer(line)
+    ]
 
 
 def extract_kb_from_output(llm_output: str) -> List[str]:
     """
     Extract KB injection lines from LLM output.
 
-    Supports two formats:
+    Supports three formats:
     1. New delimited format with [KB_START] ... [KB_END] markers
     2. Legacy format: lines starting with isa_wn( or disj(
+    3. Entailment-decision format: relations: { entails(a, b), ... }
     """
     start_marker = "[KB_START]"
     end_marker = "[KB_END]"
@@ -315,8 +331,9 @@ def extract_kb_from_output(llm_output: str) -> List[str]:
         if not line:
             continue
 
-        if KB_PATTERN.match(line):
-            kb_injections.append(line)
+        relations = _extract_relations_from_line(line)
+        if relations:
+            kb_injections.extend(relations)
         elif line.startswith(("isa_wn(", "disj(")) and "(" in line and ")" in line:
             kb_injections.append(line)
 
@@ -342,8 +359,9 @@ def _extract_validated_kb_from_output(llm_output: str) -> List[str]:
         if not line:
             continue
 
-        if KB_PATTERN.match(line):
-            kb_injections.append(line)
+        relations = _extract_relations_from_line(line)
+        if relations:
+            kb_injections.extend(relations)
         elif KB_RELATION_PREFIX.match(line):
             raise ValueError(f"Malformed KB relation from LLM: {line}")
 
