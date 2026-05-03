@@ -6,7 +6,7 @@ from .async_runtime import AsyncRunContext
 from .models import ExperimentResult, ExperimentStepStatus, ExperimentStatus, NLIProblem, NLILabel, ProblemConfig, TestMode, LangProResult
 from .loaders.base import DatasetLoader
 from .langpro import langpro_api_call
-from .llm import call_llm
+from .llm import LLMGenerationError, call_llm
 from .filtering import filter_kb_by_prem_hyp
 
 from .filtering import pipeline_filter_kb_injections
@@ -104,6 +104,15 @@ async def process_single_problem(
     # ----- Step 2: Generate KB -----
     try:
         kb_raw = await call_llm(config.llm_provider, config.model, config.prompt_style, prob, context=context)
+    except LLMGenerationError as e:
+        log(f"  [KB] LLM Call failed: {e}")
+        exp_result.llm_error = str(e)
+        exp_result.llm_output_raw = e.raw_output
+        exp_result.kb_raw = e.extracted_kb
+        exp_result.final_status = ExperimentStatus.KB_GENERATION_FAILED
+        if cache_file:
+            _save_cache_result(cache_file, exp_result)
+        return exp_result
     except Exception as e:
         log(f"  [KB] LLM Call failed: {e}")
         exp_result.llm_error = str(e)

@@ -76,15 +76,6 @@ def summarize(items: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-def serializable_result_payload(result: Any) -> Dict[str, Any]:
-    payload = result.model_dump(
-        mode="json",
-        exclude={"prover_calls"},
-    )
-    payload["prover_calls"] = None
-    return payload
-
-
 def compare_runs(baseline: List[Dict[str, Any]], candidate: List[Dict[str, Any]]) -> str:
     base = summarize(baseline)
     cand = summarize(candidate)
@@ -138,6 +129,7 @@ async def run_async(args: argparse.Namespace) -> int:
 
     from kbprojection.models import NLIProblem, ProblemConfig, TestMode
     from kbprojection.orchestration import process_single_problem
+    from kbprojection.runners import serialize_result_payload
 
     baseline_path = Path(args.baseline).resolve()
     if not baseline_path.exists():
@@ -172,10 +164,13 @@ async def run_async(args: argparse.Namespace) -> int:
         print(f"[{index}/{total}] Replaying {problem.dataset}/{problem.split}/{problem.id}")
         result = await process_single_problem(problem, config=config)
 
-        payload = serializable_result_payload(result)
-        payload["model"] = args.model
-        payload["provider"] = args.provider
-        payload["prompt_style"] = args.prompt_style
+        payload = serialize_result_payload(
+            result,
+            model=args.model,
+            provider=args.provider,
+            prompt_style=args.prompt_style,
+            discard_prover_calls=args.discard_prover_calls,
+        )
         payload["baseline_reference"] = str(baseline_path)
         replay_items.append(payload)
         completed_problem_ids.add(problem.id)
@@ -225,6 +220,11 @@ def parse_args() -> argparse.Namespace:
         "--verbose",
         action="store_true",
         help="Print detailed per-problem logs from the pipeline.",
+    )
+    parser.add_argument(
+        "--discard-prover-calls",
+        action="store_true",
+        help="Discard prover call trees/proofs from result JSON to keep files smaller.",
     )
     return parser.parse_args()
 

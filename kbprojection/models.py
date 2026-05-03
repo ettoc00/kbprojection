@@ -85,6 +85,7 @@ class ExperimentResult(BaseModel):
     # Step 2: Generation
     kb_raw: Optional[List[str]] = None # List of strings as returned by LLM
     llm_error: Optional[str] = None
+    llm_output_raw: Optional[str] = None
     
     # Step 3: Normalisation
     kb_filtered: Optional[List[str]] = None # Normalised list of strings ready for LangPro

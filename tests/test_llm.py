@@ -92,6 +92,25 @@ class TestLLMHandling(unittest.IsolatedAsyncioTestCase):
 
     @patch("kbprojection.orchestration.call_llm", new_callable=AsyncMock)
     @patch("kbprojection.orchestration.langpro_api_call", new_callable=AsyncMock)
+    async def test_process_single_problem_records_raw_llm_output_on_generation_failure(self, mock_langpro, mock_call_llm):
+        mock_call_llm.side_effect = LLMGenerationError(
+            "malformed output",
+            raw_output="answer: entailment\nrelations: { entails(cat, animal)",
+            extracted_kb=["isa_wn(cat, animal)"],
+        )
+        mock_langpro.return_value = LangProResult(label=NLILabel.NEUTRAL)
+
+        result = await process_single_problem(
+            self.problem,
+            config=ProblemConfig(verbose=False),
+        )
+
+        self.assertEqual(result.final_status, ExperimentStatus.KB_GENERATION_FAILED)
+        self.assertEqual(result.llm_output_raw, "answer: entailment\nrelations: { entails(cat, animal)")
+        self.assertEqual(result.kb_raw, ["isa_wn(cat, animal)"])
+
+    @patch("kbprojection.orchestration.call_llm", new_callable=AsyncMock)
+    @patch("kbprojection.orchestration.langpro_api_call", new_callable=AsyncMock)
     async def test_process_single_problem_records_kb_generation_empty(self, mock_langpro, mock_call_llm):
         mock_call_llm.return_value = []
         mock_langpro.return_value = LangProResult(label=NLILabel.NEUTRAL)

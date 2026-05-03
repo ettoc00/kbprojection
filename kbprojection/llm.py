@@ -38,6 +38,17 @@ DEFAULT_PROVIDER_MAX_TOKENS = {
 class LLMGenerationError(RuntimeError):
     """Raised when an LLM call fails after retries are exhausted."""
 
+    def __init__(
+        self,
+        message: str,
+        *,
+        raw_output: Optional[str] = None,
+        extracted_kb: Optional[List[str]] = None,
+    ):
+        super().__init__(message)
+        self.raw_output = raw_output
+        self.extracted_kb = extracted_kb
+
 
 def _load_dotenv_if_present(dotenv_path: Optional[Path] = None) -> None:
     """
@@ -287,6 +298,8 @@ def _parse_response_model_text(text: str, response_model: Any) -> Any:
 
 KB_PATTERN = re.compile(r"^\s*(isa_wn|disj)\s*\(\s*[^,]+\s*,\s*[^)]+\s*\)\s*$", re.MULTILINE)
 KB_RELATION_PREFIX = re.compile(r"^\s*(isa_wn|disj)\s*\(")
+LASHA_ANSWER_PATTERN = re.compile(r"^\s*answer:\s*(entailment|non-entailment)\s*$", re.IGNORECASE | re.MULTILINE)
+LASHA_RELATION_PATTERN = re.compile(r"entails\(\s*([^,()]+?)\s*,\s*([^()]+?)\s*\)", re.IGNORECASE)
 
 
 def extract_kb_from_output(llm_output: str) -> List[str]:
@@ -350,6 +363,58 @@ def _extract_validated_kb_from_output(llm_output: str) -> List[str]:
     return kb_injections
 
 
+def _extract_lasha_kb_from_output(llm_output: str) -> List[str]:
+    answer_match = LASHA_ANSWER_PATTERN.search(llm_output)
+    if not answer_match:
+        raise ValueError("Missing 'answer:' line in lasha output.")
+
+    answer = answer_match.group(1).strip().lower()
+    if answer == "non-entailment":
+        return []
+
+    relations_line = None
+    for line in llm_output.splitlines():
+        if line.strip().lower().startswith("relations:"):
+            relations_line = line.strip()
+            break
+    if relations_line is None:
+        raise ValueError("Missing 'relations:' line in lasha entailment output.")
+
+    relations_payload = relations_line.split(":", 1)[1].strip()
+    if relations_payload == "{ }" or relations_payload == "{}":
+        return []
+
+    if not (relations_payload.startswith("{") and relations_payload.endswith("}")):
+        raise ValueError(f"Malformed lasha relations block: {relations_line}")
+
+    relations = []
+    for left, right in LASHA_RELATION_PATTERN.findall(relations_payload):
+        relations.append(f"isa_wn({left.strip()}, {right.strip()})")
+
+    if not relations and "entails(" in relations_payload.lower():
+        raise ValueError(f"Could not parse lasha relations: {relations_line}")
+
+    return relations
+
+
+def _best_effort_kb_from_output(prompt_style: str, llm_output: Any) -> List[str]:
+    if not isinstance(llm_output, str):
+        if hasattr(llm_output, "output"):
+            kb_relations: List[str] = []
+            for item in getattr(llm_output, "output", []):
+                kb_relations.extend(extract_kb_from_output(getattr(item, "KB_injection", "")))
+            return kb_relations
+        return []
+
+    if prompt_style == "lasha":
+        return [
+            f"isa_wn({left.strip()}, {right.strip()})"
+            for left, right in LASHA_RELATION_PATTERN.findall(llm_output)
+        ]
+
+    return extract_kb_from_output(llm_output)
+
+
 async def call_llm(
     provider: Optional[str],
     model: Optional[str],
@@ -363,6 +428,7 @@ async def call_llm(
     Unified LLM call using GenericAIClient.
     """
     is_legacy = prompt_style.startswith("legacy_")
+    is_lasha = prompt_style == "lasha"
     prompt = fill_prompt(prompt_style, prob.premises, prob.hypothesis)
 
     response_model = None
@@ -378,6 +444,7 @@ async def call_llm(
 
     retries = 0
     provider_name = client.provider
+    last_output: Any = None
     while True:
         try:
             async with resolved_context.llm_semaphore:
@@ -387,7 +454,10 @@ async def call_llm(
                     response_model=response_model,
                     max_tokens=max_tokens,
                 )
+            last_output = output
 
+            if is_lasha:
+                return _extract_lasha_kb_from_output(output)
             if not is_legacy:
                 return _extract_validated_kb_from_output(output)
             return [
@@ -397,9 +467,13 @@ async def call_llm(
             ]
         except Exception as e:
             if max_retries is not None and retries >= max_retries:
+                extracted_kb = _best_effort_kb_from_output(prompt_style, last_output)
+                raw_output = last_output if isinstance(last_output, str) else None
                 raise LLMGenerationError(
                     f"LLM generation failed with {provider_name}"
-                    f" using model {model or DEFAULT_MODELS[provider_name]}: {e}"
+                    f" using model {model or DEFAULT_MODELS[provider_name]}: {e}",
+                    raw_output=raw_output,
+                    extracted_kb=extracted_kb or None,
                 ) from e
 
             retries += 1
