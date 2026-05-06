@@ -84,6 +84,7 @@ Runtime behavior can also be configured with:
 * `KBPROJECTION_CACHE_DIR` to override generated cache defaults.
 * `KBPROJECTION_LANGPRO_ENDPOINT` to override the LangPro API endpoint.
   Set this to `local://auto` to use a local LangPro checkout instead of the remote API.
+  Set this to `hybrid://auto` to use both the default remote endpoint and `local://auto` in the same run.
 * `KBPROJECTION_LANGPRO_TIMEOUT_SECONDS` to control LangPro request timeouts.
 * `KBPROJECTION_DOWNLOAD_TIMEOUT_SECONDS` to control dataset download timeouts.
 * `KBPROJECTION_LANGPRO_CACHE_BACKEND` to choose `memory` or `sqlite`.
@@ -95,6 +96,12 @@ Runtime behavior can also be configured with:
 * `KBPROJECTION_LANGPRO_REPO` to override the auto-clone repository. Defaults to `https://github.com/kovvalsky/LangPro.git`.
 * `KBPROJECTION_LANGPRO_REF` to override the auto-clone branch/ref. Defaults to `nl`.
 * `KBPROJECTION_LANGPRO_LOCAL_SWIPL` to override the `swipl` executable used for local runs.
+
+In hybrid LangPro mode, `--langpro-concurrency` limits remote API calls and
+`--local-langpro-concurrency` limits local subprocess calls. If one backend fails
+repeatedly, kbprojection temporarily routes normal traffic to the other backend
+and probes the failed backend with exponential backoff, so short remote outages
+are routed around without permanently disabling the remote endpoint.
 
 In Python, local LangPro can also be enabled for the current process with:
 
@@ -254,7 +261,7 @@ Some implementation details matter when using the library directly:
 * `prompt_style` defaults to `icl`; available prompt names include `legacy_cot`, `legacy_least_to_most`, `legacy_icl`, `icl`, and `cot`.
 * `collect_kb_helpful_examples_random(...)` yields only results whose final status is `normalised_kb_solved` or `raw_kb_solved`.
 * `process_kb_examples(...)` yields all processed results, including failures and already-correct baselines.
-* Identical KB relation sets share the same LangPro cache entry, even when they come from different models or arrive in a different order.
+* Identical KB relation sets share the same LangPro cache entry, even when they come from different models, arrive in a different order, or are run through local, remote, or hybrid LangPro endpoints.
 * LangPro caching can be backed by in-memory storage or SQLite persistence. The default SQLite path is `<app-data>/langpro_cache.sqlite3`; legacy repo-local `.kbprojection/` files are ignored but no longer created by default.
 * Local LangPro mode first tries sentence match against any preparsed corpora discovered under `<LangPro>/ccg_sen_d` with `*_sen.pl` companion files. It prefers parser-specific `*_eccg.pl` or `*_depccg*.pl` files when they exist, and falls back to generic `*_ccg.pl` when needed.
 * If no bundled or generated corpus match is found, local mode falls back to raw-text parsing through EasyCCG, then runs LangPro locally on temporary `ccg.pl`/`sen.pl` files.
@@ -268,4 +275,5 @@ Useful scripts include:
 
 * `scripts/2x2_50_problems.py` to replay the fixed 50-problem benchmark across `legacy_icl` and `icl`.
 * `scripts/evaluate_sick_dataset.py` to run one model/prompt across the full SICK dataset with resumable JSON output.
+* `scripts/evaluate_snli_dataset.py` to run one model/prompt across the full SNLI dataset with resumable JSON output.
 * `scripts/build_local_langpro_corpus.py` to generate preparsed `*_sen.pl` and `*_eccg.pl` corpora for `SNLI` or `SICK` inside a local LangPro checkout so repeated local runs can skip raw-text parsing.

@@ -1,6 +1,7 @@
 import json
 import hashlib
 import asyncio
+import time
 from itertools import product
 from pathlib import Path
 from functools import lru_cache
@@ -23,6 +24,7 @@ from .local_easyccg import (
 )
 from .models import LangProResult, NLILabel
 from .settings import (
+    DEFAULT_LANGPRO_ENDPOINT,
     format_local_langpro_missing_error,
     get_langpro_settings,
 )
@@ -603,12 +605,31 @@ def remove_outer_parens(s):
 
 
 _LANGPRO_CACHE_BACKEND: Optional[LangProCacheBackend] = None
-_LANGPRO_INFLIGHT: Dict[str, "asyncio.Task[str]"] = {}
+_LANGPRO_INFLIGHT: Dict[str, "asyncio.Task[Tuple[Optional[str], Optional[str]]]"] = {}
 _LANGPRO_INFLIGHT_LOCK: Optional[asyncio.Lock] = None
+HYBRID_LANGPRO_ENDPOINT = "hybrid://auto"
+HYBRID_LOCAL_ENDPOINT = "local://auto"
+_HYBRID_FAILURE_THRESHOLD = 3
+_HYBRID_INITIAL_BACKOFF_SECONDS = 15.0
+_HYBRID_MAX_BACKOFF_SECONDS = 300.0
 
 _SEN_ID_PATTERN = re.compile(
     r"sen_id\(\d+,\s*(?:(?P<num>[0-9]+)|'(?P<quoted>(?:\\'|[^'])*)'|(?P<atom>[A-Za-z_][A-Za-z0-9_]*)),\s*'(?P<role>[ph])',\s*'[^']*',\s*'(?P<sentence>(?:\\'|[^'])*)'\)\."
 )
+
+
+@dataclass
+class HybridBackendHealth:
+    consecutive_failures: int = 0
+    disabled_until: float = 0.0
+    next_probe_at: float = 0.0
+    backoff_seconds: float = _HYBRID_INITIAL_BACKOFF_SECONDS
+
+
+_HYBRID_BACKEND_HEALTH: Dict[str, HybridBackendHealth] = {
+    "remote": HybridBackendHealth(),
+    "local": HybridBackendHealth(),
+}
 
 
 @dataclass(frozen=True)
@@ -652,7 +673,6 @@ def _normalize_kb_for_cache(kb: List[str]) -> Tuple[str, ...]:
 def _make_langpro_cache_payload(
     premises: List[str],
     hypothesis: str,
-    endpoint: str,
     parser: str,
     ral: int,
     kb: List[str],
@@ -663,7 +683,6 @@ def _make_langpro_cache_payload(
     return {
         "premises": premises,
         "hypothesis": hypothesis,
-        "endpoint": endpoint,
         "parser": parser,
         "ral": ral,
         "kb": list(_normalize_kb_for_cache(kb)),
@@ -676,7 +695,6 @@ def _make_langpro_cache_payload(
 def _make_langpro_cache_key(
     premises: List[str],
     hypothesis: str,
-    endpoint: str,
     parser: str,
     ral: int,
     kb: List[str],
@@ -687,7 +705,6 @@ def _make_langpro_cache_key(
     payload = _make_langpro_cache_payload(
         premises,
         hypothesis,
-        endpoint,
         parser,
         ral,
         kb,
@@ -695,6 +712,32 @@ def _make_langpro_cache_key(
         strong_align,
         intersective,
     )
+    serialized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def _make_legacy_endpoint_langpro_cache_key(
+    premises: List[str],
+    hypothesis: str,
+    endpoint: str,
+    parser: str,
+    ral: int,
+    kb: List[str],
+    senses: str,
+    strong_align: bool,
+    intersective: bool,
+) -> str:
+    payload = {
+        "premises": premises,
+        "hypothesis": hypothesis,
+        "endpoint": endpoint,
+        "parser": parser,
+        "ral": ral,
+        "kb": list(_normalize_kb_for_cache(kb)),
+        "senses": senses,
+        "strong_align": strong_align,
+        "intersective": intersective,
+    }
     serialized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
@@ -742,6 +785,10 @@ def _is_local_langpro_endpoint(endpoint: str) -> bool:
     return endpoint.startswith("local://")
 
 
+def _is_hybrid_langpro_endpoint(endpoint: str) -> bool:
+    return endpoint == HYBRID_LANGPRO_ENDPOINT
+
+
 def _local_endpoint_cache_key(endpoint: str, settings) -> str:
     if not _is_local_langpro_endpoint(endpoint):
         return endpoint
@@ -750,6 +797,56 @@ def _local_endpoint_cache_key(endpoint: str, settings) -> str:
         f"|easyccg_dir={settings.local_easyccg_dir.resolve()}"
         f"|easyccg_spacy={settings.local_easyccg_spacy_model}"
     )
+
+
+def _legacy_endpoint_cache_candidates(resolved_endpoint: str, settings) -> Tuple[str, ...]:
+    raw_candidates = [
+        resolved_endpoint,
+        DEFAULT_LANGPRO_ENDPOINT,
+        HYBRID_LOCAL_ENDPOINT,
+    ]
+    candidates: List[str] = []
+    seen = set()
+    for endpoint in raw_candidates:
+        cache_endpoint = _local_endpoint_cache_key(endpoint, settings)
+        if cache_endpoint in seen:
+            continue
+        seen.add(cache_endpoint)
+        candidates.append(cache_endpoint)
+    return tuple(candidates)
+
+
+def _get_and_migrate_legacy_langpro_cache_entry(
+    cache_backend: LangProCacheBackend,
+    new_cache_key: str,
+    premises: List[str],
+    hypothesis: str,
+    resolved_endpoint: str,
+    parser: str,
+    ral: int,
+    kb: List[str],
+    senses: str,
+    strong_align: bool,
+    intersective: bool,
+    settings,
+) -> Optional[str]:
+    for legacy_endpoint in _legacy_endpoint_cache_candidates(resolved_endpoint, settings):
+        legacy_cache_key = _make_legacy_endpoint_langpro_cache_key(
+            premises,
+            hypothesis,
+            legacy_endpoint,
+            parser,
+            ral,
+            kb,
+            senses,
+            strong_align,
+            intersective,
+        )
+        cached_response_text = cache_backend.get(legacy_cache_key)
+        if cached_response_text is not None:
+            cache_backend.set(new_cache_key, cached_response_text)
+            return cached_response_text
+    return None
 
 
 def _relation_to_prolog_atom(relation: str) -> str:
@@ -1143,6 +1240,65 @@ async def _run_easyccg_async(
         return await _run_easyccg_once_async(fallback_sentence, easyccg_dir, model_name, timeout_seconds)
 
 
+_EASYCCG_TERM_LOCKS: Dict[str, asyncio.Lock] = {}
+
+
+def _easyccg_term_cache_path(sentence: str, easyccg_dir: Path, model_name: str) -> Path:
+    settings = get_langpro_settings()
+    payload = {
+        "sentence": sentence or "",
+        "easyccg_dir": str(easyccg_dir.resolve()),
+        "model_name": model_name,
+    }
+    key = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+    return settings.cache_dir / "easyccg_terms" / f"{key}.json"
+
+
+def _read_easyccg_term_cache(cache_path: Path) -> Optional[str]:
+    if not cache_path.exists():
+        return None
+    try:
+        payload = json.loads(cache_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    term = payload.get("term")
+    return term if isinstance(term, str) and term.strip() else None
+
+
+def _write_easyccg_term_cache(cache_path: Path, sentence: str, term: str) -> None:
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = cache_path.with_suffix(".tmp")
+    payload = {"sentence": sentence or "", "term": term}
+    tmp_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    tmp_path.replace(cache_path)
+
+
+async def _get_easyccg_term_cached(
+    sentence: str,
+    easyccg_dir: Path,
+    model_name: str,
+    timeout_seconds: float,
+) -> str:
+    cache_path = _easyccg_term_cache_path(sentence, easyccg_dir, model_name)
+    cached = _read_easyccg_term_cache(cache_path)
+    if cached is not None:
+        return cached
+
+    cache_key = str(cache_path)
+    lock = _EASYCCG_TERM_LOCKS.setdefault(cache_key, asyncio.Lock())
+    async with lock:
+        cached = _read_easyccg_term_cache(cache_path)
+        if cached is not None:
+            return cached
+
+        raw_output = await _run_easyccg_async(sentence, easyccg_dir, model_name, timeout_seconds)
+        term = process_single_output(raw_output)
+        if term is None:
+            raise RuntimeError("Failed to convert EasyCCG output to LangPro Prolog terms")
+        _write_easyccg_term_cache(cache_path, sentence, term)
+        return term
+
+
 async def _write_local_langpro_ccg_file(
     ccg_path: Path,
     premises: List[str],
@@ -1154,11 +1310,14 @@ async def _write_local_langpro_ccg_file(
     sentences = list(premises) + [hypothesis]
     terms: List[str] = []
     for sentence in sentences:
-        raw_output = await _run_easyccg_async(sentence, easyccg_dir, spacy_model, timeout_seconds)
-        term = process_single_output(raw_output)
-        if term is None:
-            raise RuntimeError("Failed to convert EasyCCG output to LangPro Prolog terms")
-        terms.append(term)
+        terms.append(
+            await _get_easyccg_term_cached(
+                sentence,
+                easyccg_dir,
+                spacy_model,
+                timeout_seconds,
+            )
+        )
 
     lines = [
         "% generated by kbprojection local LangPro EasyCCG fallback",
@@ -1461,7 +1620,163 @@ def _parse_langpro_output(output: Dict[str, Any]) -> LangProResult:
     )
 
 
-async def _execute_langpro_request(
+def _reset_hybrid_backend_health() -> None:
+    for health in _HYBRID_BACKEND_HEALTH.values():
+        health.consecutive_failures = 0
+        health.disabled_until = 0.0
+        health.next_probe_at = 0.0
+        health.backoff_seconds = _HYBRID_INITIAL_BACKOFF_SECONDS
+
+
+def _is_hybrid_backend_eligible(backend: str, now: float) -> bool:
+    health = _HYBRID_BACKEND_HEALTH[backend]
+    if health.consecutive_failures < _HYBRID_FAILURE_THRESHOLD:
+        return True
+    return now >= health.next_probe_at
+
+
+def _eligible_hybrid_backends(now: float) -> List[str]:
+    backends = [
+        backend
+        for backend in ("remote", "local")
+        if _is_hybrid_backend_eligible(backend, now)
+    ]
+    return backends or ["remote", "local"]
+
+
+def _mark_hybrid_backend_success(backend: str) -> None:
+    health = _HYBRID_BACKEND_HEALTH[backend]
+    health.consecutive_failures = 0
+    health.disabled_until = 0.0
+    health.next_probe_at = 0.0
+    health.backoff_seconds = _HYBRID_INITIAL_BACKOFF_SECONDS
+
+
+def _mark_hybrid_backend_failure(backend: str, now: float) -> None:
+    health = _HYBRID_BACKEND_HEALTH[backend]
+    health.consecutive_failures += 1
+    if health.consecutive_failures >= _HYBRID_FAILURE_THRESHOLD:
+        next_probe_at = now + health.backoff_seconds
+        health.disabled_until = next_probe_at
+        health.next_probe_at = next_probe_at
+        health.backoff_seconds = min(
+            health.backoff_seconds * 2.0,
+            _HYBRID_MAX_BACKOFF_SECONDS,
+        )
+
+
+def penalize_hybrid_local_backend_for_timeout() -> None:
+    """Bias hybrid LangPro away from the local backend after an outer timeout."""
+    _mark_hybrid_backend_failure("local", time.monotonic())
+
+
+async def _acquire_hybrid_backend_token(
+    resolved_context: AsyncRunContext,
+    backends: List[str],
+) -> str:
+    if len(backends) == 1:
+        backend = backends[0]
+        semaphore = (
+            resolved_context.langpro_semaphore
+            if backend == "remote"
+            else resolved_context.local_langpro_semaphore
+        )
+        await semaphore.acquire()
+        return backend
+
+    acquire_tasks = {
+        asyncio.create_task(resolved_context.langpro_semaphore.acquire()): "remote",
+        asyncio.create_task(resolved_context.local_langpro_semaphore.acquire()): "local",
+    }
+    filtered_tasks = {
+        task: backend
+        for task, backend in acquire_tasks.items()
+        if backend in backends
+    }
+    for task, backend in acquire_tasks.items():
+        if backend not in backends:
+            task.cancel()
+
+    done, pending = await asyncio.wait(
+        set(filtered_tasks),
+        return_when=asyncio.FIRST_COMPLETED,
+    )
+    chosen_task = next(iter(done))
+    chosen_backend = filtered_tasks[chosen_task]
+
+    for task in done:
+        if task is chosen_task:
+            continue
+        extra_backend = filtered_tasks[task]
+        _release_hybrid_backend_token(resolved_context, extra_backend)
+
+    for task in pending:
+        task.cancel()
+    if pending:
+        await asyncio.gather(*pending, return_exceptions=True)
+
+    return chosen_backend
+
+
+def _release_hybrid_backend_token(resolved_context: AsyncRunContext, backend: str) -> None:
+    if backend == "remote":
+        resolved_context.langpro_semaphore.release()
+    else:
+        resolved_context.local_langpro_semaphore.release()
+
+
+async def _execute_local_langpro_request_without_limit(
+    premises: List[str],
+    hypothesis: str,
+    parser: str,
+    kb: List[str],
+    report: bool,
+    timeout_seconds: float,
+    ral: int,
+    strong_align: bool,
+    intersective: bool,
+) -> Tuple[Optional[str], Optional[str]]:
+    return await _execute_local_langpro_request(
+        premises,
+        hypothesis,
+        parser,
+        kb,
+        report,
+        timeout_seconds,
+        ral,
+        strong_align,
+        intersective,
+    )
+
+
+async def _execute_local_langpro_request_with_limit(
+    premises: List[str],
+    hypothesis: str,
+    parser: str,
+    ral: int,
+    kb: List[str],
+    strong_align: bool,
+    intersective: bool,
+    report: bool,
+    timeout_seconds: float,
+    context: Optional[AsyncRunContext] = None,
+) -> Tuple[Optional[str], Optional[str]]:
+    resolved_context = resolve_async_run_context(context)
+    async with resolved_context.local_langpro_semaphore:
+        return await _execute_local_langpro_request_without_limit(
+            premises,
+            hypothesis,
+            parser,
+            kb,
+            report,
+            timeout_seconds,
+            ral,
+            strong_align,
+            intersective,
+        )
+
+
+async def _execute_remote_langpro_request_without_limit(
     premises: List[str],
     hypothesis: str,
     endpoint: str,
@@ -1474,23 +1789,7 @@ async def _execute_langpro_request(
     curl: bool,
     report: bool,
     timeout_seconds: float,
-    context: Optional[AsyncRunContext] = None,
 ) -> Tuple[Optional[str], Optional[str]]:
-    resolved_context = resolve_async_run_context(context)
-    if _is_local_langpro_endpoint(endpoint):
-        async with resolved_context.local_langpro_semaphore:
-            return await _execute_local_langpro_request(
-                premises,
-                hypothesis,
-                parser,
-                kb,
-                report,
-                timeout_seconds,
-                ral,
-                strong_align,
-                intersective,
-            )
-
     # preparing an input for the API call
     prob = {'premises': premises, 'hypothesis': hypothesis}
     headers={'Content-Type': 'application/json'}
@@ -1511,9 +1810,8 @@ async def _execute_langpro_request(
         print(curl_command)
 
     try:
-        async with resolved_context.langpro_semaphore:
-            async with httpx.AsyncClient(timeout=timeout_seconds) as client:
-                response = await client.post(endpoint, content=js_query, headers=headers)
+        async with httpx.AsyncClient(timeout=timeout_seconds) as client:
+            response = await client.post(endpoint, content=js_query, headers=headers)
         response.raise_for_status()
         json.loads(response.text)
     except (json.decoder.JSONDecodeError, httpx.HTTPError) as e:
@@ -1522,6 +1820,259 @@ async def _execute_langpro_request(
         return None, str(e)
 
     return response.text, None
+
+
+async def _execute_remote_langpro_request(
+    premises: List[str],
+    hypothesis: str,
+    endpoint: str,
+    parser: str,
+    ral: int,
+    kb: List[str],
+    senses: str,
+    strong_align: bool,
+    intersective: bool,
+    curl: bool,
+    report: bool,
+    timeout_seconds: float,
+    context: Optional[AsyncRunContext] = None,
+) -> Tuple[Optional[str], Optional[str]]:
+    resolved_context = resolve_async_run_context(context)
+    async with resolved_context.langpro_semaphore:
+        return await _execute_remote_langpro_request_without_limit(
+            premises,
+            hypothesis,
+            endpoint,
+            parser,
+            ral,
+            kb,
+            senses,
+            strong_align,
+            intersective,
+            curl,
+            report,
+            timeout_seconds,
+        )
+
+
+async def _execute_hybrid_backend_with_token(
+    backend: str,
+    premises: List[str],
+    hypothesis: str,
+    parser: str,
+    ral: int,
+    kb: List[str],
+    senses: str,
+    strong_align: bool,
+    intersective: bool,
+    curl: bool,
+    report: bool,
+    timeout_seconds: float,
+) -> Tuple[Optional[str], Optional[str]]:
+    if backend == "remote":
+        return await _execute_remote_langpro_request_without_limit(
+            premises,
+            hypothesis,
+            DEFAULT_LANGPRO_ENDPOINT,
+            parser,
+            ral,
+            kb,
+            senses,
+            strong_align,
+            intersective,
+            curl,
+            report,
+            timeout_seconds,
+        )
+    return await _execute_local_langpro_request_without_limit(
+        premises,
+        hypothesis,
+        parser,
+        kb,
+        report,
+        timeout_seconds,
+        ral,
+        strong_align,
+        intersective,
+    )
+
+
+async def _execute_hybrid_backend(
+    backend: str,
+    resolved_context: AsyncRunContext,
+    premises: List[str],
+    hypothesis: str,
+    parser: str,
+    ral: int,
+    kb: List[str],
+    senses: str,
+    strong_align: bool,
+    intersective: bool,
+    curl: bool,
+    report: bool,
+    timeout_seconds: float,
+    *,
+    token_acquired: bool = False,
+) -> Tuple[Optional[str], Optional[str]]:
+    if not token_acquired:
+        semaphore = (
+            resolved_context.langpro_semaphore
+            if backend == "remote"
+            else resolved_context.local_langpro_semaphore
+        )
+        await semaphore.acquire()
+    try:
+        return await _execute_hybrid_backend_with_token(
+            backend,
+            premises,
+            hypothesis,
+            parser,
+            ral,
+            kb,
+            senses,
+            strong_align,
+            intersective,
+            curl,
+            report,
+            timeout_seconds,
+        )
+    finally:
+        _release_hybrid_backend_token(resolved_context, backend)
+
+
+async def _execute_hybrid_langpro_request(
+    premises: List[str],
+    hypothesis: str,
+    parser: str,
+    ral: int,
+    kb: List[str],
+    senses: str,
+    strong_align: bool,
+    intersective: bool,
+    curl: bool,
+    report: bool,
+    timeout_seconds: float,
+    context: Optional[AsyncRunContext] = None,
+) -> Tuple[Optional[str], Optional[str]]:
+    resolved_context = resolve_async_run_context(context)
+    first_backend = await _acquire_hybrid_backend_token(
+        resolved_context,
+        _eligible_hybrid_backends(time.monotonic()),
+    )
+    errors: Dict[str, str] = {}
+
+    response_text, error = await _execute_hybrid_backend(
+        first_backend,
+        resolved_context,
+        premises,
+        hypothesis,
+        parser,
+        ral,
+        kb,
+        senses,
+        strong_align,
+        intersective,
+        curl,
+        report,
+        timeout_seconds,
+        token_acquired=True,
+    )
+    if response_text is not None:
+        _mark_hybrid_backend_success(first_backend)
+        return response_text, None
+
+    errors[first_backend] = error or "unknown error"
+    _mark_hybrid_backend_failure(first_backend, time.monotonic())
+
+    fallback_backend = "local" if first_backend == "remote" else "remote"
+    response_text, fallback_error = await _execute_hybrid_backend(
+        fallback_backend,
+        resolved_context,
+        premises,
+        hypothesis,
+        parser,
+        ral,
+        kb,
+        senses,
+        strong_align,
+        intersective,
+        curl,
+        report,
+        timeout_seconds,
+    )
+    if response_text is not None:
+        _mark_hybrid_backend_success(fallback_backend)
+        return response_text, None
+
+    errors[fallback_backend] = fallback_error or "unknown error"
+    _mark_hybrid_backend_failure(fallback_backend, time.monotonic())
+    return (
+        None,
+        "Hybrid LangPro failed. "
+        f"remote: {errors.get('remote', 'not attempted')} | "
+        f"local: {errors.get('local', 'not attempted')}",
+    )
+
+
+async def _execute_langpro_request(
+    premises: List[str],
+    hypothesis: str,
+    endpoint: str,
+    parser: str,
+    ral: int,
+    kb: List[str],
+    senses: str,
+    strong_align: bool,
+    intersective: bool,
+    curl: bool,
+    report: bool,
+    timeout_seconds: float,
+    context: Optional[AsyncRunContext] = None,
+) -> Tuple[Optional[str], Optional[str]]:
+    if _is_hybrid_langpro_endpoint(endpoint):
+        return await _execute_hybrid_langpro_request(
+            premises,
+            hypothesis,
+            parser,
+            ral,
+            kb,
+            senses,
+            strong_align,
+            intersective,
+            curl,
+            report,
+            timeout_seconds,
+            context=context,
+        )
+    if _is_local_langpro_endpoint(endpoint):
+        return await _execute_local_langpro_request_with_limit(
+            premises,
+            hypothesis,
+            parser,
+            ral,
+            kb,
+            strong_align,
+            intersective,
+            report,
+            timeout_seconds,
+            context=context,
+        )
+    return await _execute_remote_langpro_request(
+        premises,
+        hypothesis,
+        endpoint,
+        parser,
+        ral,
+        kb,
+        senses,
+        strong_align,
+        intersective,
+        curl,
+        report,
+        timeout_seconds,
+        context=context,
+    )
+
 
 async def _execute_langpro_request_for_cache(
     cache_key: str,
@@ -1593,7 +2144,6 @@ async def langpro_api_call(premises: list, hypothesis: str,
     settings = get_langpro_settings()
     resolved_endpoint = endpoint or settings.endpoint
     resolved_timeout = timeout_seconds if timeout_seconds is not None else settings.timeout_seconds
-    cache_endpoint = _local_endpoint_cache_key(resolved_endpoint, settings)
 
     premises_list = list(premises or [])
     kb_list = _normalize_kb_for_request(kb)
@@ -1601,7 +2151,6 @@ async def langpro_api_call(premises: list, hypothesis: str,
     cache_key = _make_langpro_cache_key(
         premises_list,
         hypothesis,
-        cache_endpoint,
         parser,
         ral,
         kb_list,
@@ -1612,6 +2161,22 @@ async def langpro_api_call(premises: list, hypothesis: str,
 
     cache_backend = get_langpro_cache_backend()
     cached_response_text = cache_backend.get(cache_key)
+    if cached_response_text is not None:
+        return _parse_langpro_output(json.loads(cached_response_text))
+    cached_response_text = _get_and_migrate_legacy_langpro_cache_entry(
+        cache_backend,
+        cache_key,
+        premises_list,
+        hypothesis,
+        resolved_endpoint,
+        parser,
+        ral,
+        kb_list,
+        senses,
+        strong_align,
+        intersective,
+        settings,
+    )
     if cached_response_text is not None:
         return _parse_langpro_output(json.loads(cached_response_text))
 

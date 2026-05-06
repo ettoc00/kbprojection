@@ -159,6 +159,10 @@ results/
 contradiction_results.json
 debug_boy_branches*
 last_problem.pl
+scripts/analysis/logs/
+scripts/analysis/*_ids_*.json
+scripts/analysis/*_records.jsonl
+scripts/analysis/remote_baseline_prewarm_*.jsonl
 
 # Debug scripts
 debug_*.py

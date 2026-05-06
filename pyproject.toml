@@ -24,6 +24,9 @@ notebook = [
     "ipywidgets>=8,<9",
     "pandas>=2,<3",
 ]
+test = [
+    "pytest>=9.0.3",
+]
 
 [tool.poetry]
 name = "kbprojection"

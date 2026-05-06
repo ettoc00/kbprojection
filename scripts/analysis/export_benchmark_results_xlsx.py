@@ -199,16 +199,20 @@ def _load_replay_rows(path: Path) -> list[dict[str, Any]]:
 def load_all_rows(results_dir: Path) -> list[dict[str, Any]]:
     compare_rows: list[dict[str, Any]] = []
     replay_rows: list[dict[str, Any]] = []
+    entailment_scope_rows: list[dict[str, Any]] = []
     for path in sorted(results_dir.glob("2x2_50_compare__openrouter__*.json")):
         if "__backup_" not in path.name:
             compare_rows.extend(_load_compare_rows(path))
+    for path in sorted(results_dir.glob("entailment_scope_compare__openrouter__*.json")):
+        if "__backup_" not in path.name:
+            entailment_scope_rows.extend(_load_compare_rows(path))
     for path in sorted(results_dir.glob("results_replay_openrouter_*__*.json")):
         if "__backup_" not in path.name:
             replay_rows.extend(_load_replay_rows(path))
     compare_models = {row["model"] for row in compare_rows}
     replay_models = {row["model"] for row in replay_rows}
     keep_models = compare_models & replay_models
-    return [row for row in compare_rows + replay_rows if row["model"] in keep_models]
+    return entailment_scope_rows + [row for row in compare_rows + replay_rows if row["model"] in keep_models]
 
 
 def _write_data_sheet(workbook: Workbook, rows: list[dict[str, Any]]) -> None:

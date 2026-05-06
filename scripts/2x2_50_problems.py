@@ -151,13 +151,13 @@ def already_correct_count(items_by_id: Dict[str, Dict[str, Any]], problem_ids: L
     return count
 
 
-def build_summary(state: Dict[str, Any], problem_ids: List[str]) -> Dict[str, Any]:
+def build_summary(state: Dict[str, Any], problem_ids: List[str], prompt_styles: Tuple[str, ...] = PROMPT_STYLES) -> Dict[str, Any]:
     summary: Dict[str, Any] = {
         "total": len(problem_ids),
         "table": {},
     }
 
-    for prompt_style in PROMPT_STYLES:
+    for prompt_style in prompt_styles:
         items_by_id = state["runs"][prompt_style]["items_by_id"]
         already_correct = already_correct_count(items_by_id, problem_ids)
         raw = success_count(items_by_id, "pred_with_raw_kb", "status_with_raw_kb", problem_ids)
@@ -172,18 +172,14 @@ def build_summary(state: Dict[str, Any], problem_ids: List[str]) -> Dict[str, An
             "normalised_rate": normalised / len(problem_ids) if problem_ids else 0.0,
         }
 
-    summary["markdown"] = (
-        "| Prompt | Raw | Normalised |\n"
-        "|---|---:|---:|\n"
-        f"| legacy_icl | {summary['table']['legacy_icl']['raw_success']}/"
-        f"{summary['table']['legacy_icl']['raw_total_solved']}/{len(problem_ids)} | "
-        f"{summary['table']['legacy_icl']['normalised_success']}/"
-        f"{summary['table']['legacy_icl']['normalised_total_solved']}/{len(problem_ids)} |\n"
-        f"| icl | {summary['table']['icl']['raw_success']}/"
-        f"{summary['table']['icl']['raw_total_solved']}/{len(problem_ids)} | "
-        f"{summary['table']['icl']['normalised_success']}/"
-        f"{summary['table']['icl']['normalised_total_solved']}/{len(problem_ids)} |"
-    )
+    lines = ["| Prompt | Raw | Normalised |", "|---|---:|---:|"]
+    for prompt_style in prompt_styles:
+        row = summary["table"][prompt_style]
+        lines.append(
+            f"| {prompt_style} | {row['raw_success']}/{row['raw_total_solved']}/{len(problem_ids)} | "
+            f"{row['normalised_success']}/{row['normalised_total_solved']}/{len(problem_ids)} |"
+        )
+    summary["markdown"] = "\n".join(lines)
     return summary
 
 
@@ -194,13 +190,14 @@ def build_initial_state(
     problem_ids: List[str],
     prompt_hashes: Dict[str, str],
     prompt_cache_files: Dict[str, str],
+    prompt_styles: Tuple[str, ...] = PROMPT_STYLES,
 ) -> Dict[str, Any]:
     return {
         "meta": {
             "results_file": str(results_path),
             "model": model,
             "provider": provider,
-            "prompt_styles": list(PROMPT_STYLES),
+            "prompt_styles": list(prompt_styles),
             "prompt_hashes": prompt_hashes,
             "prompt_cache_files": prompt_cache_files,
             "problem_ids": problem_ids,
@@ -210,7 +207,7 @@ def build_initial_state(
             prompt_style: {
                 "items_by_id": {},
             }
-            for prompt_style in PROMPT_STYLES
+            for prompt_style in prompt_styles
         },
     }
 
@@ -223,6 +220,7 @@ def ensure_compatible_state(
     problem_ids: List[str],
     prompt_hashes: Dict[str, str],
     prompt_cache_files: Dict[str, str],
+    prompt_styles: Tuple[str, ...] = PROMPT_STYLES,
 ) -> Dict[str, Any]:
     if not state:
         return build_initial_state(
@@ -232,6 +230,7 @@ def ensure_compatible_state(
             problem_ids,
             prompt_hashes,
             prompt_cache_files,
+            prompt_styles,
         )
 
     meta = state.get("meta", {})
@@ -241,7 +240,7 @@ def ensure_compatible_state(
             f"but this run requested model={model} provider={provider}."
         )
 
-    for prompt_style in PROMPT_STYLES:
+    for prompt_style in prompt_styles:
         state.setdefault("runs", {}).setdefault(prompt_style, {}).setdefault("items_by_id", {})
 
     existing_prompt_hashes = meta.get("prompt_hashes") or {}
@@ -349,8 +348,9 @@ def sync_prompt_cache_with_comparison_state(
     state: Dict[str, Any],
     prompt_cache_states: Dict[str, Dict[str, Any]],
     problem_ids: List[str],
+    prompt_styles: Tuple[str, ...] = PROMPT_STYLES,
 ) -> None:
-    for prompt_style in PROMPT_STYLES:
+    for prompt_style in prompt_styles:
         comparison_items = state["runs"][prompt_style]["items_by_id"]
         cache_items = prompt_cache_states[prompt_style]["items_by_id"]
 
@@ -413,6 +413,7 @@ async def run_async(args: argparse.Namespace) -> int:
     load_dotenv_if_present()
 
     provider = infer_provider(args.model, args.provider)
+    prompt_styles = tuple(args.prompt_styles)
     default_results_dir = get_default_results_dir()
     results_file_arg = args.results_file or args.output_file
     results_path = (
@@ -425,7 +426,7 @@ async def run_async(args: argparse.Namespace) -> int:
     problems = [NLIProblem.model_validate(problem.model_dump()) for problem in load_benchmark_problems()]
     problem_ids = [problem.id for problem in problems]
     problems_by_id = {problem.id: problem for problem in problems}
-    prompt_hashes = {prompt_style: prompt_hash(prompt_style) for prompt_style in PROMPT_STYLES}
+    prompt_hashes = {prompt_style: prompt_hash(prompt_style) for prompt_style in prompt_styles}
     prompt_cache_paths = {
         prompt_style: build_prompt_cache_path(
             cache_dir,
@@ -434,7 +435,7 @@ async def run_async(args: argparse.Namespace) -> int:
             prompt_style,
             prompt_hashes[prompt_style],
         )
-        for prompt_style in PROMPT_STYLES
+        for prompt_style in prompt_styles
     }
     prompt_cache_files = {
         prompt_style: str(path)
@@ -460,9 +461,9 @@ async def run_async(args: argparse.Namespace) -> int:
             prompt_hashes[prompt_style],
             problem_ids,
         )
-        for prompt_style in PROMPT_STYLES
+        for prompt_style in prompt_styles
     }
-    sync_prompt_cache_with_comparison_state(state, prompt_cache_states, problem_ids)
+    sync_prompt_cache_with_comparison_state(state, prompt_cache_states, problem_ids, prompt_styles)
     for prompt_style, cache_path in prompt_cache_paths.items():
         save_state(cache_path, prompt_cache_states[prompt_style])
     save_state(results_path, state)
@@ -476,7 +477,7 @@ async def run_async(args: argparse.Namespace) -> int:
     )
 
     jobs: List[Tuple[str, Any]] = []
-    for prompt_style in PROMPT_STYLES:
+    for prompt_style in prompt_styles:
         completed_problem_ids = set(state["runs"][prompt_style]["items_by_id"])
         jobs.extend(
             (prompt_style, problem)
@@ -518,7 +519,7 @@ async def run_async(args: argparse.Namespace) -> int:
             return prompt_style, problem.id, payload
 
     print(f"\n=== Running {len(jobs)} jobs for model={args.model} provider={provider} ===")
-    for prompt_style in PROMPT_STYLES:
+    for prompt_style in prompt_styles:
         completed_count = len(state["runs"][prompt_style]["items_by_id"])
         if completed_count:
             print(f"Resuming {prompt_style}: {completed_count}/{len(problems)} already completed.")
@@ -537,7 +538,7 @@ async def run_async(args: argparse.Namespace) -> int:
             save_state(prompt_cache_paths[prompt_style], prompt_cache_states[prompt_style])
             completed_since_save = 0
 
-    summary = build_summary(state, problem_ids)
+    summary = build_summary(state, problem_ids, prompt_styles)
     for prompt_style, cache_path in prompt_cache_paths.items():
         save_state(cache_path, prompt_cache_states[prompt_style])
     save_state(results_path, state)
@@ -546,7 +547,7 @@ async def run_async(args: argparse.Namespace) -> int:
     print(summary["markdown"])
     print(f"\nWrote {results_path}")
     print("Prompt result caches:")
-    for prompt_style in PROMPT_STYLES:
+    for prompt_style in prompt_styles:
         print(f"  {prompt_style}: {prompt_cache_paths[prompt_style]}")
     return 0
 
@@ -593,6 +594,13 @@ def parse_args() -> argparse.Namespace:
             "Directory for reusable per-prompt result caches. "
             "Defaults to the kbprojection results directory."
         ),
+    )
+    parser.add_argument(
+        "--prompt-styles",
+        nargs="+",
+        default=list(PROMPT_STYLES),
+        choices=list(PROMPT_STYLES),
+        help="Prompt styles to run. Use '--prompt-styles icl' to skip legacy_icl.",
     )
     parser.add_argument(
         "--verbose",

@@ -93,19 +93,14 @@ def cached_langpro_result(
     intersective: bool,
 ) -> Any:
     from kbprojection.langpro import (
-        _local_endpoint_cache_key,
         _make_langpro_cache_key,
         _parse_langpro_output,
         get_langpro_cache_backend,
     )
-    from kbprojection.settings import get_langpro_settings
 
-    settings = get_langpro_settings()
-    cache_endpoint = _local_endpoint_cache_key(endpoint, settings)
     cache_key = _make_langpro_cache_key(
         premises,
         hypothesis,
-        cache_endpoint,
         parser,
         ral,
         kb,

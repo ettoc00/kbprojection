@@ -14,10 +14,11 @@ class TestPrompts(unittest.TestCase):
         prompt = get_prompt("icl")
 
         self.assertIn("genuinely KB-helpful for LangPro", prompt)
-        self.assertIn("Only output relations that are genuinely KB-helpful for LangPro", prompt)
+        self.assertIn("Prefer CCG/prover-friendly lemma heads", prompt)
         self.assertIn("Would each fact give LangPro a concrete new bridge", prompt)
-        self.assertIn("isa_wn(walk, move around)", prompt)
-        self.assertIn("disj(open, closed)", prompt)
+        self.assertIn("Negation-aware direction", prompt)
+        self.assertIn("isa_wn(jump, play)", prompt)
+        self.assertIn("disj(sit, dance)", prompt)
 
     def test_fill_prompt_substitutes_multi_premise_input(self):
         prompt = fill_prompt("cot", ["Premise one.", "Premise two."], "Hypothesis.")
@@ -34,6 +35,19 @@ class TestPrompts(unittest.TestCase):
         self.assertIn("hypothesis: Hypothesis.", prompt)
         self.assertNotIn("${PREMISE}", prompt)
         self.assertNotIn("${HYPOTHESIS}", prompt)
+        self.assertIn("entails(woman, person)", prompt)
+
+    def test_fill_prompt_accepts_partial_predicate_dictionary(self):
+        prompt = fill_prompt(
+            "lasha",
+            ["A woman is dancing."],
+            "A person is moving.",
+            variables={"predicates": {"entailment": "isa_wn"}},
+        )
+
+        self.assertIn("isa_wn(woman, person)", prompt)
+        self.assertNotIn("${PREDICATE_ENTAILMENT}", prompt)
+        self.assertNotIn("${PREDICATE_DISJUNCTION}", prompt)
 
     def test_extract_lasha_kb_from_entailment_output(self):
         output = (
