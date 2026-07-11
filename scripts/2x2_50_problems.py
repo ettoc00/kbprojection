@@ -16,7 +16,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.append(str(PROJECT_ROOT))
 
 
-PROMPT_STYLES = ("legacy_icl", "icl")
+PROMPT_STYLES = ("icl", "lasha")
 BENCHMARK_IDS = {
     "sick": {
         "train": [
@@ -172,18 +172,15 @@ def build_summary(state: Dict[str, Any], problem_ids: List[str]) -> Dict[str, An
             "normalised_rate": normalised / len(problem_ids) if problem_ids else 0.0,
         }
 
-    summary["markdown"] = (
-        "| Prompt | Raw | Normalised |\n"
-        "|---|---:|---:|\n"
-        f"| legacy_icl | {summary['table']['legacy_icl']['raw_success']}/"
-        f"{summary['table']['legacy_icl']['raw_total_solved']}/{len(problem_ids)} | "
-        f"{summary['table']['legacy_icl']['normalised_success']}/"
-        f"{summary['table']['legacy_icl']['normalised_total_solved']}/{len(problem_ids)} |\n"
-        f"| icl | {summary['table']['icl']['raw_success']}/"
-        f"{summary['table']['icl']['raw_total_solved']}/{len(problem_ids)} | "
-        f"{summary['table']['icl']['normalised_success']}/"
-        f"{summary['table']['icl']['normalised_total_solved']}/{len(problem_ids)} |"
-    )
+    lines = ["| Prompt | Raw | Normalised |", "|---|---:|---:|"]
+    for prompt_style in PROMPT_STYLES:
+        row = summary["table"][prompt_style]
+        lines.append(
+            f"| {prompt_style} | "
+            f"{row['raw_success']}/{row['raw_total_solved']}/{len(problem_ids)} | "
+            f"{row['normalised_success']}/{row['normalised_total_solved']}/{len(problem_ids)} |"
+        )
+    summary["markdown"] = "\n".join(lines)
     return summary
 
 
@@ -557,7 +554,7 @@ def run(args: argparse.Namespace) -> int:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Replay the fixed 50-problem benchmark and produce a legacy_icl vs icl 2x2 table."
+        description="Replay the fixed 50-problem benchmark and produce an icl vs lasha comparison table."
     )
     parser.add_argument(
         "-m",

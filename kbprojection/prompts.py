@@ -95,7 +95,74 @@ NEW_PROMPT_RULES = """## STRICT RULES
 - Did you use disj only for genuine opposites?
 """
 
-ICL_V2_TEMPLATE = '''You are an expert in linguistic semantics and logic. You will receive a Natural Language Inference (NLI) problem in English, consisting of a premise sentence and a hypothesis sentence.
+ICL_V2_TEMPLATE = f"""You are a knowledge base injection assistant. Your task is to generate the smallest set of semantic relations that is genuinely KB-helpful for LangPro on this Premise/Hypothesis pair.
+
+{NEW_PROMPT_RULES}
+
+## EXAMPLES
+
+The examples below were chosen from cached current proof-useful checks or explicitly old-proof-grounded replay evidence.
+
+### Example 1: Verb normalization
+Premise: A man is strumming a guitar.
+Hypothesis: A man is playing guitar.
+[KB_START]
+isa_wn(strum, play)
+[KB_END]
+
+### Example 2: Event paraphrase
+Premise: A man vaults over a high bar.
+Hypothesis: A man jumps.
+[KB_START]
+isa_wn(vault, jump)
+[KB_END]
+
+### Example 3: Old-proof-grounded broad activity bridge
+Premise: A child rides a swing.
+Hypothesis: A kid is playing.
+[KB_START]
+isa_wn(child, kid)
+isa_wn(ride, play)
+[KB_END]
+
+### Example 4: disj only for genuine opposites
+Premise: The window is open.
+Hypothesis: The window is closed.
+[KB_START]
+disj(open, closed)
+[KB_END]
+
+Premise: ${{premise}}
+Hypothesis: ${{hypothesis}}
+
+Generate the knowledge injections:
+"""
+
+def _insert_before_marker(template: str, marker: str, addition: str) -> str:
+    if marker not in template:
+        raise ValueError(f"Marker not found in prompt template: {marker}")
+    return template.replace(marker, f"{addition.rstrip()}\n\n{marker}", 1)
+
+
+ETTORE_BASE_PROMPT = ICL_V2_TEMPLATE
+
+ETTORE_PRECISION_CALIBRATION = """## CALIBRATION UPDATE: precision without changing the task
+
+Keep all rules above. Apply these extra checks only to resolve ambiguity:
+- Prefer no relation over a broad event or social inference.
+- Do not infer activities from objects or situations, for example carrying a shopping bag is not enough for shop.
+- Do not infer event paraphrases unless the two verbs are direct lexical paraphrases.
+- Output at most one form of the same bridge; never output both an inflected phrase and its lemma.
+- If a candidate relation only proves a sentence that is already syntactically entailed, omit it.
+"""
+
+ETTORE_PROMPT = _insert_before_marker(
+    ETTORE_BASE_PROMPT,
+    "Premise: ${premise}",
+    ETTORE_PRECISION_CALIBRATION,
+)
+
+LASHA_PROMPT = '''You are an expert in linguistic semantics and logic. You will receive a Natural Language Inference (NLI) problem in English, consisting of a premise sentence and a hypothesis sentence.
 You will reason carefully and decide whether the premise entails the hypothesis, which means that if the premise is true, then the hypothesis must also be true under ordinary English meaning and widely accepted background knowledge.
 If the answer is "entailment", output a structured explanation that is a set of lexical entailment relations over short phrases that explain why the hypothesis is entailed from the premise.
 Lexical entailment should be defined over short phrases that are lemmatized or normalized versions of short phrases occurring in the premise and the hypothesis, e.g., entails(phrase_1, phrase_2), and it means that phrase_1 is a type of phrase_2, for example, entails(woman, person), entails(dog, domestic animal), entails(huge, very big), and entails(run, move fast).
@@ -217,6 +284,23 @@ input:
 	hypothesis: ${HYPOTHESIS}
 correct output:'''
 
+LASHA_BASE_PROMPT = LASHA_PROMPT
+
+LASHA_PRECISION_CALIBRATION = """Additional calibration while preserving all rules above:
+- Only output lexical entailment relations that are both factually acceptable and needed to explain the entailment.
+- Do not output relations for entailments that follow without a non-trivial lexical bridge.
+- Do not use event or social implications as lexical entailment unless the phrase relation is a direct paraphrase.
+- Do not output modifier-dropping relations such as old woman -> woman or military men -> men.
+- Do not output both an inflected form and a lemmatized form for the same relation.
+- If the best relation would violate any existing formatting rule, omit it instead of approximating it.
+"""
+
+LASHA_PROMPT = _insert_before_marker(
+    LASHA_BASE_PROMPT,
+    "Now process the following input while strictly following the above instructions and formatting.",
+    LASHA_PRECISION_CALIBRATION,
+)
+
 COT_V2_TEMPLATE = f"""You are a knowledge base injection assistant using chain-of-thought reasoning.
 
 ## TASK
@@ -263,6 +347,16 @@ prompts = {
             "name": "icl",
             "description": "Improved ICL with shared rules and in-context examples",
             "template": ICL_V2_TEMPLATE,
+        },
+        {
+            "name": "ettore",
+            "description": "Alias for Ettore's improved ICL prompt",
+            "template": ETTORE_PROMPT,
+        },
+        {
+            "name": "lasha",
+            "description": "Lasha lexical-entailment ICL prompt",
+            "template": LASHA_PROMPT,
         },
         {
             "name": "cot",

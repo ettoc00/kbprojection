@@ -416,7 +416,16 @@ async def run_async(args: argparse.Namespace) -> int:
 
     completed_since_save = 0
     tasks = [asyncio.create_task(process_job(problem)) for problem in jobs]
-    progress = tqdm(asyncio.as_completed(tasks), total=len(tasks), desc="sick", unit="problem")
+    progress = tqdm(
+        asyncio.as_completed(tasks),
+        total=len(tasks),
+        desc="sick",
+        unit="problem",
+        # Show explicit elapsed/remaining time and throughput while running.
+        bar_format=(
+            "{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]"
+        ),
+    )
     try:
         for completed in progress:
             try:
@@ -489,9 +498,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--test-mode",
-        default="both",
+        default="raw_kb",
         choices=["no_kb", "raw_kb", "normalised", "filtered", "both", "full"],
-        help="Pipeline mode. Defaults to both raw and normalised KB evaluation. 'filtered' is a legacy alias.",
+        help=(
+            "Pipeline mode. Defaults to raw_kb (raw KB only, no normalised KB step). "
+            "'filtered' is a legacy alias."
+        ),
     )
     parser.add_argument(
         "--run-ablation",

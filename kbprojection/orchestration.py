@@ -1,7 +1,8 @@
 import asyncio
 import json
+from enum import Enum
 from pathlib import Path
-from typing import AsyncIterator, List, Set, Optional, Iterator
+from typing import Any, AsyncIterator, List, Set, Optional, Iterator
 from .async_runtime import AsyncRunContext
 from .models import ExperimentResult, ExperimentStepStatus, ExperimentStatus, NLIProblem, NLILabel, ProblemConfig, TestMode, LangProResult
 from .loaders.base import DatasetLoader
@@ -11,11 +12,33 @@ from .filtering import filter_kb_by_prem_hyp
 
 from .filtering import pipeline_filter_kb_injections
 
+def _to_jsonable(value: Any) -> Any:
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    if isinstance(value, Enum):
+        return value.value
+    if isinstance(value, Path):
+        return str(value)
+    if hasattr(value, "model_dump"):
+        return _to_jsonable(value.model_dump(mode="python"))
+    if isinstance(value, dict):
+        return {str(_to_jsonable(key)): _to_jsonable(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_to_jsonable(item) for item in value]
+    return str(value)
+
+
+def experiment_result_to_json(result: ExperimentResult, *, indent: Optional[int] = None) -> str:
+    return json.dumps(_to_jsonable(result), indent=indent, ensure_ascii=False)
+
+
 def _save_cache_result(cache_path: Path, result: ExperimentResult):
     """Helper to save a result object to a JSON file."""
     try:
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = experiment_result_to_json(result, indent=2)
         with open(cache_path, "w", encoding="utf-8") as f:
-            f.write(result.model_dump_json(indent=2))
+            f.write(payload)
         print(f"[cache] Result cached to {cache_path}")
     except Exception as e:
         print(f"[Warning] Failed to save cache to {cache_path}: {e}")

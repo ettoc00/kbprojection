@@ -1,3 +1,4 @@
+import os
 import shutil
 import zipfile
 import requests
@@ -52,8 +53,19 @@ _DOWNLOADED_NLTK = set()
 def check_nltk(package: str):
     try:
         import nltk
-        if package not in _DOWNLOADED_NLTK:
-            nltk.download(package)
-            _DOWNLOADED_NLTK.add(package)
+        download_dir = os.environ.get("NLTK_DATA")
+        cache_key = (package, download_dir)
+
+        if download_dir:
+            Path(download_dir).mkdir(parents=True, exist_ok=True)
+            if download_dir not in nltk.data.path:
+                nltk.data.path.insert(0, download_dir)
+
+        if cache_key not in _DOWNLOADED_NLTK:
+            kwargs = {"quiet": True}
+            if download_dir:
+                kwargs["download_dir"] = download_dir
+            nltk.download(package, **kwargs)
+            _DOWNLOADED_NLTK.add(cache_key)
     except Exception as e:
         print(f"[NLTK] Error: {e}")

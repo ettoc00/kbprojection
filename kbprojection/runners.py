@@ -5,7 +5,7 @@ from typing import Any, Optional, Sequence
 
 from .async_runtime import AsyncRunContext, AsyncRunLimits, create_async_run_context
 from .models import ExperimentResult, LangProResult, NLIProblem, ProblemConfig, TestMode
-from .orchestration import process_single_problem
+from .orchestration import experiment_result_to_json, process_single_problem
 
 
 def infer_provider(model: str, explicit_provider: Optional[str] = None) -> str:
@@ -34,8 +34,7 @@ def serialize_result_payload(
     prompt_style: Optional[str] = None,
     discard_prover_calls: bool = False,
 ) -> dict[str, Any]:
-    exclude = {"prover_calls"} if discard_prover_calls else None
-    payload = json.loads(result.model_dump_json(exclude=exclude, fallback=str))
+    payload = json.loads(experiment_result_to_json(result))
     if discard_prover_calls:
         payload["prover_calls"] = None
     if model is not None:

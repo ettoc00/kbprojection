@@ -159,21 +159,27 @@ class AsyncGenericAIClient:
         model: Optional[str],
         response_model: Any = None,
         max_tokens: Optional[int] = None,
+        temperature: Optional[float] = None,
     ) -> Any:
         model = model or DEFAULT_MODELS[self.provider]
 
         if self.provider in {"openai", "openrouter"}:
+            completion_kwargs: dict[str, Any] = {}
+            if temperature is not None:
+                completion_kwargs["temperature"] = temperature
             if response_model:
                 response = await self.client.beta.chat.completions.parse(
                     model=model,
                     messages=[{"role": "user", "content": prompt}],
                     response_format=response_model,
+                    **completion_kwargs,
                 )
                 return response.choices[0].message.parsed
 
             response = await self.client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
+                **completion_kwargs,
             )
             return response.choices[0].message.content
 
