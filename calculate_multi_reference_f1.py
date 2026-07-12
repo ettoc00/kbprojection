@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import csv
 import math
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -55,6 +56,7 @@ class EvaluationResult:
     skipped_no_reference: int = 0
     exact_best_matches: int = 0
     no_relation_best_matches: int = 0
+    position_sensitive_counts: Counts | None = None
 
 
 def is_blank(value: object) -> bool:
@@ -68,6 +70,24 @@ def parse_kb_cell(value: object) -> frozenset[tuple[str, ...]]:
     return normalize_kb(text)
 
 
+def parse_kb_sequence(value: object) -> tuple[tuple[str, ...], ...]:
+    """Normalize a KB cell while preserving the written relation order."""
+    text = str(value or "").strip().lower().replace("?", "")
+    if text.upper() == "NO_RELATION" or not normalize_kb(text):
+        return ()
+
+    relations: list[tuple[str, ...]] = []
+    for match in re.finditer(r"\(([^()]*)\)", text):
+        inner = match.group(1).strip()
+        if not inner or inner in {"no, relation", "no relation", "none"}:
+            continue
+        relations.append(tuple(part.strip() for part in inner.split(",")))
+
+    if relations:
+        return tuple(relations)
+    return ((text,),)
+
+
 def relation_counts(
     prediction: frozenset[tuple[str, ...]],
     reference: frozenset[tuple[str, ...]],
@@ -76,6 +96,27 @@ def relation_counts(
         tp=len(prediction & reference),
         fp=len(prediction - reference),
         fn=len(reference - prediction),
+    )
+
+
+def position_sensitive_relation_counts(
+    prediction: tuple[tuple[str, ...], ...],
+    reference: tuple[tuple[str, ...], ...],
+) -> Counts:
+    """Count exact relation matches at the same sequence position.
+
+    A mismatch at a shared position contributes one FP and one FN. Relations
+    extending beyond the shorter sequence contribute an FP (prediction) or FN
+    (reference).
+    """
+    matching_positions = sum(
+        predicted_relation == reference_relation
+        for predicted_relation, reference_relation in zip(prediction, reference)
+    )
+    return Counts(
+        tp=matching_positions,
+        fp=len(prediction) - matching_positions,
+        fn=len(reference) - matching_positions,
     )
 
 
@@ -124,6 +165,7 @@ def evaluate_prediction_column(
     reference_columns: list[str],
     *,
     empty_prediction_is_no_relation: bool,
+    calculate_position_sensitive: bool = False,
     details_path: Path | None = None,
 ) -> EvaluationResult:
     result = EvaluationResult(
@@ -132,6 +174,8 @@ def evaluate_prediction_column(
         selected_counts=Counts(),
     )
     detail_rows: list[dict[str, object]] = []
+    if calculate_position_sensitive:
+        result.position_sensitive_counts = Counts()
 
     for row in rows:
         raw_prediction = row.get(prediction_column, "")
@@ -165,6 +209,33 @@ def evaluate_prediction_column(
             ),
         )
         result.selected_counts.add(best_counts)
+
+        position_best_column = ""
+        position_best_score = float("nan")
+        position_best_counts: Counts | None = None
+        if calculate_position_sensitive:
+            prediction_sequence = parse_kb_sequence(raw_prediction)
+            position_scored_references = []
+            for column, _ in references:
+                reference_sequence = parse_kb_sequence(row.get(column, ""))
+                counts = position_sensitive_relation_counts(
+                    prediction_sequence, reference_sequence
+                )
+                position_scored_references.append(
+                    (item_selection_score(counts), column, counts)
+                )
+            position_best_score, position_best_column, position_best_counts = max(
+                position_scored_references,
+                key=lambda entry: (
+                    entry[0],
+                    entry[2].tp,
+                    -entry[2].fp,
+                    -entry[2].fn,
+                    entry[1],
+                ),
+            )
+            assert result.position_sensitive_counts is not None
+            result.position_sensitive_counts.add(position_best_counts)
         result.evaluated_items += 1
         if prediction == best_reference:
             result.exact_best_matches += 1
@@ -182,6 +253,11 @@ def evaluate_prediction_column(
                 "fn": best_counts.fn,
                 "prediction_kb": raw_prediction,
                 "best_reference_kb": row.get(best_column, ""),
+                "position_sensitive_best_reference_column": position_best_column,
+                "position_sensitive_best_item_f1": position_best_score,
+                "position_sensitive_tp": position_best_counts.tp if position_best_counts else "",
+                "position_sensitive_fp": position_best_counts.fp if position_best_counts else "",
+                "position_sensitive_fn": position_best_counts.fn if position_best_counts else "",
             }
         )
 
@@ -199,6 +275,11 @@ def evaluate_prediction_column(
                     "fn",
                     "prediction_kb",
                     "best_reference_kb",
+                    "position_sensitive_best_reference_column",
+                    "position_sensitive_best_item_f1",
+                    "position_sensitive_tp",
+                    "position_sensitive_fp",
+                    "position_sensitive_fn",
                 ],
             )
             writer.writeheader()
@@ -254,6 +335,16 @@ def print_result(result: EvaluationResult) -> None:
         f"missing_prediction={result.skipped_missing_prediction}, "
         f"no_available_reference={result.skipped_no_reference}"
     )
+    if result.position_sensitive_counts is not None:
+        position_counts = result.position_sensitive_counts
+        print(
+            "  position_sensitive_relation_sequence_micro_f1 "
+            f"P={format_score(position_counts.precision)} "
+            f"R={format_score(position_counts.recall)} "
+            f"F1={format_score(position_counts.f1)} "
+            f"(TP={position_counts.tp}, FP={position_counts.fp}, "
+            f"FN={position_counts.fn})"
+        )
 
 
 def print_global_reference_results(
@@ -290,11 +381,18 @@ def write_summary(path: Path, results: list[EvaluationResult]) -> None:
                 "no_relation_best_matches",
                 "skipped_missing_prediction",
                 "skipped_no_reference",
+                "position_sensitive_precision",
+                "position_sensitive_recall",
+                "position_sensitive_micro_f1",
+                "position_sensitive_tp",
+                "position_sensitive_fp",
+                "position_sensitive_fn",
             ],
         )
         writer.writeheader()
         for result in results:
             counts = result.selected_counts
+            position_counts = result.position_sensitive_counts
             exact_rate = result.exact_best_matches / result.evaluated_items if result.evaluated_items else float("nan")
             writer.writerow(
                 {
@@ -312,6 +410,12 @@ def write_summary(path: Path, results: list[EvaluationResult]) -> None:
                     "no_relation_best_matches": result.no_relation_best_matches,
                     "skipped_missing_prediction": result.skipped_missing_prediction,
                     "skipped_no_reference": result.skipped_no_reference,
+                    "position_sensitive_precision": position_counts.precision if position_counts else "",
+                    "position_sensitive_recall": position_counts.recall if position_counts else "",
+                    "position_sensitive_micro_f1": position_counts.f1 if position_counts else "",
+                    "position_sensitive_tp": position_counts.tp if position_counts else "",
+                    "position_sensitive_fp": position_counts.fp if position_counts else "",
+                    "position_sensitive_fn": position_counts.fn if position_counts else "",
                 }
             )
 
@@ -343,6 +447,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--empty-prediction-is-no-relation",
         action="store_true",
         help="Treat blank prediction cells as explicit NO_RELATION instead of skipping them as missing.",
+    )
+    parser.add_argument(
+        "--position-sensitive",
+        action="store_true",
+        help=(
+            "Also calculate position-sensitive relation-sequence micro-F1. "
+            "Relations only match when they occur at the same sequence position."
+        ),
     )
     parser.add_argument(
         "--summary-csv",
@@ -398,6 +510,7 @@ def main() -> None:
             prediction_column,
             reference_columns,
             empty_prediction_is_no_relation=args.empty_prediction_is_no_relation,
+            calculate_position_sensitive=args.position_sensitive,
             details_path=details_path,
         )
         all_results.append(result)
