@@ -316,6 +316,42 @@ The evaluator works item by item:
 `Exact best match` means the model's full KB set exactly equals at least one
 available human KB reference.
 
+### Position-sensitive relation-sequence micro-F1
+
+The default micro-F1 treats each KB as an unordered set of relations. Use the
+position-sensitive variant when the order in which relations are written should
+also affect the score. A relation only matches when it is identical and appears
+at the same position in both KB sequences.
+
+For example, these KBs receive a perfect default set-based score because they
+contain the same two relations:
+
+```text
+Prediction: (isa, cat, animal); (entails, cat, sleeps)
+Reference:  (entails, cat, sleeps); (isa, cat, animal)
+```
+
+With position-sensitive scoring, neither relation is in the same position, so
+this example has `TP=0`, `FP=2`, and `FN=2`.
+
+Add `--position-sensitive` to calculate both metrics in one run:
+
+```bash
+.venv/bin/python calculate_multi_reference_f1.py \
+  --csv "llm_outputs_sonnet45_gpt54_gemini35flash_all_usable.csv" \
+  --reference-columns \
+    Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
+  --position-sensitive \
+  --summary-csv \
+    "multi_reference_f1_sonnet45_gpt54_gemini35flash_all_usable_position_sensitive_summary.csv"
+```
+
+The summary retains the default `micro_f1` columns and adds
+`position_sensitive_precision`, `position_sensitive_recall`, and
+`position_sensitive_micro_f1`. The position-sensitive metric independently
+selects the best available human reference per item under the ordered scoring
+rule.
+
 ### Calculate inter-annotator agreement
 
 Rebuild the agreement overview from the assignment JSON files with:
