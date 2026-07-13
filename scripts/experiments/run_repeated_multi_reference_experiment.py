@@ -39,6 +39,7 @@ from kbprojection.prompts import fill_prompt
 
 
 DEFAULT_REFERENCE_COLUMNS = [
+    "Alternative_KB",
     "Ettore_KB",
     "Jorryt_KB",
     "Lasha_KB",
@@ -517,6 +518,7 @@ def write_f1_metrics(
                 "prompt": prompt,
                 "model": model,
                 "model_slug": model_slug(model),
+                "reference_columns": ";".join(reference_columns),
                 "repeat": repeat,
                 "total_items": len(prediction_rows),
                 "evaluated_items": result.evaluated_items,
@@ -545,6 +547,7 @@ def write_f1_metrics(
         "prompt",
         "model",
         "model_slug",
+        "reference_columns",
         "repeat",
         "total_items",
         "evaluated_items",
@@ -590,6 +593,7 @@ def write_f1_metrics(
                 "prompt": prompt,
                 "model": model,
                 "model_slug": model_slug(model),
+                "reference_columns": ";".join(reference_columns),
                 "repeats_requested": len(rows),
                 "repeats_with_f1": len(f1_values),
                 "mean_micro_f1": statistics.mean(f1_values) if f1_values else math.nan,
@@ -636,6 +640,7 @@ def write_f1_metrics(
         "prompt",
         "model",
         "model_slug",
+        "reference_columns",
         "repeats_requested",
         "repeats_with_f1",
         "mean_micro_f1",

@@ -244,6 +244,7 @@ The experiment input CSV must contain one row per NLI item. The runner uses:
 
 The multi-reference evaluator also needs the human KB reference columns:
 
+* `Alternative_KB`
 * `Ettore_KB`
 * `Jorryt_KB`
 * `Lasha_KB`
@@ -318,7 +319,7 @@ models on all 362 usable annotation items:
     openai/gpt-5.4 \
     google/gemini-3.5-flash \
   --reference-columns \
-    Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
+    Alternative_KB Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
   --temperature 0 \
   --concurrency 4 \
   --write-every-jobs 40 \
@@ -393,7 +394,7 @@ Evaluate every generated `LLM__*_KB` column against the human references:
 .venv/bin/python calculate_multi_reference_f1.py \
   --csv "llm_outputs_sonnet45_gpt54_gemini35flash_all_usable.csv" \
   --reference-columns \
-    Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
+    Alternative_KB Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
   --summary-csv \
     "multi_reference_f1_sonnet45_gpt54_gemini35flash_all_usable_summary.csv"
 ```
@@ -433,7 +434,7 @@ Add `--position-sensitive` to calculate both metrics in one run:
 .venv/bin/python calculate_multi_reference_f1.py \
   --csv "llm_outputs_sonnet45_gpt54_gemini35flash_all_usable.csv" \
   --reference-columns \
-    Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
+    Alternative_KB Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
   --position-sensitive \
   --summary-csv \
     "multi_reference_f1_sonnet45_gpt54_gemini35flash_all_usable_position_sensitive_summary.csv"
