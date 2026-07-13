@@ -292,6 +292,99 @@ The output file contains three columns per prompt/model pair:
 Resume is enabled by default. If a run stops, rerun the same command with the
 same output file. Existing KB/error cells are skipped.
 
+### Repeated-run model evaluation
+
+Use `prompt_engineering/run_consistency_trial.py` when each model should process
+every item multiple times. Unlike the standard experiment runner, this script
+writes one row per item, prompt, model, and repetition. This long format allows
+accuracy and output stability to be evaluated separately.
+
+The following experiment runs the improved Lasha prompt five times with eight
+models on all 362 usable annotation items:
+
+```bash
+.venv/bin/python prompt_engineering/run_consistency_trial.py \
+  --input-csv "all_usable_items_362.csv" \
+  --sample-size 362 \
+  --repeats 5 \
+  --prompts lasha \
+  --models \
+    openai/gpt-5.4-mini \
+    anthropic/claude-haiku-4.5 \
+    google/gemini-3.1-flash-lite \
+    openai/gpt-oss-20b \
+    google/gemma-3-4b-it \
+    anthropic/claude-sonnet-4.5 \
+    openai/gpt-5.4 \
+    google/gemini-3.5-flash \
+  --reference-columns \
+    Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
+  --temperature 0 \
+  --concurrency 4 \
+  --write-every-jobs 40 \
+  --request-timeout 120 \
+  --max-retries 2
+```
+
+This creates `362 x 8 x 5 = 14,480` model calls. The production prompt name
+`lasha` refers to the original Lasha prompt with the selected precision
+calibration added.
+
+Generated files are written to:
+
+```text
+experiment_results/lasha_all362_5runs/
+```
+
+The files have distinct purposes:
+
+* `consistency_sample.csv`: frozen copy of the exact evaluated input items.
+* `consistency_outputs.csv`: raw response, parsed KB, error, and repetition for
+  every model call.
+* `consistency_metrics.csv`: repeatability statistics for each prompt-model
+  combination.
+* `consistency_f1_by_run.csv`: standard and position-sensitive multi-reference
+  F1 for every individual repetition.
+* `consistency_f1_summary.csv`: mean, sample standard deviation, minimum, and
+  maximum F1 across repetitions.
+
+The consistency metrics include:
+
+* `all_runs_identical_rate`: fraction of complete items for which every
+  repetition produced the same KB.
+* `mean_pairwise_kb_f1`: average KB similarity between every pair of
+  repetitions.
+* `no_relation_flip_rate`: frequency with which a model alternated between
+  `NO_RELATION` and a non-empty KB.
+* `mean_unique_kb_sets_per_item`: average number of distinct KB answers per
+  item.
+* `error_rate`: fraction of unsuccessful model calls.
+
+Both F1 variants use the same multi-reference best-match procedure as
+`calculate_multi_reference_f1.py`. For each item, the model prediction is
+compared with every available non-blank human reference, and the best reference
+is selected before TP, FP, and FN are accumulated.
+
+The standard metric treats relations as an unordered set. The
+position-sensitive metric requires matching relations to appear in the same
+sequence positions and selects the best reference independently under that
+rule.
+
+Blank predictions and errors are skipped and counted; they are not interpreted
+as `NO_RELATION`.
+
+The output is resumable. Reusing the same output path skips rows that already
+contain a KB or an error. Requests are retried during their initial execution,
+but persisted error rows are not automatically retried on a later resume.
+
+Temperature zero is requested for all models, but OpenRouter may ignore it when
+the selected model does not support temperature control. At the time of this
+experiment, it was unsupported for GPT-5.4 and GPT-5.4 Mini. Even where
+supported, temperature zero does not guarantee identical hosted-model output.
+
+A completed five-run experiment is available in
+[`experiment_results/lasha_all362_5runs`](experiment_results/lasha_all362_5runs).
+
 ### Calculate multi-reference micro-F1
 
 Evaluate every generated `LLM__*_KB` column against the human references:
