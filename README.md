@@ -294,16 +294,16 @@ same output file. Existing KB/error cells are skipped.
 
 ### Repeated-run model evaluation
 
-Use `prompt_engineering/run_consistency_trial.py` when each model should process
-every item multiple times. Unlike the standard experiment runner, this script
-writes one row per item, prompt, model, and repetition. This long format allows
-accuracy and output stability to be evaluated separately.
+Use `scripts/experiments/run_repeated_multi_reference_experiment.py` when each
+model should process every item multiple times. Unlike the standard experiment
+runner, this script writes one row per item, prompt, model, and repetition. This
+long format allows accuracy and output stability to be evaluated separately.
 
 The following experiment runs the improved Lasha prompt five times with eight
 models on all 362 usable annotation items:
 
 ```bash
-.venv/bin/python prompt_engineering/run_consistency_trial.py \
+.venv/bin/python kbprojection/scripts/experiments/run_repeated_multi_reference_experiment.py \
   --input-csv "all_usable_items_362.csv" \
   --sample-size 362 \
   --repeats 5 \
