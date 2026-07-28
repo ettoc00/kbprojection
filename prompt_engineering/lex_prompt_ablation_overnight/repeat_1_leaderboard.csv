@@ -1,0 +1,9 @@
+﻿rank,prompt,model,prediction_column,micro_f1,precision,recall,exact_best_match_rate,evaluated_items,tp,fp,fn,exact_best_matches,no_relation_best_matches,skipped_missing_prediction,skipped_no_reference
+1,lex_few_shot_precision,google_gemini-3.1-flash-lite,LLM__lex_few_shot_precision__google_gemini-3.1-flash-lite_KB,0.7143,0.6322,0.8209,0.6800,100,55,32,12,68,32,0,0
+2,lex_few_shot_precision,anthropic_claude-haiku-4.5,LLM__lex_few_shot_precision__anthropic_claude-haiku-4.5_KB,0.6951,0.5876,0.8507,0.6500,100,57,40,10,65,31,0,0
+3,lex_few_shot_base,google_gemini-3.1-flash-lite,LLM__lex_few_shot_base__google_gemini-3.1-flash-lite_KB,0.6509,0.5392,0.8209,0.6000,100,55,47,12,60,25,0,0
+4,lex_few_shot_precision,openai_gpt-oss-20b,LLM__lex_few_shot_precision__openai_gpt-oss-20b_KB,0.6452,0.5682,0.7463,0.6000,100,50,38,17,60,31,0,0
+5,lex_few_shot_base,openai_gpt-5.4-mini,LLM__lex_few_shot_base__openai_gpt-5.4-mini_KB,0.6127,0.5000,0.7910,0.5800,100,53,53,14,58,27,0,0
+6,lex_few_shot_base,anthropic_claude-haiku-4.5,LLM__lex_few_shot_base__anthropic_claude-haiku-4.5_KB,0.6064,0.4711,0.8507,0.5700,100,57,64,10,57,24,0,0
+7,lex_few_shot_precision,openai_gpt-5.4-mini,LLM__lex_few_shot_precision__openai_gpt-5.4-mini_KB,0.5868,0.4900,0.7313,0.6000,100,49,51,18,60,31,0,0
+8,lex_few_shot_base,openai_gpt-oss-20b,LLM__lex_few_shot_base__openai_gpt-oss-20b_KB,0.5366,0.4536,0.6567,0.5000,100,44,53,23,50,25,0,0

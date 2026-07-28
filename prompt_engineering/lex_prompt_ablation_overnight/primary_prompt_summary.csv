@@ -1,0 +1,5 @@
+﻿rank,prompt,models,mean_micro_f1,mean_precision,mean_recall,mean_exact_best_match_rate
+1,lex_few_shot_precision,4,0.6923,0.6281,0.7727,0.6289
+2,lex_few_shot_base,4,0.6522,0.5600,0.7841,0.5785
+3,lex_zero_shot_constrained,4,0.5347,0.4515,0.6703,0.4424
+4,lex_zero_shot_base,4,0.4385,0.3495,0.5938,0.3693

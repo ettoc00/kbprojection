@@ -1,0 +1,9 @@
+﻿prediction_column,reference_columns,evaluated_items,precision,recall,micro_f1,tp,fp,fn,exact_best_matches,exact_best_match_rate,no_relation_best_matches,skipped_missing_prediction,skipped_no_reference,position_sensitive_precision,position_sensitive_recall,position_sensitive_micro_f1,position_sensitive_tp,position_sensitive_fp,position_sensitive_fn
+LLM__lex_few_shot_precision__openai_gpt-5.4-mini_KB,Alternative_KB;Ettore_KB;Jorryt_KB;Lasha_KB;Stefan_KB,100,0.47058823529411764,0.7164179104477612,0.5680473372781065,48,54,19,57,0.57,30,0,0,,,,,,
+LLM__lex_few_shot_precision__anthropic_claude-haiku-4.5_KB,Alternative_KB;Ettore_KB;Jorryt_KB;Lasha_KB;Stefan_KB,100,0.5252525252525253,0.7761194029850746,0.6265060240963856,52,47,15,60,0.6,28,0,0,,,,,,
+LLM__lex_few_shot_precision__google_gemini-3.1-flash-lite_KB,Alternative_KB;Ettore_KB;Jorryt_KB;Lasha_KB;Stefan_KB,100,0.5978260869565217,0.8208955223880597,0.6918238993710691,55,37,12,64,0.64,28,0,0,,,,,,
+LLM__lex_few_shot_precision__openai_gpt-oss-20b_KB,Alternative_KB;Ettore_KB;Jorryt_KB;Lasha_KB;Stefan_KB,100,0.6067415730337079,0.8059701492537313,0.6923076923076923,54,35,13,62,0.62,27,0,0,,,,,,
+LLM__lex_few_shot_base__openai_gpt-5.4-mini_KB,Alternative_KB;Ettore_KB;Jorryt_KB;Lasha_KB;Stefan_KB,100,0.4857142857142857,0.7611940298507462,0.5930232558139535,51,54,16,56,0.56,27,0,0,,,,,,
+LLM__lex_few_shot_base__anthropic_claude-haiku-4.5_KB,Alternative_KB;Ettore_KB;Jorryt_KB;Lasha_KB;Stefan_KB,100,0.4583333333333333,0.8208955223880597,0.5882352941176471,55,65,12,55,0.55,24,0,0,,,,,,
+LLM__lex_few_shot_base__google_gemini-3.1-flash-lite_KB,Alternative_KB;Ettore_KB;Jorryt_KB;Lasha_KB;Stefan_KB,100,0.5612244897959183,0.8208955223880597,0.6666666666666666,55,43,12,60,0.6,26,0,0,,,,,,
+LLM__lex_few_shot_base__openai_gpt-oss-20b_KB,Alternative_KB;Ettore_KB;Jorryt_KB;Lasha_KB;Stefan_KB,100,0.5094339622641509,0.8059701492537313,0.6242774566473989,54,52,13,54,0.54,23,0,0,,,,,,
