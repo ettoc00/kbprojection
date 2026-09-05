@@ -477,10 +477,13 @@ and the relaxed diagnostic in one run:
 
 The summary retains the directed `micro_f1` fields and adds
 `argument_order_agnostic_precision`, `argument_order_agnostic_recall`, and
-`argument_order_agnostic_micro_f1`. The best available human reference is
-selected independently under the relaxed rule. Repeated-run reports include
-the corresponding per-run counts and mean, standard deviation, minimum, and
-maximum fields automatically.
+`argument_order_agnostic_micro_f1`, plus
+`argument_order_agnostic_exact_match_rate`. Exact match is an all-or-nothing
+per-item score: after canonicalizing each two-argument pair, the complete
+predicted relation set must equal the selected best human reference. The best
+available human reference is selected independently under the relaxed rule.
+Repeated-run reports include the corresponding per-run counts and mean,
+standard deviation, minimum, and maximum fields automatically.
 
 ### Calculate inter-annotator agreement
 

@@ -516,6 +516,11 @@ def write_f1_metrics(
             if result.evaluated_items
             else math.nan
         )
+        argument_order_agnostic_exact_rate = (
+            result.argument_order_agnostic_exact_best_matches / result.evaluated_items
+            if result.evaluated_items
+            else math.nan
+        )
         metric_rows.append(
             {
                 "prompt": prompt,
@@ -546,6 +551,8 @@ def write_f1_metrics(
                 "argument_order_agnostic_precision": argument_order_agnostic_counts.precision,
                 "argument_order_agnostic_recall": argument_order_agnostic_counts.recall,
                 "argument_order_agnostic_micro_f1": argument_order_agnostic_counts.f1,
+                "argument_order_agnostic_exact_best_matches": result.argument_order_agnostic_exact_best_matches,
+                "argument_order_agnostic_exact_match_rate": argument_order_agnostic_exact_rate,
                 "exact_best_matches": result.exact_best_matches,
                 "exact_best_match_rate": exact_rate,
                 "no_relation_best_matches": result.no_relation_best_matches,
@@ -581,6 +588,8 @@ def write_f1_metrics(
         "argument_order_agnostic_precision",
         "argument_order_agnostic_recall",
         "argument_order_agnostic_micro_f1",
+        "argument_order_agnostic_exact_best_matches",
+        "argument_order_agnostic_exact_match_rate",
         "exact_best_matches",
         "exact_best_match_rate",
         "no_relation_best_matches",
@@ -607,6 +616,11 @@ def write_f1_metrics(
             float(row["argument_order_agnostic_micro_f1"])
             for row in rows
             if not math.isnan(float(row["argument_order_agnostic_micro_f1"]))
+        ]
+        argument_order_agnostic_exact_rates = [
+            float(row["argument_order_agnostic_exact_match_rate"])
+            for row in rows
+            if not math.isnan(float(row["argument_order_agnostic_exact_match_rate"]))
         ]
         summary_rows.append(
             {
@@ -662,6 +676,26 @@ def write_f1_metrics(
                     if argument_order_agnostic_f1_values
                     else math.nan
                 ),
+                "mean_argument_order_agnostic_exact_match_rate": (
+                    statistics.mean(argument_order_agnostic_exact_rates)
+                    if argument_order_agnostic_exact_rates
+                    else math.nan
+                ),
+                "sample_stddev_argument_order_agnostic_exact_match_rate": (
+                    statistics.stdev(argument_order_agnostic_exact_rates)
+                    if len(argument_order_agnostic_exact_rates) > 1
+                    else math.nan
+                ),
+                "min_argument_order_agnostic_exact_match_rate": (
+                    min(argument_order_agnostic_exact_rates)
+                    if argument_order_agnostic_exact_rates
+                    else math.nan
+                ),
+                "max_argument_order_agnostic_exact_match_rate": (
+                    max(argument_order_agnostic_exact_rates)
+                    if argument_order_agnostic_exact_rates
+                    else math.nan
+                ),
                 "total_evaluated_items": sum(int(row["evaluated_items"]) for row in rows),
                 "total_error_runs": sum(int(row["error_runs"]) for row in rows),
                 "total_missing_predictions": sum(
@@ -700,6 +734,10 @@ def write_f1_metrics(
         "sample_stddev_argument_order_agnostic_micro_f1",
         "min_argument_order_agnostic_micro_f1",
         "max_argument_order_agnostic_micro_f1",
+        "mean_argument_order_agnostic_exact_match_rate",
+        "sample_stddev_argument_order_agnostic_exact_match_rate",
+        "min_argument_order_agnostic_exact_match_rate",
+        "max_argument_order_agnostic_exact_match_rate",
         "total_evaluated_items",
         "total_error_runs",
         "total_missing_predictions",

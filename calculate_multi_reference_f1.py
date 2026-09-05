@@ -58,6 +58,7 @@ class EvaluationResult:
     no_relation_best_matches: int = 0
     position_sensitive_counts: Counts | None = None
     argument_order_agnostic_counts: Counts | None = None
+    argument_order_agnostic_exact_best_matches: int = 0
 
 
 def is_blank(value: object) -> bool:
@@ -272,6 +273,11 @@ def evaluate_prediction_column(
             result.argument_order_agnostic_counts.add(
                 argument_order_agnostic_best_counts
             )
+            if (
+                argument_order_agnostic_best_counts.fp == 0
+                and argument_order_agnostic_best_counts.fn == 0
+            ):
+                result.argument_order_agnostic_exact_best_matches += 1
 
         position_best_column = ""
         position_best_score = float("nan")
@@ -326,6 +332,11 @@ def evaluate_prediction_column(
                 "argument_order_agnostic_tp": argument_order_agnostic_best_counts.tp if argument_order_agnostic_best_counts else "",
                 "argument_order_agnostic_fp": argument_order_agnostic_best_counts.fp if argument_order_agnostic_best_counts else "",
                 "argument_order_agnostic_fn": argument_order_agnostic_best_counts.fn if argument_order_agnostic_best_counts else "",
+                "argument_order_agnostic_exact_match": (
+                    argument_order_agnostic_best_counts is not None
+                    and argument_order_agnostic_best_counts.fp == 0
+                    and argument_order_agnostic_best_counts.fn == 0
+                ),
             }
         )
 
@@ -353,6 +364,7 @@ def evaluate_prediction_column(
                     "argument_order_agnostic_tp",
                     "argument_order_agnostic_fp",
                     "argument_order_agnostic_fn",
+                    "argument_order_agnostic_exact_match",
                 ],
             )
             writer.writeheader()
@@ -420,6 +432,11 @@ def print_result(result: EvaluationResult) -> None:
         )
     if result.argument_order_agnostic_counts is not None:
         argument_order_agnostic_counts = result.argument_order_agnostic_counts
+        argument_order_agnostic_exact_rate = (
+            result.argument_order_agnostic_exact_best_matches / result.evaluated_items
+            if result.evaluated_items
+            else float("nan")
+        )
         print(
             "  argument_order_agnostic_relation_set_micro_f1 "
             f"P={format_score(argument_order_agnostic_counts.precision)} "
@@ -428,6 +445,12 @@ def print_result(result: EvaluationResult) -> None:
             f"(TP={argument_order_agnostic_counts.tp}, "
             f"FP={argument_order_agnostic_counts.fp}, "
             f"FN={argument_order_agnostic_counts.fn})"
+        )
+        print(
+            "  argument_order_agnostic_exact_match "
+            f"{format_score(argument_order_agnostic_exact_rate)} "
+            f"({result.argument_order_agnostic_exact_best_matches}/"
+            f"{result.evaluated_items})"
         )
 
 
@@ -477,6 +500,8 @@ def write_summary(path: Path, results: list[EvaluationResult]) -> None:
                 "argument_order_agnostic_tp",
                 "argument_order_agnostic_fp",
                 "argument_order_agnostic_fn",
+                "argument_order_agnostic_exact_best_matches",
+                "argument_order_agnostic_exact_match_rate",
             ],
         )
         writer.writeheader()
@@ -485,6 +510,12 @@ def write_summary(path: Path, results: list[EvaluationResult]) -> None:
             position_counts = result.position_sensitive_counts
             argument_order_agnostic_counts = result.argument_order_agnostic_counts
             exact_rate = result.exact_best_matches / result.evaluated_items if result.evaluated_items else float("nan")
+            argument_order_agnostic_exact_rate = (
+                result.argument_order_agnostic_exact_best_matches
+                / result.evaluated_items
+                if result.evaluated_items
+                else float("nan")
+            )
             writer.writerow(
                 {
                     "prediction_column": result.prediction_column,
@@ -513,6 +544,16 @@ def write_summary(path: Path, results: list[EvaluationResult]) -> None:
                     "argument_order_agnostic_tp": argument_order_agnostic_counts.tp if argument_order_agnostic_counts else "",
                     "argument_order_agnostic_fp": argument_order_agnostic_counts.fp if argument_order_agnostic_counts else "",
                     "argument_order_agnostic_fn": argument_order_agnostic_counts.fn if argument_order_agnostic_counts else "",
+                    "argument_order_agnostic_exact_best_matches": (
+                        result.argument_order_agnostic_exact_best_matches
+                        if argument_order_agnostic_counts
+                        else ""
+                    ),
+                    "argument_order_agnostic_exact_match_rate": (
+                        argument_order_agnostic_exact_rate
+                        if argument_order_agnostic_counts
+                        else ""
+                    ),
                 }
             )
 

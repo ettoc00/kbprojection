@@ -62,6 +62,26 @@ class ArgumentOrderAgnosticMetricTests(unittest.TestCase):
             ),
             (1, 0, 0),
         )
+        self.assertEqual(result.argument_order_agnostic_exact_best_matches, 1)
+
+    def test_agnostic_exact_match_requires_the_complete_relation_set(self):
+        rows = [
+            {
+                "ID": "example",
+                "prediction": "isa_wn(fruit, apple)",
+                "reference": "isa_wn(apple, fruit); isa_wn(cat, animal)",
+            }
+        ]
+
+        result = evaluate_prediction_column(
+            rows,
+            "prediction",
+            ["reference"],
+            empty_prediction_is_no_relation=False,
+            calculate_argument_order_agnostic=True,
+        )
+
+        self.assertEqual(result.argument_order_agnostic_exact_best_matches, 0)
 
 
 if __name__ == "__main__":
