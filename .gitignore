@@ -150,6 +150,8 @@ Thumbs.db
 data/*
 !data/
 !data/all_usable_items_362.csv
+!data/annotator_assignments/
+!data/annotator_assignments/*_assignments.json
 
 # Notebooks
 *.ipynb

@@ -477,15 +477,26 @@ rule.
 
 ### Calculate inter-annotator agreement
 
-Rebuild the agreement overview from the assignment JSON files with:
+The authoritative assignment files are tracked in
+[`data/annotator_assignments`](data/annotator_assignments): the original JSON
+submissions from Ettore, Jorryt, Lasha, and Stefan. The files retain each
+annotator's submitted rows; duplicate IDs are reported and collapsed only for
+ID-aligned comparisons.
+
+Rebuild the per-item agreement overview without network or API calls with:
 
 ```bash
+mkdir -p /tmp/kbprojection-iaa
 .venv/bin/python calculate_inter_annotator_agreement.py \
-  "annotated files" \
-  --csv "inter_annotator_agreement_overview.csv" \
-  --tsv "inter_annotator_agreement_overview.tsv"
+  data/annotator_assignments \
+  --csv /tmp/kbprojection-iaa/inter_annotator_agreement_overview.csv \
+  --tsv /tmp/kbprojection-iaa/inter_annotator_agreement_overview.tsv
 ```
 
-This reports pairwise exact KB-set agreement, weighted Cohen's kappa over the
-number of relations, pairwise relation-level micro-F1, all-annotator exact
-agreement, and nominal Krippendorff's alpha.
+The report includes pairwise exact KB-set agreement, linear-weighted Cohen's
+kappa over the number of relations, pairwise relation-level micro-F1,
+all-annotator exact agreement, and nominal Krippendorff's alpha. It recreates
+the agreement values from the JSONs alone. If the optional original SICK and
+SNLI source datasets are also present under `data/`, the overview additionally
+populates dataset, split, and gold-label metadata; those fields do not affect
+the agreement calculations.
