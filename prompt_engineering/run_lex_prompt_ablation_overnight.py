@@ -33,7 +33,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from calculate_multi_reference_f1 import parse_kb_cell
-from kbprojection.kbprojection.prompts import LASHA_BASE_PROMPT as SOURCE_PROMPT
+from kbprojection.prompts import LASHA_BASE_PROMPT as SOURCE_PROMPT
 from prompt_engineering import run_prompt_trial as trial
 
 

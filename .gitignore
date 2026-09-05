@@ -147,7 +147,9 @@ cython_debug/
 Thumbs.db
 
 # Data
-data/
+data/*
+!data/
+!data/all_usable_items_362.csv
 
 # Notebooks
 *.ipynb

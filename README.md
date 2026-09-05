@@ -12,6 +12,8 @@ uv sync
 uv pip install -e .
 ```
 
+Use Python 3.10 or newer. The repository's type annotations require it.
+
 ## Runtime configuration: local or Google Colab
 
 The package can run with local paths or Drive-backed Colab paths through one
@@ -254,13 +256,28 @@ Blank KB cells mean the annotator did not provide an annotation. `NO_RELATION`
 means an explicit annotation that no KB relation is needed. Do not convert
 blank cells into `NO_RELATION`.
 
+### Canonical experiment input
+
+The reproducible 362-item input is committed at
+`data/all_usable_items_362.csv`. It contains the quality-controlled SNLI/SICK
+entailment problems and the five reference LEX annotation columns used by the
+multi-reference evaluations. The file has 362 data rows and its SHA-256 is:
+
+```text
+7be06d326bdaff587368b06c86e4b28ee0d8e642fda3cbf676a5baffd816e77e
+```
+
+The experiment scripts validate the required columns and row count before
+making model calls. This prevents accidentally running the paper evaluation
+on a different or incomplete CSV.
+
 ### Run an LLM experiment
 
 Always run a small live smoke test before a full model run:
 
 ```bash
 .venv/bin/python run_multi_reference_llm_experiment.py \
-  --input-csv "all_usable_items_362.csv" \
+  --input-csv "data/all_usable_items_362.csv" \
   --output-csv "llm_outputs_smoke.csv" \
   --provider openrouter \
   --prompts ettore lasha \
@@ -273,7 +290,7 @@ Then run the full experiment:
 
 ```bash
 .venv/bin/python run_multi_reference_llm_experiment.py \
-  --input-csv "all_usable_items_362.csv" \
+  --input-csv "data/all_usable_items_362.csv" \
   --output-csv "llm_outputs_sonnet45_gpt54_gemini35flash_all_usable.csv" \
   --provider openrouter \
   --prompts ettore lasha \
@@ -304,8 +321,8 @@ The following experiment runs the improved Lasha prompt five times with eight
 models on all 362 usable annotation items:
 
 ```bash
-.venv/bin/python kbprojection/scripts/experiments/run_repeated_multi_reference_experiment.py \
-  --input-csv "all_usable_items_362.csv" \
+.venv/bin/python scripts/experiments/run_repeated_multi_reference_experiment.py \
+  --input-csv "data/all_usable_items_362.csv" \
   --sample-size 362 \
   --repeats 5 \
   --prompts lasha \

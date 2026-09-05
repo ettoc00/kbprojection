@@ -30,10 +30,10 @@ from calculate_multi_reference_f1 import (
     parse_kb_cell,
     write_summary,
 )
-from kbprojection.kbprojection.filtering import pipeline_filter_kb_injections
-from kbprojection.kbprojection.llm import AsyncGenericAIClient, _extract_validated_kb_from_output
-from kbprojection.kbprojection.models import NLILabel, NLIProblem
-from kbprojection.kbprojection.prompts import ETTORE_BASE_PROMPT, LASHA_BASE_PROMPT
+from kbprojection.filtering import pipeline_filter_kb_injections
+from kbprojection.llm import AsyncGenericAIClient, _extract_validated_kb_from_output
+from kbprojection.models import NLILabel, NLIProblem
+from kbprojection.prompts import ETTORE_BASE_PROMPT, LASHA_BASE_PROMPT
 
 
 DEFAULT_REFERENCE_COLUMNS = [

@@ -25,6 +25,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 DEFAULT_OUTPUT_DIR = ROOT / "experiment_results" / "lasha_all362_5runs"
+DEFAULT_INPUT_CSV = ROOT / "data" / "all_usable_items_362.csv"
+EXPECTED_INPUT_ROWS = 362
 
 from calculate_multi_reference_f1 import (
     Counts,
@@ -51,6 +53,34 @@ DEFAULT_MODELS = [
     "google/gemini-3.1-flash-lite",
     "openai/gpt-oss-20b",
 ]
+
+
+def validate_input_rows(
+    path: Path,
+    fieldnames: list[str],
+    rows: list[dict[str, str]],
+    reference_columns: list[str],
+) -> None:
+    required = {
+        "ID",
+        "premise",
+        "hypothesis",
+        "gold_label",
+        *reference_columns,
+    }
+    missing = sorted(required - set(fieldnames))
+    if missing:
+        raise ValueError(
+            f"{path} is missing required column(s): {', '.join(missing)}"
+        )
+    if len(rows) != EXPECTED_INPUT_ROWS:
+        raise ValueError(
+            f"{path} must contain exactly {EXPECTED_INPUT_ROWS} data rows; "
+            f"found {len(rows)}"
+        )
+    blank_ids = [index + 2 for index, row in enumerate(rows) if not row.get("ID", "").strip()]
+    if blank_ids:
+        raise ValueError(f"{path} contains blank ID values on CSV lines: {blank_ids[:10]}")
 DEFAULT_PROMPTS = ["lasha", "ettore"]
 OUTPUT_FIELDNAMES = [
     "ID",
@@ -665,7 +695,7 @@ def write_sample(path: Path, sample_rows: list[dict[str, str]], fieldnames: list
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input-csv", default=str(ROOT / "small_models_all_present_exact_match_TRUE.csv"))
+    parser.add_argument("--input-csv", default=str(DEFAULT_INPUT_CSV))
     parser.add_argument(
         "--sample-csv",
         default=str(DEFAULT_OUTPUT_DIR / "consistency_sample.csv"),
@@ -712,6 +742,7 @@ async def async_main(args: argparse.Namespace) -> None:
     f1_summary_path = Path(args.f1_summary_csv)
 
     fieldnames, rows = read_rows(input_path)
+    validate_input_rows(input_path, fieldnames, rows, args.reference_columns)
     sample_rows = choose_balanced_sample(
         rows,
         sample_size=args.sample_size,
