@@ -507,3 +507,22 @@ place; Table 2 prints 75.7%.
 
 To analyze the initial, pre-adjudication submissions separately, run
 `calculate_inter_annotator_agreement.py data/annotator_assignments`.
+
+### Prepare the prompt-ablation comparison (no API calls)
+
+The prompt ablation uses the 223 unanimous items from the pre-finalization
+edited IAA overview. This is intentional: two of these items were excluded
+later from the 362-item final paper dataset, so do not replace the source with
+`data/all_usable_items_362.csv`.
+
+```bash
+.venv/bin/python prompt_engineering/run_lex_prompt_ablation_overnight.py \
+  --output-dir /tmp/kbprojection-prompt-ablation \
+  --prepare-only
+```
+
+This writes the derived `agreed_subset.csv` (223 items), `primary_sample.csv`,
+the deterministic stability sample, and the exact prompt templates into the
+chosen output directory. It makes no model or network calls. A later live run
+uses the same command without `--prepare-only`; it requires configured API
+credentials and may vary because hosted model outputs can change.

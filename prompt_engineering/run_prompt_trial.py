@@ -923,11 +923,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--agreement-csv",
-        default=str(ROOT / "annotator agreement - IAA_overview_edit.csv"),
+        default=str(
+            ROOT / "data" / "annotator_agreement" / "iaa_overview_edit.csv"
+        ),
+        help="Edited IAA overview used to derive the high-agreement subset.",
     )
     parser.add_argument(
         "--agreed-subset-csv",
-        default=str(ROOT / "small_models_all_present_exact_match_TRUE.csv"),
+        help=(
+            "Optional destination for the derived high-agreement subset. "
+            "Defaults beside --sample-csv."
+        ),
     )
     parser.add_argument(
         "--sample-csv",
@@ -989,8 +995,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 async def async_main(args: argparse.Namespace) -> None:
     agreement_csv = Path(args.agreement_csv)
-    agreed_subset_csv = Path(args.agreed_subset_csv)
     sample_csv = Path(args.sample_csv)
+    agreed_subset_csv = (
+        Path(args.agreed_subset_csv)
+        if args.agreed_subset_csv
+        else sample_csv.with_name("agreed_subset.csv")
+    )
     output_csv = Path(args.output_csv)
     summary_csv = Path(args.summary_csv)
     leaderboard_csv = Path(args.leaderboard_csv)
