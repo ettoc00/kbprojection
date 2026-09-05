@@ -16,7 +16,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.append(str(PROJECT_ROOT))
 
 
-PROMPT_STYLES = ("legacy_icl", "icl")
+PROMPT_STYLES = ("icl", "lasha")
 BENCHMARK_IDS = {
     "sick": {
         "train": [
@@ -558,7 +558,7 @@ def run(args: argparse.Namespace) -> int:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Replay the fixed 50-problem benchmark and produce a legacy_icl vs icl 2x2 table."
+        description="Replay the fixed 50-problem benchmark and produce an icl vs lasha comparison table."
     )
     parser.add_argument(
         "-m",

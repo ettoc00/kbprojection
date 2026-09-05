@@ -32,6 +32,21 @@ def get_snli_problem(SNLI, key: str, split: str = "dev"):
 
     return SNLI[split][key]
 
+
+def get_sick_problem(SICK, key: str, split: str = "dev"):
+    """
+    Given a SICK key (e.g., '3586'),
+    return the full SICK problem dictionary.
+    """
+
+    if split not in SICK:
+        raise ValueError(f"Unknown split: {split}. Must be one of {list(SICK.keys())}")
+
+    if key not in SICK[split]:
+        raise KeyError(f"Key '{key}' not found in SICK[{split}]")
+
+    return SICK[split][key]
+
 def random_snli_key(SNLI, split="dev", label_filter=None, used_keys=None):
     """
     Returns a random key from SNLI[split] that:

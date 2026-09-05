@@ -6,12 +6,14 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from kbprojection.llm import _extract_lasha_kb_from_output
-from kbprojection.prompts import fill_prompt, get_prompt
+from kbprojection.prompts import (
+    ETTORE_BASE_PROMPT, LASHA_BASE_PROMPT, fill_prompt, get_prompt, list_prompts,
+)
 
 
 class TestPrompts(unittest.TestCase):
-    def test_icl_prompt_emphasizes_langpro_helpfulness(self):
-        prompt = get_prompt("icl")
+    def test_synthetic_icl_prompt_emphasizes_langpro_helpfulness(self):
+        prompt = get_prompt("icl_synthetic")
 
         self.assertIn("genuinely KB-helpful for LangPro", prompt)
         self.assertIn("Prefer CCG/prover-friendly lemma heads", prompt)
@@ -66,6 +68,39 @@ class TestPrompts(unittest.TestCase):
     def test_extract_lasha_kb_from_empty_relation_set(self):
         output = "answer: entailment\nrelations: { }\n"
         self.assertEqual(_extract_lasha_kb_from_output(output), [])
+
+    def test_lasha_prompt_is_registered_and_substituted(self):
+        prompt = fill_prompt("lasha", ["A dog is running."], "An animal is moving.")
+
+        self.assertIn("answer: entailment", prompt)
+        self.assertIn("relations: {", prompt)
+        self.assertIn("premise: A dog is running.", prompt)
+        self.assertIn("hypothesis: An animal is moving.", prompt)
+        self.assertNotIn("${PREMISE}", prompt)
+        self.assertNotIn("${HYPOTHESIS}", prompt)
+
+
+    def test_prompt_names_are_unique(self):
+        self.assertEqual(len(list_prompts()), len(set(list_prompts())))
+
+    def test_prompt_ablation_bases_and_explicit_variants(self):
+        self.assertIn("isa_wn(strum, play)", ETTORE_BASE_PROMPT)
+        self.assertEqual(get_prompt("icl"), ETTORE_BASE_PROMPT)
+        self.assertNotIn("CALIBRATION UPDATE", ETTORE_BASE_PROMPT)
+        self.assertIn("CALIBRATION UPDATE", get_prompt("ettore"))
+        self.assertNotIn("Additional calibration", LASHA_BASE_PROMPT)
+        self.assertNotIn("Additional calibration", get_prompt("lasha_uncalibrated"))
+        self.assertIn("Additional calibration", get_prompt("lasha"))
+
+    def test_calibrated_lasha_supports_predicate_overrides(self):
+        prompt = fill_prompt(
+            "lasha", ["A woman dances."], "A person moves.",
+            variables={"predicates": {"entailment": "isa_wn"}},
+        )
+        self.assertIn("isa_wn(woman, person)", prompt)
+        self.assertNotIn("${PREDICATE_ENTAILMENT}", prompt)
+        self.assertNotIn("entails(", prompt)
+        self.assertIn("Additional calibration", prompt)
 
 
 if __name__ == "__main__":

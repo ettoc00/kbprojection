@@ -1,0 +1,9 @@
+﻿prompt,model,requested_repeats,valid_items,incomplete_items,all_runs_identical_rate,mean_pairwise_exact,mean_pairwise_kb_f1,no_relation_flip_rate
+lex_few_shot_precision,openai_gpt-5.4-mini,3,100,0,0.5800,0.6833,0.7582,0.1300
+lex_few_shot_precision,anthropic_claude-haiku-4.5,3,100,0,0.7800,0.8333,0.8689,0.0600
+lex_few_shot_precision,google_gemini-3.1-flash-lite,3,100,0,0.7500,0.8100,0.8378,0.0700
+lex_few_shot_precision,openai_gpt-oss-20b,3,100,0,0.5800,0.6700,0.7157,0.1400
+lex_few_shot_base,openai_gpt-5.4-mini,3,100,0,0.6200,0.6933,0.7692,0.0900
+lex_few_shot_base,anthropic_claude-haiku-4.5,3,100,0,0.7600,0.8200,0.8721,0.0000
+lex_few_shot_base,google_gemini-3.1-flash-lite,3,100,0,0.7100,0.7900,0.8177,0.0500
+lex_few_shot_base,openai_gpt-oss-20b,3,100,0,0.4300,0.5433,0.6113,0.2000

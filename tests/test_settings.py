@@ -58,9 +58,10 @@ class TestSettingsPaths(unittest.TestCase):
             self.assertEqual(settings.cache_path, Path(r"C:\app") / "langpro_cache.sqlite3")
 
     def test_dataset_loaders_default_to_app_data_dataset_dirs(self):
-        with patch.dict(os.environ, {"KBPROJECTION_DATA_DIR": r"C:\datasets"}, clear=True):
-            self.assertEqual(SICKLoader().data_dir, Path(r"C:\datasets") / "sick")
-            self.assertEqual(SNLILoader().data_dir, Path(r"C:\datasets") / "snli")
+        with tempfile.TemporaryDirectory() as data_dir:
+            with patch.dict(os.environ, {"KBPROJECTION_DATA_DIR": data_dir}, clear=True):
+                self.assertEqual(SICKLoader().data_dir, Path(data_dir) / "sick")
+                self.assertEqual(SNLILoader().data_dir, Path(data_dir) / "snli")
 
     def test_dataset_loaders_keep_explicit_data_dir(self):
         with tempfile.TemporaryDirectory() as tmp_dir:

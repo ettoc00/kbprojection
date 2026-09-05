@@ -147,8 +147,13 @@ cython_debug/
 Thumbs.db
 
 # Data
-data/
-kbprojection_data/
+data/*
+!data/
+!data/all_usable_items_362.csv
+!data/annotator_assignments/
+!data/annotator_assignments/*_assignments.json
+!data/annotator_agreement/
+!data/annotator_agreement/iaa_overview_edit.csv
 
 # Runtime caches and generated experiment artifacts
 .kbprojection/
@@ -163,6 +168,11 @@ scripts/analysis/logs/
 scripts/analysis/*_ids_*.json
 scripts/analysis/*_records.jsonl
 scripts/analysis/remote_baseline_prewarm_*.jsonl
+
+# Notebooks
+*.ipynb
+!notebooks/
+!notebooks/*.ipynb
 
 # Debug scripts
 debug_*.py

@@ -1,6 +1,7 @@
 import re
 from functools import lru_cache
-from typing import Tuple, List, Set, Union
+import os
+from typing import Optional, Tuple, List, Set, Union
 import nltk
 from .downloads import check_nltk
 from nltk.stem import WordNetLemmatizer
@@ -17,10 +18,17 @@ def get_lemmatizer() -> WordNetLemmatizer:
     return WordNetLemmatizer()
 
 
-@lru_cache(maxsize=1)
-def get_st_model(model_name: str = "all-MiniLM-L6-v2"):
+@lru_cache(maxsize=4)
+def _get_st_model_cached(model_name: str, cache_folder: Optional[str] = None):
     from sentence_transformers import SentenceTransformer
+    if cache_folder:
+        return SentenceTransformer(model_name, cache_folder=cache_folder)
     return SentenceTransformer(model_name)
+
+
+def get_st_model(model_name: str = "all-MiniLM-L6-v2"):
+    cache_folder = os.environ.get("SENTENCE_TRANSFORMERS_HOME")
+    return _get_st_model_cached(model_name, cache_folder)
 
 
 # =============================================================================

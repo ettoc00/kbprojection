@@ -1,0 +1,1114 @@
+﻿ID,dataset,split,premise,hypothesis,gold_label,annotator_count,all_present_exact_match,Alternative_KB,Ettore_KB,Jorryt_KB,Lasha_KB,Stefan_KB,Ettore_Jorryt_match,Ettore_Lasha_match,Ettore_Stefan_match,Jorryt_Lasha_match,Jorryt_Stefan_match,Lasha_Stefan_match,LLM__lex_few_shot_precision__openai_gpt-5.4-mini_raw_response,LLM__lex_few_shot_precision__openai_gpt-5.4-mini_KB,LLM__lex_few_shot_precision__openai_gpt-5.4-mini_error,LLM__lex_few_shot_precision__anthropic_claude-haiku-4.5_raw_response,LLM__lex_few_shot_precision__anthropic_claude-haiku-4.5_KB,LLM__lex_few_shot_precision__anthropic_claude-haiku-4.5_error,LLM__lex_few_shot_precision__google_gemini-3.1-flash-lite_raw_response,LLM__lex_few_shot_precision__google_gemini-3.1-flash-lite_KB,LLM__lex_few_shot_precision__google_gemini-3.1-flash-lite_error,LLM__lex_few_shot_precision__openai_gpt-oss-20b_raw_response,LLM__lex_few_shot_precision__openai_gpt-oss-20b_KB,LLM__lex_few_shot_precision__openai_gpt-oss-20b_error,LLM__lex_few_shot_base__openai_gpt-5.4-mini_raw_response,LLM__lex_few_shot_base__openai_gpt-5.4-mini_KB,LLM__lex_few_shot_base__openai_gpt-5.4-mini_error,LLM__lex_few_shot_base__anthropic_claude-haiku-4.5_raw_response,LLM__lex_few_shot_base__anthropic_claude-haiku-4.5_KB,LLM__lex_few_shot_base__anthropic_claude-haiku-4.5_error,LLM__lex_few_shot_base__google_gemini-3.1-flash-lite_raw_response,LLM__lex_few_shot_base__google_gemini-3.1-flash-lite_KB,LLM__lex_few_shot_base__google_gemini-3.1-flash-lite_error,LLM__lex_few_shot_base__openai_gpt-oss-20b_raw_response,LLM__lex_few_shot_base__openai_gpt-oss-20b_KB,LLM__lex_few_shot_base__openai_gpt-oss-20b_error
+1192,sick,dev,A man and a woman are walking together through the woods,A man and a woman are walking through a wooded area,entailment,3,TRUE,,,"(woods, wooded area)","(woods, wooded area)","(woods, wooded area)",,,,FALSE,FALSE,TRUE,"answer: entailment
+relations: { entails(woods, wooded area) }","isa_wn(woods, wooded area)",,"answer: entailment
+relations: { entails(woods, wooded area) }","isa_wn(woods, wooded area)",,"answer: entailment
+relations: { entails(woods, wooded area) }","isa_wn(woods, wooded area)",,"answer: entailment  
+relations: { entails(woods, wooded area) }","isa_wn(woods, wooded area)",,"answer: entailment
+relations: { entails(woods, wooded area) }","isa_wn(woods, wooded area)",,"answer: entailment
+relations: { entails(woods, wooded area) }","isa_wn(woods, wooded area)",,"answer: entailment
+relations: { entails(wood, wooded area) }","isa_wn(wood, wooded area)",,"answer: entailment  
+relations: { entails(woods, wooded area) }","isa_wn(woods, wooded area)",
+1405221276.jpg#4r1e,snli,dev,Two dogs shaking themselves dry on the sand.,Two dogs shake off water to get dry.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,FALSE,TRUE,,FALSE,,,"answer: entailment
+relations: { entails(shake themselves dry, shake off water), entails(sand, water) }","isa_wn(shake themselves dry, shake off water); isa_wn(sand, water)",,"answer: entailment
+relations: { entails(shaking themselves dry, shake off water to get dry) }","isa_wn(shaking themselves dry, shake off water to get dry)",,"answer: entailment
+relations: { entails(shake themselves dry, shake off water to get dry) }","isa_wn(shake themselves dry, shake off water to get dry)",,"answer: entailment  
+relations: { entails(shake themselves dry, shake off water) }","isa_wn(shake themselves dry, shake off water)",,"answer: entailment
+relations: { entails(shaking oneself dry, shake off water to get dry) }","isa_wn(shaking oneself dry, shake off water to get dry)",,"answer: entailment
+relations: { entails(shake, shake off), entails(sand, water) }
+
+Wait, let me reconsider. The relation entails(sand, water) is not correct - sand is not a type of water. Let me think about this more carefully.
+
+The premise states: ""Two dogs shaking themselves dry on the sand.""
+The hypothesis states: ""Two dogs shake off water to get dry.""
+
+The dogs are shaking themselves to get dry. When dogs shake themselves to get dry, they are shaking off water. The fact that they are on the sand doesn't contradict that they are shaking off water - dogs shake off water when wet, and the sand is where this is happening.
+
+Actually, ""shaking themselves dry"" entails that they are shaking off water, since shaking dry means removing water by shaking.
+
+answer: entailment
+relations: { entails(shake dry, shake off water) }","isa_wn(shake, shake off); isa_wn(sand, water); isa_wn(sand, water); isa_wn(shake dry, shake off water)",,"answer: entailment
+relations: { entails(shake self, shake off water) }","isa_wn(shake self, shake off water)",,"answer: entailment  
+relations: { entails(shaking themselves dry, shake off water), entails(shaking themselves dry, get dry) }","isa_wn(shaking themselves dry, shake off water); isa_wn(shaking themselves dry, get dry)",
+147236031.jpg#1r1e,snli,dev,An Asian woman is looking at the camera while trimming asparagus.,Woman cuts vegetables.,entailment,2,TRUE,,"(asparagus, vegetable); (trim, cut)",,"(asparagus, vegetable); (trim, cut)","(asparagus, vegetable); (trim, cut)",,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(trimming, cuts), entails(asparagus, vegetables), entails(Asian woman, woman) }","isa_wn(trimming, cuts); isa_wn(asparagus, vegetables); isa_wn(Asian woman, woman)",,"answer: entailment
+relations: { entails(trim asparagus, cut vegetable), entails(Asian woman, woman) }","isa_wn(trim asparagus, cut vegetable); isa_wn(Asian woman, woman)",,"answer: entailment
+relations: { entails(trim, cut), entails(asparagus, vegetable) }","isa_wn(trim, cut); isa_wn(asparagus, vegetable)",,"answer: entailment  
+relations: { entails(trim, cut), entails(asparagus, vegetable) }","isa_wn(trim, cut); isa_wn(asparagus, vegetable)",,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(trim, cut), entails(asparagus, vegetable) }","isa_wn(trim, cut); isa_wn(asparagus, vegetable)",,"answer: entailment
+relations: { entails(asparagus, vegetable), entails(trim, cut) }","isa_wn(asparagus, vegetable); isa_wn(trim, cut)",,"answer: entailment  
+relations: { entails(Asian woman, woman), entails(trimming, cutting), entails(asparagus, vegetable) }","isa_wn(Asian woman, woman); isa_wn(trimming, cutting); isa_wn(asparagus, vegetable)",
+1796608106.jpg#4r1e,snli,dev,A woman building herself a sand castle.,a women is making a sand castle,entailment,2,TRUE,,"(build, make)","(build, make)","(build, make)",,TRUE,TRUE,,TRUE,,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(build, make), entails(woman, women) }
+
+Wait, let me reconsider. The phrase ""woman"" in the premise is singular, while ""women"" in the hypothesis is plural. This is not a lexical entailment relation—it's a grammatical number mismatch that doesn't represent a semantic entailment relationship.
+
+Let me re-examine: The premise states ""A woman building herself a sand castle"" (singular). The hypothesis states ""a women is making a sand castle"" (plural, which is also grammatically incorrect, but taking it as stated).
+
+Actually, the core entailment is:
+- ""a woman"" (singular) entails the existence of at least one woman, which is consistent with ""women"" (plural referring to potentially multiple instances)
+- However, this is not a straightforward lexical relation.
+
+More carefully: The hypothesis has ""women"" (plural) but the premise has ""woman"" (singular). This is actually problematic for entailment in the strict sense, as the premise doesn't entail that multiple women are making a sand castle.
+
+Given this grammatical issue in the hypothesis, the most accurate assessment is:
+
+answer: non-entailment
+
+The premise describes a single woman, while the hypothesis refers to women (plural). The premise does not entail the hypothesis as stated.
+
+However, if we interpret ""women"" as a typo for ""woman"", then:
+
+answer: entailment
+relations: { entails(build, make) }","isa_wn(build, make); isa_wn(woman, women); isa_wn(build, make)",,"answer: entailment
+relations: { entails(build, make) }","isa_wn(build, make)",,"answer: entailment
+relations: { entails(build, make) }","isa_wn(build, make)",,"answer: entailment
+relations: { entails(building, making), entails(woman, women) }","isa_wn(building, making); isa_wn(woman, women)",,"answer: entailment
+relations: { entails(build, make), entails(woman, women) }","isa_wn(build, make); isa_wn(woman, women)",,"answer: entailment
+relations: { entails(build, make) }","isa_wn(build, make)",,"**answer:** entailment  
+**relations:** { entails(building, making) }","isa_wn(building, making)",
+211,sick,dev,Two dogs are playing by a tree,Two dogs are playing by a plant,entailment,2,TRUE,,"(tree, plant)","(tree, plant)",,"(tree, plant)",TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(tree, plant) }","isa_wn(tree, plant)",,"answer: entailment
+relations: { entails(tree, plant) }","isa_wn(tree, plant)",,"answer: entailment
+relations: { entails(tree, plant) }","isa_wn(tree, plant)",,"answer: entailment
+relations: { entails(tree, plant) }","isa_wn(tree, plant)",,"answer: entailment
+relations: { entails(tree, plant) }","isa_wn(tree, plant)",,"answer: entailment
+relations: { entails(tree, plant) }","isa_wn(tree, plant)",,"answer: entailment
+relations: { entails(tree, plant) }","isa_wn(tree, plant)",,"answer: entailment  
+relations: { entails(tree, plant) }","isa_wn(tree, plant)",
+2255375425.jpg#2r1e,snli,dev,A man is sitting in on the side of the street with brass pots.,A man is sitting.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis ""A man is sitting"" is directly entailed by the premise ""A man is sitting in on the side of the street with brass pots"" without requiring any non-trivial lexical entailment relations. The premise contains all the information needed for the hypothesis - it explicitly states that a man is sitting. The additional details about location (side of the street) and objects (brass pots) are merely elaborations that do not affect the core assertion that a man is sitting.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: {}",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis ""A man is sitting"" is a direct simplification of the premise ""A man is sitting in on the side of the street with brass pots."" The premise explicitly states that a man is sitting, and the additional details (location on the side of the street, presence of brass pots) are modifiers that do not negate or contradict the core proposition. Therefore, the hypothesis is entailed without requiring any non-trivial lexical entailments.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,
+2367387854.jpg#1r1e,snli,dev,"A woman with dark hair wearing a dark shirt, jeans, and glasses is talking into a microphone.",A woman is speaking into a device.,entailment,2,TRUE,,"(microphone, device); (talk, speak)","(microphone, device); (talk, speak)",,"(microphone, device); (talk, speak)",FALSE,,TRUE,,FALSE,,"answer: entailment  
+relations: { entails(talking, speaking), entails(microphone, device) }","isa_wn(talking, speaking); isa_wn(microphone, device)",,"answer: entailment
+relations: { entails(talk, speak), entails(microphone, device) }","isa_wn(talk, speak); isa_wn(microphone, device)",,"answer: entailment
+relations: { entails(talk, speak), entails(microphone, device) }","isa_wn(talk, speak); isa_wn(microphone, device)",,"answer: entailment  
+relations: { entails(microphone, device), entails(talk, speak) }","isa_wn(microphone, device); isa_wn(talk, speak)",,"answer: entailment
+relations: { entails(talking, speaking), entails(microphone, device) }","isa_wn(talking, speaking); isa_wn(microphone, device)",,"answer: entailment
+relations: { entails(talk, speak), entails(microphone, device) }","isa_wn(talk, speak); isa_wn(microphone, device)",,"answer: entailment
+relations: { entails(talk, speak), entails(microphone, device) }","isa_wn(talk, speak); isa_wn(microphone, device)",,"answer: entailment  
+relations: { entails(talk, speak), entails(microphone, device) }","isa_wn(talk, speak); isa_wn(microphone, device)",
+237424188.jpg#0r1e,snli,dev,"A girl wearing a red shirt and jeans is sitting in a rocking chair at a cluttered desk, while another girl wearing a black t-shirt and jogging pants is sitting on the floor writing on a piece of paper with other papers arranged around her.",two girls in a room,entailment,3,TRUE,,,NO_RELATION,NO_RELATION,NO_RELATION,,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(rocking chair, room) }","isa_wn(rocking chair, room)",,"answer: entailment
+
+relations: { }
+
+explanation: The premise explicitly mentions ""a girl"" and ""another girl,"" which clearly establishes that there are two girls present. The premise describes them in a room with furniture (rocking chair, desk) and papers, which establishes they are in a room. No non-trivial lexical entailment relations are needed to bridge the premise and hypothesis, as the entailment follows directly from the explicit mention of two girls and the room setting described in the premise.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(girl, girl) }","isa_wn(girl, girl)",,"answer: entailment
+relations: { entails(girl, person), entails(sitting in rocking chair, in room), entails(sitting on floor, in room) }","isa_wn(girl, person); isa_wn(sitting in rocking chair, in room); isa_wn(sitting on floor, in room)",,"answer: entailment
+relations: { entails(girl and girl, two girl) }","isa_wn(girl and girl, two girl)",,"**answer:** entailment  
+**relations:** {entails(floor, room)}","isa_wn(floor, room)",
+2393059551.jpg#1r1e,snli,dev,Two people work construction on the inside of a house.,Two people work inside.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed from the premise without requiring non-trivial lexical relations. The premise states that two people work construction on the inside of a house, which directly implies that two people work inside. The phrase ""construction on the inside of a house"" contains the core information that they work inside; the specific detail about construction is additional but does not prevent the entailment of the simpler statement.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"Answer: entailment
+Relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed from the premise without requiring any non-trivial lexical relations. The premise states that ""Two people work construction on the inside of a house,"" which directly entails that ""Two people work inside."" The phrase ""on the inside of a house"" necessarily means ""inside,"" so the hypothesis is a direct logical consequence of the premise. No special lexical entailments are needed to bridge the two sentences.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"**answer:** entailment  
+**relations:** { entails(construction, work) }","isa_wn(construction, work)",
+241345721.jpg#4r1e,snli,dev,Men playing football.,Some men are playing a game.,entailment,2,TRUE,,"(football, game)","(football, game)","(football, game)",,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(football, game) }","isa_wn(football, game)",,"answer: entailment
+relations: { entails(football, game) }","isa_wn(football, game)",,"answer: entailment
+relations: { entails(football, game) }","isa_wn(football, game)",,"**answer:** entailment  
+**relations:** { entails(football, game) }","isa_wn(football, game)",,"answer: entailment
+relations: { entails(football, game) }","isa_wn(football, game)",,"answer: entailment
+relations: { entails(football, game) }","isa_wn(football, game)",,"answer: entailment
+relations: { entails(football, game) }","isa_wn(football, game)",,"**answer:** entailment  
+**relations:** { entails(football, game) }","isa_wn(football, game)",
+2521878609.jpg#4r1e,snli,train,kid eating pasta,The kid is human.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(kid, human) }","isa_wn(kid, human)",,"answer: entailment
+relations: { entails(kid, human) }","isa_wn(kid, human)",,"answer: entailment
+relations: { entails(kid, human) }","isa_wn(kid, human)",,"answer: entailment  
+relations: { entails(kid, human) }","isa_wn(kid, human)",,"answer: entailment
+relations: { entails(kid, human) }","isa_wn(kid, human)",,"answer: entailment
+relations: { entails(kid, human) }","isa_wn(kid, human)",,"answer: entailment
+relations: { entails(kid, human) }","isa_wn(kid, human)",,"answer: entailment
+relations: { entails(kid, human) }","isa_wn(kid, human)",
+2543017787.jpg#4r1e,snli,train,A child rides a swing.,A kid is playing,entailment,2,TRUE,,"(child, kid)","(child, kid)",,"(child, kid)",FALSE,,FALSE,,TRUE,,"answer: entailment
+relations: { entails(child, kid), entails(ride a swing, play) }","isa_wn(child, kid); isa_wn(ride a swing, play)",,"answer: non-entailment
+
+explanation: While ""child"" and ""kid"" are closely related terms, the premise only states that a child rides a swing. This does not entail that the child is playing. Riding a swing could be a solitary, mechanical action without the element of play. The hypothesis introduces ""playing,"" which is not necessarily implied by the premise. Additionally, the premise uses ""rides"" (present tense) while the hypothesis uses ""is playing"" (present progressive), but the more fundamental issue is that riding a swing does not logically entail playing.",NO_RELATION,,"answer: entailment
+relations: { entails(child, kid), entails(ride swing, play) }","isa_wn(child, kid); isa_wn(ride swing, play)",,"answer: entailment  
+relations: { entails(child, kid), entails(ride swing, play) }","isa_wn(child, kid); isa_wn(ride swing, play)",,"answer: entailment
+relations: { entails(child, kid), entails(ride a swing, play) }","isa_wn(child, kid); isa_wn(ride a swing, play)",,"answer: non-entailment
+
+explanation: While ""child"" entails ""kid"", the premise states that a child ""rides a swing,"" which describes a specific activity. The hypothesis claims the child ""is playing,"" which is a different predicate. Riding a swing may or may not constitute ""playing"" depending on context and interpretation—it could be a mechanical activity without playful intent. The premise does not provide sufficient information to conclude that the activity constitutes playing.
+
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(child, kid), entails(ride swing, play) }","isa_wn(child, kid); isa_wn(ride swing, play)",,"answer: entailment  
+relations: { entails(child, kid), entails(ride swing, play) }","isa_wn(child, kid); isa_wn(ride swing, play)",
+2665904080.jpg#1r1e,snli,dev,A young puppy suckles from his mother.,A young puppy lays at it's mothers stomach.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,answer: non-entailment,NO_RELATION,,"answer: non-entailment
+
+relations: { }
+
+explanation: While both sentences describe a young puppy and its mother, the premise states that the puppy ""suckles from"" (i.e., feeds from) its mother, whereas the hypothesis claims the puppy ""lays at"" its mother's stomach. These are different actions with different implications. Suckling does not necessarily entail that the puppy is laying down at the mother's stomach - the puppy could be suckling while in other positions. The hypothesis adds a specific positional claim (laying at the stomach) that is not logically required by the premise.",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: non-entailment
+
+explanation: While the premise establishes that a young puppy suckles from its mother, this does not entail that the puppy lays at its mother's stomach. Suckling is a nursing behavior that could occur in various positions and contexts. The hypothesis makes a specific claim about the puppy's physical position (laying at the mother's stomach) that is not necessarily true just because suckling occurs. The premise does not provide information about the puppy's posture or exact positioning relative to the mother.
+
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment  
+relations: { entails(suckling, lying) }","isa_wn(suckling, lying)",
+2680990587.jpg#3r1e,snli,train,One boy is pushing another boy on a swing.,One human pushing another.,entailment,2,TRUE,,"(boy, human)","(boy, human)",,"(boy, human)",TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(boy, human) }","isa_wn(boy, human)",,"answer: entailment
+relations: { entails(boy, human), entails(push, push) }
+
+Wait, let me reconsider. The relation entails(push, push) is trivial and doesn't need to be stated.
+
+answer: entailment
+relations: { entails(boy, human) }","isa_wn(boy, human); isa_wn(push, push); isa_wn(push, push); isa_wn(boy, human)",,"answer: entailment
+relations: { entails(boy, human) }","isa_wn(boy, human)",,"**answer:** entailment  
+**relations:** { entails(boy, human) }","isa_wn(boy, human)",,"answer: entailment
+relations: { entails(boy, human) }","isa_wn(boy, human)",,"answer: entailment
+relations: { entails(boy, human), entails(push, push) }
+
+Actually, let me reconsider. The relation entails(push, push) is trivial and unnecessary.
+
+answer: entailment
+relations: { entails(boy, human) }","isa_wn(boy, human); isa_wn(push, push); isa_wn(push, push); isa_wn(boy, human)",,"answer: entailment
+relations: { entails(boy, human) }","isa_wn(boy, human)",,"answer: entailment  
+relations: { entails(boy, human) }","isa_wn(boy, human)",
+2744856447.jpg#3r1e,snli,dev,An Asian young man is drinking out of a metal cup.,The young man is drinking a liquid.,entailment,2,TRUE,,NO_RELATION,,NO_RELATION,NO_RELATION,,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(metal cup, cup), entails(cup, container) }","isa_wn(metal cup, cup); isa_wn(cup, container)",,"answer: entailment
+relations: { entails(drink, consume liquid) }","isa_wn(drink, consume liquid)",,"answer: entailment
+relations: { entails(metal cup, container), entails(drink, consume liquid) }","isa_wn(metal cup, container); isa_wn(drink, consume liquid)",,"**answer:** entailment  
+**relations:** { entails(asian young man, young man), entails(drinking, liquid) }","isa_wn(asian young man, young man); isa_wn(drinking, liquid)",,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(drink out of cup, drink liquid) }","isa_wn(drink out of cup, drink liquid)",,"answer: entailment
+relations: { entails(cup, liquid container), entails(drink out of, ingest) }
+
+*Explanation: The premise states the man is drinking out of a cup. By definition, a cup is a container used to hold liquids, and the act of drinking out of such a vessel entails that the person is consuming/ingesting a liquid.*","isa_wn(cup, liquid container); isa_wn(drink out of, ingest)",,"answer: entailment  
+relations: { entails(drink, liquid) }","isa_wn(drink, liquid)",
+2809,sick,train,A cartoon airplane is landing,An animated airplane is landing,entailment,2,TRUE,,"(cartoon, animated)",,"(cartoon, animated)","(cartoon, animated)",,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(cartoon, animated) }","isa_wn(cartoon, animated)",,"answer: entailment
+relations: { entails(cartoon, animated) }","isa_wn(cartoon, animated)",,"answer: entailment
+relations: { entails(cartoon, animated) }","isa_wn(cartoon, animated)",,"answer: entailment  
+relations: { entails(cartoon airplane, animated airplane) }","isa_wn(cartoon airplane, animated airplane)",,"answer: entailment
+relations: { entails(cartoon, animated) }","isa_wn(cartoon, animated)",,"answer: entailment
+relations: { entails(cartoon, animated) }","isa_wn(cartoon, animated)",,"answer: entailment
+relations: { entails(cartoon, animated) }","isa_wn(cartoon, animated)",,"answer: entailment  
+relations: { entails(cartoon, animated) }","isa_wn(cartoon, animated)",
+281271503.jpg#4r1e,snli,test,A man in a bright yellow shirt juggles while riding a unicycle.,Man performs a juggling act on a unicycle.,entailment,3,TRUE,,,NO_RELATION,NO_RELATION,NO_RELATION,,,,FALSE,FALSE,TRUE,"answer: entailment
+relations: { entails(juggle, perform juggling act), entails(riding a unicycle, on a unicycle) }","isa_wn(juggle, perform juggling act); isa_wn(riding a unicycle, on a unicycle)",,"answer: entailment
+relations: { entails(juggle, juggling act) }","isa_wn(juggle, juggling act)",,"answer: entailment
+relations: { entails(juggle, perform juggling act) }","isa_wn(juggle, perform juggling act)",,"answer: entailment  
+relations: { entails(juggle, perform juggling act) }","isa_wn(juggle, perform juggling act)",,"answer: entailment
+relations: { entails(juggles, performs a juggling act), entails(riding a unicycle, on a unicycle) }","isa_wn(juggles, performs a juggling act); isa_wn(riding a unicycle, on a unicycle)",,"answer: entailment
+relations: { entails(juggle, juggling act), entails(ride, perform) }","isa_wn(juggle, juggling act); isa_wn(ride, perform)",,"answer: entailment
+relations: { entails(juggle, perform juggling act) }","isa_wn(juggle, perform juggling act)",,"**answer:** entailment  
+**relations:** { entails(juggle, juggling act) }","isa_wn(juggle, juggling act)",
+2864340145.jpg#2r1e,snli,dev,A black dog walking through water.,The water has a black dog walking through it.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The premise states that a black dog is walking through water. The hypothesis rephrases this same situation by describing the water as having a black dog walking through it. This is a logical rearrangement of the same semantic content without requiring any non-trivial lexical entailments. The noun phrases ""a black dog"" and ""water"" remain the same, and ""walking through"" expresses the same spatial relationship in both sentences, just from different perspectives.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,
+2898,sick,dev,The man is lifting barbells,The man is lifting weights,entailment,2,TRUE,,"(barbell, weight)","(barbell, weight)","(barbell, weight)",,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(barbell, weight) }","isa_wn(barbell, weight)",,"answer: entailment
+relations: { entails(barbell, weight) }","isa_wn(barbell, weight)",,"answer: entailment
+relations: { entails(barbell, weight) }","isa_wn(barbell, weight)",,"answer: entailment
+relations: { entails(barbell, weight) }","isa_wn(barbell, weight)",,"answer: entailment  
+relations: { entails(barbell, weight) }","isa_wn(barbell, weight)",,"answer: entailment
+relations: { entails(barbell, weight) }","isa_wn(barbell, weight)",,"answer: entailment
+relations: { entails(barbell, weight) }","isa_wn(barbell, weight)",,"answer: entailment  
+relations: {entails(barbell, weight)}","isa_wn(barbell, weight)",
+303607405.jpg#4r3e,snli,train,a dog shakes dry.,A dog is wet.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(shake dry, wet) }","isa_wn(shake dry, wet)",,"answer: non-entailment
+
+relations: { }
+
+explanation: The premise states that a dog shakes dry, which describes an action the dog is performing. However, this does not entail that the dog is wet. While shaking dry is often performed by wet dogs, the action of shaking dry by itself does not logically necessitate that the dog is currently wet—a dog might shake for other reasons, or might have already dried. The premise describes a behavior but does not establish the dog's state of wetness.",NO_RELATION,,answer: non-entailment,NO_RELATION,,answer: non-entailment,NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: non-entailment
+
+explanation: The premise states that a dog shakes dry, which describes an action the dog is performing. However, this does not entail that the dog is wet. While it is possible that a dog might shake dry after being wet, the premise does not explicitly state or necessarily imply that the dog is currently wet. A dog could shake dry for other reasons, or ""shakes dry"" could simply describe the manner of shaking without confirming a wet state. Therefore, the hypothesis does not necessarily follow from the premise.
+
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: non-entailment
+relations: { }",NO_RELATION,
+3046190891.jpg#2r1e,snli,test,A surfer is performing a jumping stunt in the ocean.,A person in the water.,entailment,2,TRUE,,"(ocean, water); (surfer, person)",,"(ocean, water); (surfer, person)","(ocean, water); (surfer, person)",,TRUE,TRUE,,,TRUE,"answer: non-entailment
+relations: { }",NO_RELATION,,"answer: non-entailment
+
+explanation: While the premise describes a surfer performing an action in the ocean, the hypothesis states ""A person in the water"" which is incomplete and does not clearly express a full proposition. More importantly, the premise does not entail that a person is simply ""in the water"" — it entails that a surfer is performing a jumping stunt in the ocean. The hypothesis lacks the action component (performing/jumping) that is central to the premise. Additionally, ""in the water"" is weaker than ""in the ocean"" in terms of specificity, but the main issue is that the hypothesis does not capture the key predicate from the premise.",NO_RELATION,,"answer: entailment
+relations: { entails(surfer, person), entails(ocean, water) }","isa_wn(surfer, person); isa_wn(ocean, water)",,"answer: entailment
+relations: { entails(surfer, person), entails(ocean, water) }","isa_wn(surfer, person); isa_wn(ocean, water)",,"answer: entailment
+relations: { entails(surfer, person), entails(ocean, water) }","isa_wn(surfer, person); isa_wn(ocean, water)",,"answer: entailment
+relations: { entails(surfer, person), entails(ocean, water) }","isa_wn(surfer, person); isa_wn(ocean, water)",,"answer: entailment
+relations: { entails(surfer, person), entails(ocean, water) }","isa_wn(surfer, person); isa_wn(ocean, water)",,"answer: entailment  
+relations: { entails(surfer, person), entails(ocean, water) }","isa_wn(surfer, person); isa_wn(ocean, water)",
+3054989420.jpg#0r1e,snli,dev,Two children throw dead leaves into the air around them.,The children are outside.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,answer: non-entailment,NO_RELATION,,"answer: non-entailment
+
+relations: { }
+
+explanation: While the premise describes children throwing dead leaves into the air, this action does not necessarily entail that they are outside. Children could be throwing dead leaves indoors (e.g., in a room with dead leaves collected inside, or in a greenhouse). The premise describes an activity involving dead leaves but does not explicitly state or necessarily imply an outdoor location.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(throw dead leaf into air, be outside) }","isa_wn(throw dead leaf into air, be outside)",,"answer: entailment
+relations: { entails(dead leaf, item found outdoors) }","isa_wn(dead leaf, item found outdoors)",,answer: non-entailment,NO_RELATION,
+3101378069.jpg#4r1e,snli,dev,A lady rows a canoe filled with things.,A woman rows a small boat loaded with items.,entailment,3,TRUE,,,"(canoe, small boat); (lady, woman); (filled, loaded); (thing, item)","(canoe, small boat); (filled, loaded); (lady, woman); (thing, item)","(canoe, small boat); (lady, woman); (thing, item); (filled, loaded)",,,,FALSE,FALSE,FALSE,"answer: entailment
+relations: { entails(lady, woman), entails(canoe, small boat), entails(filled with things, loaded with items) }","isa_wn(lady, woman); isa_wn(canoe, small boat); isa_wn(filled with things, loaded with items)",,"answer: entailment
+relations: { entails(lady, woman), entails(canoe, small boat), entails(thing, item) }","isa_wn(lady, woman); isa_wn(canoe, small boat); isa_wn(thing, item)",,"answer: entailment
+relations: { entails(lady, woman), entails(canoe, small boat), entails(thing, item) }","isa_wn(lady, woman); isa_wn(canoe, small boat); isa_wn(thing, item)",,"answer: entailment  
+relations: { entailed(lady, woman), entails(canoe, small boat), entails(thing, item), entails(filled, loaded) }","isa_wn(canoe, small boat); isa_wn(thing, item); isa_wn(filled, loaded)",,"answer: entailment
+relations: { entails(lady, woman), entails(canoe, small boat), entails(filled with things, loaded with items) }","isa_wn(lady, woman); isa_wn(canoe, small boat); isa_wn(filled with things, loaded with items)",,"answer: entailment
+relations: { entails(lady, woman), entails(canoe, small boat), entails(thing, item) }","isa_wn(lady, woman); isa_wn(canoe, small boat); isa_wn(thing, item)",,"answer: entailment
+relations: { entails(lady, woman), entails(canoe, small boat), entails(thing, item) }","isa_wn(lady, woman); isa_wn(canoe, small boat); isa_wn(thing, item)",,"answer: entailment
+relations: { entails(lady, woman), entails(canoe, small boat), entails(filled, loaded), entails(thing, item) }","isa_wn(lady, woman); isa_wn(canoe, small boat); isa_wn(filled, loaded); isa_wn(thing, item)",
+3134092148.jpg#3r2e,snli,train,A man surfing a wave.,A man catches a wave.,entailment,3,TRUE,,,NO_RELATION,NO_RELATION,NO_RELATION,,,,TRUE,FALSE,FALSE,answer: non-entailment,NO_RELATION,,"answer: non-entailment
+
+explanation: The premise states that a man is surfing a wave, which means he is riding on the wave. The hypothesis states that a man catches a wave, which means he is acquiring or seizing the wave. While these actions both involve a man and a wave, ""surfing"" and ""catching"" are distinct actions. Surfing a wave does not necessarily entail catching a wave - a surfer typically catches a wave first and then surfs it, but the premise only describes the surfing action, not the catching action. Therefore, the premise does not entail the hypothesis.",NO_RELATION,,"answer: entailment
+relations: { entails(surf, catch) }","isa_wn(surf, catch)",,"answer: entailment  
+relations: { entails(surf, catch) }","isa_wn(surf, catch)",,"answer: entailment
+relations: { entails(surf, catch a wave) }","isa_wn(surf, catch a wave)",,"answer: entailment
+relations: { entails(surf, catch) }
+
+Explanation: The premise states that a man is surfing a wave. Surfing a wave entails catching a wave, as surfing necessarily involves catching and riding a wave. The lexical relation captures that ""surf"" (as a verb meaning to ride on a wave) is a type of ""catch"" (as a verb meaning to get onto a wave).","isa_wn(surf, catch)",,answer: non-entailment,NO_RELATION,,"answer: entailment  
+relations: { entails(surf, catch) }","isa_wn(surf, catch)",
+3168293517.jpg#2r1e,snli,dev,A little boy in a blue shirt holding a toy.,Boy dressed in blue holds a toy.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment  
+relations: { entails(in a blue shirt, dressed in blue), entails(holding, holds) }","isa_wn(in a blue shirt, dressed in blue); isa_wn(holding, holds)",,"answer: entailment
+relations: { entails(little boy, boy) }","isa_wn(little boy, boy)",,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(in a blue shirt, dressed in blue) }","isa_wn(in a blue shirt, dressed in blue)",,"answer: entailment
+relations: { entails(little boy, boy) }","isa_wn(little boy, boy)",,"answer: entailment
+relations: { entails(little boy, boy) }","isa_wn(little boy, boy)",,"answer: entailment  
+relations: { entails(little boy, boy), entails(blue shirt, dressed in blue) }","isa_wn(little boy, boy); isa_wn(blue shirt, dressed in blue)",
+3232994074.jpg#4r1e,snli,dev,A man and child working on a puzzle.,An adult and a kid are engaged in an activity.,entailment,3,TRUE,,,"(child, kid); (man, adult)","(child, kid); (man, adult)","(man, adult); (child, kid)",,,,FALSE,FALSE,FALSE,"answer: entailment  
+relations: { entails(man, adult), entails(child, kid), entails(working on a puzzle, be engaged in an activity) }","isa_wn(man, adult); isa_wn(child, kid); isa_wn(working on a puzzle, be engaged in an activity)",,"answer: entailment
+relations: { entails(man, adult), entails(child, kid), entails(puzzle, activity) }","isa_wn(man, adult); isa_wn(child, kid); isa_wn(puzzle, activity)",,"answer: entailment
+relations: { entails(man, adult), entails(child, kid), entails(work on puzzle, engage in activity) }","isa_wn(man, adult); isa_wn(child, kid); isa_wn(work on puzzle, engage in activity)",,"**answer**: entailment  
+**relations**: {entails(man, adult), entails(child, kid)}","isa_wn(man, adult); isa_wn(child, kid)",,"answer: entailment
+relations: { entails(man, adult), entails(child, kid), entails(working on a puzzle, engaged in an activity) }","isa_wn(man, adult); isa_wn(child, kid); isa_wn(working on a puzzle, engaged in an activity)",,"answer: entailment
+relations: { entails(man, adult), entails(child, kid), entails(puzzle, activity), entails(work on, engage in) }","isa_wn(man, adult); isa_wn(child, kid); isa_wn(puzzle, activity); isa_wn(work on, engage in)",,"answer: entailment
+relations: { entails(man, adult), entails(child, kid), entails(work on puzzle, engage in activity) }","isa_wn(man, adult); isa_wn(child, kid); isa_wn(work on puzzle, engage in activity)",,"answer: entailment  
+relations: {entails(man, adult), entails(child, kid), entails(puzzle, activity), entails(work, engage)}","isa_wn(man, adult); isa_wn(child, kid); isa_wn(puzzle, activity); isa_wn(work, engage)",
+3246724744.jpg#0r1e,snli,dev,A young woman wearing a black shirt and black shorts jumps in the air at the beach.,A women in black at the beach.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(woman, women), entails(black shirt and black shorts, black) }","isa_wn(woman, women); isa_wn(black shirt and black shorts, black)",,"answer: non-entailment
+
+explanation: The premise describes a young woman performing an action (jumps in the air), while the hypothesis describes a woman in a static state at the beach. More critically, the hypothesis uses ""women"" (plural) while the premise refers to ""a young woman"" (singular). The premise does not entail that there are multiple women, nor does it entail that the woman is simply ""in black at the beach"" without the action component being part of the description. The number mismatch alone is sufficient to establish non-entailment.",NO_RELATION,,"answer: entailment
+relations: { entails(young woman, woman) }","isa_wn(young woman, woman)",,"answer: entailment  
+relations: { entails(black shirt and black shorts, black) }","isa_wn(black shirt and black shorts, black)",,"answer: entailment
+relations: { entails(woman, women) }","isa_wn(woman, women)",,"answer: non-entailment
+
+explanation: The hypothesis is incomplete or grammatically malformed (""A women in black at the beach"" lacks a main verb). However, even if we interpret it charitably as ""A woman in black is at the beach,"" there is a critical mismatch: the premise describes a dynamic action (jumps in the air), while the hypothesis only asserts a static state (is at the beach). The premise entails that the woman is at the beach, but the hypothesis as stated does not form a complete proposition that can be evaluated against the premise. Additionally, the use of ""women"" (plural) in the hypothesis contradicts the singular ""woman"" in the premise.",NO_RELATION,,"answer: entailment
+relations: { entails(young woman, woman) }","isa_wn(young woman, woman)",,"answer: entailment  
+relations: { entails(young woman, woman) }","isa_wn(young woman, woman)",
+3375549004.jpg#4r1e,snli,dev,Men walk in line carrying things.,"While carrying their load, the men walked one behind the other.",entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,FALSE,,FALSE,,"answer: entailment
+relations: { entails(walk in line, walk one behind the other), entails(carry thing, carry load) }","isa_wn(walk in line, walk one behind the other); isa_wn(carry thing, carry load)",,"answer: entailment
+relations: { entails(walk in line, walk one behind the other), entails(carry, carry load) }","isa_wn(walk in line, walk one behind the other); isa_wn(carry, carry load)",,"answer: entailment
+relations: { entails(walk in line, walk one behind other), entails(thing, load) }","isa_wn(walk in line, walk one behind other); isa_wn(thing, load)",,"answer: entailment  
+relations: { entails(thing, load) }","isa_wn(thing, load)",,"answer: entailment
+relations: { entails(in line, one behind the other), entails(carrying things, carrying their load) }","isa_wn(in line, one behind the other); isa_wn(carrying things, carrying their load)",,"answer: entailment
+relations: { entails(walk in line, walk one behind the other), entails(thing, load), entails(carry, carry) }
+
+Wait, let me reconsider this more carefully.
+
+The premise states: ""Men walk in line carrying things.""
+The hypothesis states: ""While carrying their load, the men walked one behind the other.""
+
+Key observations:
+- ""walk in line"" entails ""walk one behind the other"" (being in a line means being positioned one after another)
+- ""things"" entails ""load"" (things being carried constitute a load)
+- The tense changes from present to past, but this doesn't affect entailment in terms of logical content
+- ""carrying things"" in the premise supports ""while carrying their load"" in the hypothesis
+
+answer: entailment
+relations: { entails(walk in line, walk one behind the other), entails(thing, load) }","isa_wn(walk in line, walk one behind the other); isa_wn(thing, load); isa_wn(carry, carry); isa_wn(walk in line, walk one behind the other); isa_wn(thing, load)",,"answer: entailment
+relations: { entails(walk in line, walk one behind the other), entails(thing, load) }","isa_wn(walk in line, walk one behind the other); isa_wn(thing, load)",,"answer: entailment  
+relations: { entails(line, one behind the other), entails(thing, load) }","isa_wn(line, one behind the other); isa_wn(thing, load)",
+3383037991.jpg#3r1e,snli,dev,A dog looks content sitting on a bed after ripping up some paper,a dog sitting on a bed after ripping up paper.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed from the premise without requiring any non-trivial lexical relations. The premise describes a dog that is sitting on a bed after ripping up paper, and the hypothesis simply states that a dog is sitting on a bed after ripping up paper. The additional detail in the premise (that the dog ""looks content"") does not contradict or negate the hypothesis; it merely adds descriptive information. All the core elements of the hypothesis are directly present in the premise.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed from the premise without requiring any non-trivial lexical relations. The premise states that ""A dog looks content sitting on a bed after ripping up some paper,"" which directly affirms that a dog is sitting on a bed after ripping up paper. The hypothesis simply removes the descriptive detail about the dog looking content, retaining all the essential information about the dog's actions and location. No specialized lexical entailments are needed to explain this inference.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,
+3424908564.jpg#1r1e,snli,dev,A woman with red-hair and wearing a black tank top and short jeans shorts appears to be yelling.,A woman with red-hair screams.,entailment,3,TRUE,,,"(yell, scream)","(yell, scream)","(yell, scream)",,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(appear to be yelling, scream) }","isa_wn(appear to be yelling, scream)",,"answer: entailment
+relations: { entails(yell, scream) }","isa_wn(yell, scream)",,"answer: entailment
+relations: { entails(yell, scream) }","isa_wn(yell, scream)",,"answer: entailment
+relations: { entails(yell, scream) }","isa_wn(yell, scream)",,"answer: entailment
+relations: { entails(appear to be yelling, scream) }","isa_wn(appear to be yelling, scream)",,"answer: entailment
+relations: { entails(yell, scream) }","isa_wn(yell, scream)",,"answer: entailment
+relations: { entails(yell, scream) }","isa_wn(yell, scream)",,"answer: entailment  
+relations: { entails(yell, scream) }","isa_wn(yell, scream)",
+3440104178.jpg#4r1e,snli,dev,A dog with big ears holds a ball in his mouth.,The dog has big ears.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis follows directly from the premise without requiring any non-trivial lexical entailment relations. The premise states that ""a dog with big ears"" has this property, and the hypothesis simply asserts that ""the dog has big ears."" This is a direct logical consequence of the premise—no semantic bridging through lexical entailment is needed.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,
+3447155358.jpg#3r1e,snli,dev,A little girl in a red flowered dress with a tennis racket.,A little girl in red.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed from the premise without requiring non-trivial lexical relations. The premise describes ""a little girl in a red flowered dress with a tennis racket,"" which necessarily includes a little girl wearing something red (the red flowered dress). The hypothesis simply states ""a little girl in red,"" which is a more general description that follows directly from the premise. No lexical entailment relations are needed because this follows from logical containment rather than from semantic relations between different words or phrases.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"**answer:** entailment  
+**relations:** { entails(red flowered dress, red) }","isa_wn(red flowered dress, red)",,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"**answer:** entailment  
+**relations:** { entails(red flowered dress, red) }","isa_wn(red flowered dress, red)",
+3584860179.jpg#1r1e,snli,dev,An old man is sitting in a chair outside a colorfully painted building.,Elderly man is sitting on a chair in outside of a building,entailment,2,TRUE,,"(old, elderly)",,"(old, elderly)","(old, elderly)",,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(old man, elderly man), entails(in a chair, on a chair), entails(colorfully painted building, building) }","isa_wn(old man, elderly man); isa_wn(in a chair, on a chair); isa_wn(colorfully painted building, building)",,"answer: entailment
+relations: { entails(old, elderly), entails(in, on) }","isa_wn(old, elderly); isa_wn(in, on)",,"answer: entailment
+relations: { entails(old man, elderly man) }","isa_wn(old man, elderly man)",,"answer: entailment  
+relations: { entails(old man, elderly man) }","isa_wn(old man, elderly man)",,"answer: entailment
+relations: { entails(old, elderly), entails(in a chair, on a chair) }","isa_wn(old, elderly); isa_wn(in a chair, on a chair)",,"answer: entailment
+relations: { entails(old, elderly), entails(in, on) }","isa_wn(old, elderly); isa_wn(in, on)",,"answer: entailment
+relations: { entails(old man, elderly man) }","isa_wn(old man, elderly man)",,"answer: entailment
+relations: { entails(old, elderly) }","isa_wn(old, elderly)",
+3612249030.jpg#1r1e,snli,dev,A boy is carrying a black body board across the sand.,The boy is holding an item.,entailment,2,TRUE,,"(body board, item); (carry, hold)",,"(body board, item); (carry, hold)","(body board, item); (carry, hold)",,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(body board, item), entails(carry, hold) }","isa_wn(body board, item); isa_wn(carry, hold)",,"answer: entailment
+relations: { entails(carry, hold), entails(body board, item) }","isa_wn(carry, hold); isa_wn(body board, item)",,"answer: entailment
+relations: { entails(body board, item) }","isa_wn(body board, item)",,"answer: entailment  
+relations: { entails(body board, item), entails(carry, hold) }","isa_wn(body board, item); isa_wn(carry, hold)",,"answer: entailment
+relations: { entails(body board, item) }","isa_wn(body board, item)",,"answer: entailment
+relations: { entails(carry, hold), entails(body board, item) }","isa_wn(carry, hold); isa_wn(body board, item)",,"answer: entailment
+relations: { entails(body board, item) }","isa_wn(body board, item)",,"answer: entailment  
+relations: {entails(carry, hold), entails(body board, item)}","isa_wn(carry, hold); isa_wn(body board, item)",
+3629664676.jpg#4r1e,snli,train,A dog pulling a rope.,The dog drags the rope.,entailment,2,TRUE,,"(pull, drag)","(pull, drag)",,"(pull, drag)",TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(pull, drag) }","isa_wn(pull, drag)",,"answer: entailment
+relations: { entails(pull, drag) }","isa_wn(pull, drag)",,"answer: entailment
+relations: { entails(pull, drag) }","isa_wn(pull, drag)",,"answer: entailment  
+relations: { entails(pull, drag) }","isa_wn(pull, drag)",,"answer: entailment
+relations: { entails(pull, drag) }","isa_wn(pull, drag)",,"answer: entailment
+relations: { entails(pull, drag) }","isa_wn(pull, drag)",,"answer: entailment
+relations: { entails(pull, drag) }","isa_wn(pull, drag)",,answer: non-entailment,NO_RELATION,
+3639967449.jpg#3r1e,snli,dev,Two boys sitting and eating ice cream.,The boys are eating.,entailment,2,TRUE,,NO_RELATION,,NO_RELATION,NO_RELATION,,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { entails(eating ice cream, eating) }","isa_wn(eating ice cream, eating)",,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis ""The boys are eating"" is directly entailed by the premise ""Two boys sitting and eating ice cream."" The premise explicitly states that the boys are eating ice cream, which means they are eating. No lexical entailment relations are needed because the entailment follows directly from the semantic content of the premise—eating ice cream is a specific instance of eating, and this relationship is captured by the explicit mention of the action ""eating"" in both sentences.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,
+3791591952.jpg#3r1e,snli,dev,Two entertainers on a stage performing acrobatic moves.,Two entertainers are performing acrobatics.,entailment,2,TRUE,,"(acrobatic move, acrobatics)","(acrobatic move, acrobatics)",,"(acrobatic move, acrobatics)",FALSE,,FALSE,,FALSE,,"answer: entailment
+relations: { entails(acrobatic move, acrobatics) }","isa_wn(acrobatic move, acrobatics)",,"answer: entailment
+relations: { entails(acrobatic move, acrobatics) }","isa_wn(acrobatic move, acrobatics)",,"answer: entailment
+relations: { entails(acrobatic move, acrobatics) }","isa_wn(acrobatic move, acrobatics)",,"answer: entailment  
+relations: { entails(acrobatic move, acrobatics) }","isa_wn(acrobatic move, acrobatics)",,"answer: entailment
+relations: { entails(acrobatic move, acrobatics) }","isa_wn(acrobatic move, acrobatics)",,"answer: entailment
+relations: { entails(acrobatic move, acrobatic) }","isa_wn(acrobatic move, acrobatic)",,"answer: entailment
+relations: { entails(acrobatic move, acrobatics) }","isa_wn(acrobatic move, acrobatics)",,"answer: entailment  
+relations: { entails(acrobatic move, acrobatics) }","isa_wn(acrobatic move, acrobatics)",
+3794595430.jpg#3r1e,snli,dev,A woman stands at a podium with a slide show behind her.,A woman is standing at a podium.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+Explanation: The hypothesis is entailed from the premise without requiring any non-trivial lexical entailment relations. The premise states that ""a woman stands at a podium with a slide show behind her,"" which directly entails that ""a woman is standing at a podium."" The only difference between the premise and hypothesis is that the hypothesis omits the detail about the slide show, but this is a simple matter of dropping non-essential information, not requiring any lexical bridge.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: {}",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed directly from the premise without requiring any non-trivial lexical relations. The premise states ""A woman stands at a podium with a slide show behind her,"" which explicitly contains all the information needed for the hypothesis ""A woman is standing at a podium."" The additional detail about the slide show in the premise does not negate or contradict the core assertion, and ""stands"" and ""is standing"" are the same verb in different grammatical forms. The entailment follows from simple logical containment of the hypothesis content within the premise.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,
+381750411.jpg#0r1e,snli,dev,Man dressed in business casual attire playing the saxophone with the rest of a band.,Man plays a woodwind instrument.,entailment,3,TRUE,,,"(saxophone, woodwind instrument)","(saxophone, woodwind instrument)","(saxophone, woodwind instrument)",,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(saxophone, woodwind instrument) }","isa_wn(saxophone, woodwind instrument)",,"answer: entailment
+relations: { entails(saxophone, woodwind instrument) }","isa_wn(saxophone, woodwind instrument)",,"answer: entailment
+relations: { entails(saxophone, woodwind instrument) }","isa_wn(saxophone, woodwind instrument)",,"answer: entailment
+relations: { entails(saxophone, woodwind instrument) }","isa_wn(saxophone, woodwind instrument)",,"answer: entailment
+relations: { entails(saxophone, woodwind instrument) }","isa_wn(saxophone, woodwind instrument)",,"answer: entailment
+relations: { entails(saxophone, woodwind instrument) }","isa_wn(saxophone, woodwind instrument)",,"answer: entailment
+relations: { entails(saxophone, woodwind instrument) }","isa_wn(saxophone, woodwind instrument)",,"answer: entailment
+relations: { entails(saxophone, woodwind instrument) }","isa_wn(saxophone, woodwind instrument)",
+3843254402.jpg#0r1e,snli,test,A man in a white striped shirt and blue jeans using a water hose to spray water on the ground of concrete ruins.Fo.,A man is spraying water on concrete.,entailment,2,TRUE,,NO_RELATION,,NO_RELATION,NO_RELATION,,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(ground of concrete ruins, concrete), entails(use water hose, spray water) }","isa_wn(ground of concrete ruins, concrete); isa_wn(use water hose, spray water)",,"answer: entailment
+relations: { entails(water hose, spray), entails(concrete ruins, concrete) }","isa_wn(water hose, spray); isa_wn(concrete ruins, concrete)",,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { entails(concrete ruins, concrete) }","isa_wn(concrete ruins, concrete)",,"answer: entailment
+relations: { entails(water hose, hose), entails(spray water on the ground, spray water on concrete), entails(concrete ruins, concrete) }","isa_wn(water hose, hose); isa_wn(spray water on the ground, spray water on concrete); isa_wn(concrete ruins, concrete)",,"answer: entailment
+relations: { entails(water hose, spray), entails(ground of concrete ruins, concrete) }","isa_wn(water hose, spray); isa_wn(ground of concrete ruins, concrete)",,"answer: entailment
+relations: { entails(ruin, concrete) }","isa_wn(ruin, concrete)",,"answer: entailment  
+relations: { entails(use water hose spray water, spray water), entails(concrete ruins, concrete) }","isa_wn(use water hose spray water, spray water); isa_wn(concrete ruins, concrete)",
+3913959754.jpg#1r1e,snli,dev,"A woman is standing near the water, looks to be throwing something.",A woman is close to the water.,entailment,3,TRUE,,,"(near, close)","(near, close)","(near, close)",,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(near, close) }","isa_wn(near, close)",,"answer: entailment
+relations: { entails(near, close to) }","isa_wn(near, close to)",,"answer: entailment
+relations: { entails(stand near, be close to) }","isa_wn(stand near, be close to)",,"answer: entailment
+relations: { entails(near water, close water) }","isa_wn(near water, close water)",,"answer: entailment
+relations: { entails(near, close) }","isa_wn(near, close)",,"answer: entailment
+relations: { entails(near, close to) }","isa_wn(near, close to)",,"answer: entailment
+relations: { entails(near, close) }","isa_wn(near, close)",,"answer: entailment  
+relations: { entails(near, close) }","isa_wn(near, close)",
+4000008650.jpg#2r1e,snli,train,A woman plays the tuba and another plays the cello on the street.,People playing instruments on the street.,entailment,3,TRUE,,,"(cello, instrument); (tuba, instrument)","(cello, instrument); (tuba, instrument)","(cello, instrument); (tuba, instrument)",,,,FALSE,FALSE,TRUE,"answer: entailment
+relations: { entails(woman, person), entails(tuba, instrument), entails(cello, instrument), entails(plays, playing) }","isa_wn(woman, person); isa_wn(tuba, instrument); isa_wn(cello, instrument); isa_wn(plays, playing)",,"answer: entailment
+relations: { entails(woman, person), entails(tuba, instrument), entails(cello, instrument), entails(play, playing) }","isa_wn(woman, person); isa_wn(tuba, instrument); isa_wn(cello, instrument); isa_wn(play, playing)",,"answer: entailment
+relations: { entails(tuba, instrument), entails(cello, instrument) }","isa_wn(tuba, instrument); isa_wn(cello, instrument)",,"answer: entailment  
+relations: { entails(tuba, instrument), entails(cello, instrument) }","isa_wn(tuba, instrument); isa_wn(cello, instrument)",,"answer: entailment
+relations: { entails(tuba, instrument), entails(cello, instrument), entails(woman, person) }","isa_wn(tuba, instrument); isa_wn(cello, instrument); isa_wn(woman, person)",,"answer: entailment
+relations: { entails(woman, person), entails(tuba, instrument), entails(cello, instrument) }","isa_wn(woman, person); isa_wn(tuba, instrument); isa_wn(cello, instrument)",,"answer: entailment
+relations: { entails(woman, person), entails(tuba, instrument), entails(cello, instrument) }","isa_wn(woman, person); isa_wn(tuba, instrument); isa_wn(cello, instrument)",,"answer: entailment
+relations: { entails(woman, person), entails(tuba, instrument), entails(cello, instrument) }","isa_wn(woman, person); isa_wn(tuba, instrument); isa_wn(cello, instrument)",
+4019072184.jpg#4r1e,snli,dev,A man is rock climbing with protective rope.,A man is being secured.,entailment,2,TRUE,,NO_RELATION,,NO_RELATION,NO_RELATION,,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(protective rope, secured) }","isa_wn(protective rope, secured)",,"answer: non-entailment
+
+explanation: While the premise mentions rock climbing with protective rope, this does not logically entail that the man is being secured. The presence of protective rope indicates the availability of safety equipment, but it does not necessarily mean the rope is actively securing the man at the time described. The man could be rock climbing with rope present but not yet attached or in use. Therefore, the hypothesis does not necessarily follow from the premise.
+
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(rock climbing with protective rope, be secure) }","isa_wn(rock climbing with protective rope, be secure)",,"answer: entailment
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(protective rope, secure) }","isa_wn(protective rope, secure)",,"answer: entailment
+relations: { entails(rock climb, secure) }","isa_wn(rock climb, secure)",,"**answer:** entailment  
+
+**relations:** { entails(rock climb with protective rope, secured) }","isa_wn(rock climb with protective rope, secured)",
+4066,sick,dev,The man is hurling knives at a tree,The man is throwing knives at a tree,entailment,2,TRUE,,"(hurl, throw)","(hurl, throw)",,"(hurl, throw)",TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(hurl, throw) }","isa_wn(hurl, throw)",,"answer: entailment
+relations: { entails(hurl, throw) }","isa_wn(hurl, throw)",,"answer: entailment
+relations: { entails(hurl, throw) }","isa_wn(hurl, throw)",,"answer: entailment  
+relations: { entails(hurl, throw) }","isa_wn(hurl, throw)",,"answer: entailment
+relations: { entails(hurl, throw) }","isa_wn(hurl, throw)",,"answer: entailment
+relations: { entails(hurl, throw) }","isa_wn(hurl, throw)",,"answer: entailment
+relations: { entails(hurl, throw) }","isa_wn(hurl, throw)",,"answer: entailment  
+relations: { entails(hurl, throw) }","isa_wn(hurl, throw)",
+4183662919.jpg#3r1e,snli,test,A child plays with her father's boots.,A child is playing.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed from the premise without requiring any non-trivial lexical relations. The premise states that a child plays with boots, which directly entails that a child is playing. The difference between ""plays"" and ""is playing"" is merely a grammatical aspect distinction (simple present vs. present continuous), not a lexical one that requires a separate entailment relation.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis ""A child is playing"" is entailed from the premise ""A child plays with her father's boots"" without requiring any non-trivial lexical entailments. The premise explicitly states that a child plays, and the hypothesis is simply a less specific version of this statement (removing the details about what the child is playing with). The verb ""plays"" in the premise directly corresponds to ""is playing"" in the hypothesis, which are the same action in different tenses/aspects.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,
+4291704682.jpg#3r1e,snli,train,There are two people sweeping a sidewalk in this picture.,There are a couple of people cleaning the path.,entailment,2,TRUE,,"(sidewalk, path); (sweep, clean); (two, couple)",,"(sidewalk, path); (sweep, clean); (two, couple)","(sidewalk, path); (sweep, clean); (two, couple)",,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(sweeping, cleaning), entails(sidewalk, path), entails(two, a couple) }","isa_wn(sweeping, cleaning); isa_wn(sidewalk, path); isa_wn(two, a couple)",,"answer: entailment
+relations: { entails(sweep, clean), entails(sidewalk, path) }","isa_wn(sweep, clean); isa_wn(sidewalk, path)",,"answer: entailment
+relations: { entails(sweep, clean), entails(sidewalk, path) }","isa_wn(sweep, clean); isa_wn(sidewalk, path)",,"answer: entailment  
+relations: { entails(sweep, clean), entails(sidewalk, path), entails(two people, couple) }","isa_wn(sweep, clean); isa_wn(sidewalk, path); isa_wn(two people, couple)",,"answer: entailment
+relations: { entails(sweep, clean), entails(sidewalk, path), entails(two, couple) }","isa_wn(sweep, clean); isa_wn(sidewalk, path); isa_wn(two, couple)",,"answer: entailment
+relations: { entails(sweep, clean), entails(sidewalk, path), entails(two, couple) }","isa_wn(sweep, clean); isa_wn(sidewalk, path); isa_wn(two, couple)",,"answer: entailment
+relations: { entails(sweep, clean), entails(sidewalk, path) }","isa_wn(sweep, clean); isa_wn(sidewalk, path)",,"answer: entailment  
+relations: {entails(two people, couple of people), entails(sweep sidewalk, clean path)}","isa_wn(two people, couple of people); isa_wn(sweep sidewalk, clean path)",
+4355004642.jpg#0r1e,snli,train,"A chef and his newest creation in process, being made in an old fashioned oven.",A chef creates.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(newest creation in process, create) }","isa_wn(newest creation in process, create)",,"answer: entailment
+relations: { entails(creation in process being made, create) }","isa_wn(creation in process being made, create)",,"answer: entailment
+relations: { entails(make, create) }","isa_wn(make, create)",,"answer: entailment  
+relations: { entails(make, create) }","isa_wn(make, create)",,"answer: entailment
+relations: { entails(newest creation in process, create), entails(being made, create) }","isa_wn(newest creation in process, create); isa_wn(being made, create)",,"answer: entailment
+relations: { entails(creation in process being made, create) }","isa_wn(creation in process being made, create)",,"answer: entailment
+relations: { entails(make, create) }","isa_wn(make, create)",,"answer: entailment
+relations: { entails(make, create) }","isa_wn(make, create)",
+4486280757.jpg#0r1e,snli,dev,A man in a black wetsuit with white shorts is windsurfing on a blue body of water with mountains in the background.,The man is near the water.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(windsurfing, near), entails(body of water, water) }","isa_wn(windsurfing, near); isa_wn(body of water, water)",,"answer: entailment
+relations: { entails(windsurf, be near water) }","isa_wn(windsurf, be near water)",,"answer: entailment
+relations: { entails(windsurfing, near water) }","isa_wn(windsurfing, near water)",,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(windsurf, be near water) }","isa_wn(windsurf, be near water)",,"answer: entailment
+relations: { entails(windsurfing, near water) }","isa_wn(windsurfing, near water)",,"answer: entailment
+relations: { entails(windsurf, be near water) }","isa_wn(windsurf, be near water)",,"answer: entailment  
+relations: { entails(body of water, water) }","isa_wn(body of water, water)",
+4494,sick,test,A girl is combing her hair,A girl is styling her hair,entailment,2,TRUE,,"(comb, style)","(comb, style)","(comb, style)",,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(combing hair, styling hair) }","isa_wn(combing hair, styling hair)",,"answer: entailment
+relations: { entails(comb, style) }","isa_wn(comb, style)",,"answer: entailment
+relations: { entails(comb, style) }","isa_wn(comb, style)",,"answer: entailment  
+relations: { entails(combing, styling) }","isa_wn(combing, styling)",,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(comb, style) }","isa_wn(comb, style)",,"answer: entailment
+relations: { entails(comb, style) }","isa_wn(comb, style)",,"answer: entailment  
+relations: { entails(combing hair, styling hair) }","isa_wn(combing hair, styling hair)",
+4501954896.jpg#2r1e,snli,test,Man jumping up in the air and splitting his legs with his mouth open.,A man is jumping.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis ""A man is jumping"" is directly entailed by the premise ""Man jumping up in the air and splitting his legs with his mouth open."" The premise explicitly states that a man is jumping, and all the additional details (jumping up in the air, splitting his legs, mouth open) are simply elaborations that do not negate or contradict the core assertion. No non-trivial lexical entailment relations are needed to explain this entailment, as the hypothesis is a straightforward simplification of what is already asserted in the premise.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { entails(jump up, jump) }","isa_wn(jump up, jump)",
+4569102627.jpg#2r1e,snli,test,Little girl with very curly hair drinking her cup of juice.,A girl is ingesting liquid.,entailment,2,TRUE,,"(drink, ingest); (juice, liquid)",,"(drink, ingest); (juice, liquid)","(drink, ingest); (juice, liquid)",,TRUE,TRUE,,,TRUE,"answer: entailment  
+relations: { entails(drink, ingest), entails(cup of juice, liquid) }","isa_wn(drink, ingest); isa_wn(cup of juice, liquid)",,"answer: entailment
+relations: { entails(juice, liquid), entails(drink, ingest) }","isa_wn(juice, liquid); isa_wn(drink, ingest)",,"answer: entailment
+relations: { entails(little girl, girl), entails(drink, ingest), entails(juice, liquid) }","isa_wn(little girl, girl); isa_wn(drink, ingest); isa_wn(juice, liquid)",,"answer: entailment  
+relations: { entails(drinking, ingesting), entails(juice, liquid) }","isa_wn(drinking, ingesting); isa_wn(juice, liquid)",,"answer: entailment
+relations: { entails(drink, ingest), entails(cup of juice, liquid) }","isa_wn(drink, ingest); isa_wn(cup of juice, liquid)",,"answer: entailment
+relations: { entails(little girl, girl), entails(juice, liquid), entails(drink, ingest) }","isa_wn(little girl, girl); isa_wn(juice, liquid); isa_wn(drink, ingest)",,"answer: entailment
+relations: { entails(little girl, girl), entails(drink, ingest), entails(juice, liquid) }","isa_wn(little girl, girl); isa_wn(drink, ingest); isa_wn(juice, liquid)",,"**answer:** entailment  
+**relations:** { entails(little girl, girl), entails(drink, ingest), entails(juice, liquid) }","isa_wn(little girl, girl); isa_wn(drink, ingest); isa_wn(juice, liquid)",
+4603247500.jpg#0r1e,snli,dev,A man in a white shirt is standing in a T-shirt booth.,A man standing in a booth.,entailment,2,TRUE,,NO_RELATION,,NO_RELATION,NO_RELATION,,TRUE,TRUE,,,TRUE,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed from the premise without requiring any non-trivial lexical entailment relations. The premise states that a man is standing in a T-shirt booth, and the hypothesis simply states that a man is standing in a booth. All the necessary information is present in the premise—the man, the standing action, and the booth. The additional details in the premise (white shirt, T-shirt booth specificity) do not create a barrier to entailment; they are simply more specific instantiations of the general claims in the hypothesis.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { entails(t-shirt booth, booth) }","isa_wn(t-shirt booth, booth)",,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is a simplified version of the premise that removes modifiers and descriptive details. The premise states ""A man in a white shirt is standing in a T-shirt booth,"" and the hypothesis states ""A man standing in a booth."" All the essential information in the hypothesis (a man, standing, in a booth) is present in the premise. No non-trivial lexical entailments are needed to explain this entailment, as it follows directly from the logical structure: if a man is standing in a T-shirt booth, then a man is standing in a booth.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { entails(T-shirt booth, booth) }","isa_wn(T-shirt booth, booth)",
+461139075.jpg#2r1e,snli,dev,A lady is standing up holing a lamp that is turned on.,A lady is holding a lit lamp.,entailment,2,TRUE,,"(turned on, lit)",,"(turned on, lit)","(turned on, lit)",,TRUE,FALSE,,,FALSE,"answer: entailment  
+relations: { entails(holing, holding), entails(turned on, lit) }","isa_wn(holing, holding); isa_wn(turned on, lit)",,"answer: entailment
+relations: { entails(turned on, lit) }","isa_wn(turned on, lit)",,"answer: entailment
+relations: { entails(lamp that is turned on, lit lamp) }","isa_wn(lamp that is turned on, lit lamp)",,"answer: entailment  
+relations: { entails(turned on lamp, lit lamp) }","isa_wn(turned on lamp, lit lamp)",,"answer: entailment
+relations: { entails(holing, holding), entails(turned on, lit) }","isa_wn(holing, holding); isa_wn(turned on, lit)",,"answer: entailment
+relations: { entails(turned on, lit) }","isa_wn(turned on, lit)",,"answer: entailment
+relations: { entails(turn on, light) }","isa_wn(turn on, light)",,"**Answer:** entailment  
+**Relations:**  
+{ entails(turned on, lit) }","isa_wn(turned on, lit)",
+4640148862.jpg#2r1e,snli,dev,A woman carrying a shopping bag in front of Fisher's Popcorn.,a woman is shopping by fisher's popcorn,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(carry shopping bag, shopping) }","isa_wn(carry shopping bag, shopping)",,answer: non-entailment,NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(carry shopping bag, shopping) }","isa_wn(carry shopping bag, shopping)",,answer: non-entailment,NO_RELATION,,answer: non-entailment,NO_RELATION,
+4648416380.jpg#0r1e,snli,dev,"Many people are listening to a concert, and TV crew is recording the audience reaction.",People are listening to a concert.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis follows directly from the premise without requiring any non-trivial lexical entailment relations. The premise states that ""Many people are listening to a concert,"" and the hypothesis states that ""People are listening to a concert."" The hypothesis is a direct simplification of the premise (removing the quantifier ""many"" and the additional clause about the TV crew), which does not require lexical bridging to establish entailment.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"**answer:** entailment  
+**relations:** { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,
+4661,sick,dev,A woman is slicing a potato,A woman is cutting a potato,entailment,3,TRUE,,,"(slice, cut)","(slice, cut)","(slice, cut)",,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(slice, cut) }","isa_wn(slice, cut)",,"answer: entailment
+relations: { entails(slice, cut) }","isa_wn(slice, cut)",,"answer: entailment
+relations: { entails(slice, cut) }","isa_wn(slice, cut)",,"answer: entailment  
+relations: { entails(slice, cut) }","isa_wn(slice, cut)",,"answer: entailment
+relations: { entails(slice, cut) }","isa_wn(slice, cut)",,"answer: entailment
+relations: { entails(slice, cut) }","isa_wn(slice, cut)",,"answer: entailment
+relations: { entails(slice, cut) }","isa_wn(slice, cut)",,"answer: entailment
+relations: { entails(slice, cut) }","isa_wn(slice, cut)",
+4718146904.jpg#2r1e,snli,dev,A man selling donuts to a customer during a world exhibition event held in the city of Angeles,A man selling donuts to a customer.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is a direct simplification of the premise. The premise describes a man selling donuts to a customer in a specific context (during a world exhibition event in Angeles), while the hypothesis describes the same core activity (a man selling donuts to a customer) without the contextual details. The entailment holds because removing additional contextual information (the time and location) does not negate the truth of the core statement. No non-trivial lexical entailment relations are needed to explain this entailment.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is a simplified version of the premise that removes contextual details (""during a world exhibition event held in the city of Angeles""). The core assertion in the premise—that a man is selling donuts to a customer—remains true in the hypothesis. No lexical entailment relations are needed because the entailment follows directly from the logical structure: if a proposition P with additional modifiers is true, then the core proposition without those modifiers is also true.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,
+4729746211.jpg#1r1e,snli,dev,A man in a hat is working with golden colored flowers.,"A man in a hat is working with flowers,",entailment,2,TRUE,,NO_RELATION,,NO_RELATION,NO_RELATION,,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed from the premise without requiring any non-trivial lexical relations. The premise states that a man in a hat is working with golden colored flowers, which necessarily means he is working with flowers. The fact that the flowers are golden colored is additional information that does not prevent the more general statement that he is working with flowers from being true. The core predicate and arguments remain the same between premise and hypothesis, with only the removal of a modifier (""golden colored"").",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed from the premise without requiring any non-trivial lexical relations. The premise states that a man in a hat is working with golden colored flowers. The hypothesis simply states that a man in a hat is working with flowers. Since golden colored flowers are a type of flowers, removing the color modifier ""golden colored"" does not break the entailment—if someone is working with golden colored flowers, they are necessarily working with flowers. This is a straightforward logical entailment that follows from the structure of the sentences without needing additional lexical mappings.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { entails(golden colored flowers, flowers) }","isa_wn(golden colored flowers, flowers)",
+4734,sick,dev,A man is fitting a silencer to a pistol,A man is applying a silencer to a gun,entailment,2,TRUE,,"(fit, apply); (pistol, gun)","(fit, apply); (pistol, gun)","(fit, apply); (pistol, gun)",,FALSE,TRUE,,FALSE,,,"answer: entailment
+relations: { entails(fit, apply), entails(pistol, gun) }","isa_wn(fit, apply); isa_wn(pistol, gun)",,"answer: entailment
+relations: { entails(pistol, gun), entails(fit, apply) }","isa_wn(pistol, gun); isa_wn(fit, apply)",,"answer: entailment
+relations: { entails(pistol, gun) }","isa_wn(pistol, gun)",,"**answer:** entailment  
+**relations:** { entails(fitting, applying), entails(pistol, gun) }","isa_wn(fitting, applying); isa_wn(pistol, gun)",,"answer: entailment
+relations: { entails(fit, apply), entails(pistol, gun) }","isa_wn(fit, apply); isa_wn(pistol, gun)",,"answer: entailment
+relations: { entails(fit, apply), entails(pistol, gun) }","isa_wn(fit, apply); isa_wn(pistol, gun)",,"answer: entailment
+relations: { entails(pistol, gun) }","isa_wn(pistol, gun)",,"answer: entailment
+relations: { entails(fitting, applying), entails(pistol, gun) }","isa_wn(fitting, applying); isa_wn(pistol, gun)",
+4740975956.jpg#4r1e,snli,dev,Tall man being stopped by an officer.,There is a tall man.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis ""There is a tall man"" directly follows from the premise ""Tall man being stopped by an officer"" without requiring any non-trivial lexical entailment relations. The premise asserts the existence of a tall man (as the subject of the action), which is sufficient to establish that there is a tall man, as stated in the hypothesis.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis ""There is a tall man"" simply asserts the existence of a tall man. The premise ""Tall man being stopped by an officer"" describes a situation involving a tall man, which necessarily entails that a tall man exists. No non-trivial lexical entailment relations are needed to establish this logical inference, as the hypothesis follows directly from the premise by extracting the existential claim about the tall man already present in the premise.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,
+4803960387.jpg#0r1e,snli,dev,A man wearing a white and blue shirt cooking corn on the cob while a different man buys a piece of corn.,A man is holding to some vegetables near another man.,entailment,3,TRUE,,,"(corn, vegetable)","(corn, vegetable)","(corn, vegetable)",,,,TRUE,TRUE,TRUE,answer: non-entailment,NO_RELATION,,"answer: entailment
+
+relations: { entails(corn, vegetable), entails(cooking, holding) }","isa_wn(corn, vegetable); isa_wn(cooking, holding)",,"answer: entailment
+relations: { entails(corn on the cob, vegetable) }","isa_wn(corn on the cob, vegetable)",,answer: non-entailment,NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(corn, vegetable), entails(cooking, hold), entails(buy, hold) }","isa_wn(corn, vegetable); isa_wn(cooking, hold); isa_wn(buy, hold)",,"answer: entailment
+relations: { entails(corn, vegetable) }","isa_wn(corn, vegetable)",,answer: non-entailment,NO_RELATION,
+4813609768.jpg#3r1e,snli,dev,A woman in a blue shirt stands with her hands on her hips.,The woman in the blue shirt is touching herself.,entailment,3,TRUE,,,NO_RELATION,NO_RELATION,NO_RELATION,,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(hands on hips, touching herself) }","isa_wn(hands on hips, touching herself)",,"answer: entailment
+relations: { entails(hands on hips, touch) }","isa_wn(hands on hips, touch)",,"answer: entailment
+relations: { entails(stand with hand on hip, touch self) }","isa_wn(stand with hand on hip, touch self)",,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(hands on her hips, touching herself) }","isa_wn(hands on her hips, touching herself)",,"answer: entailment
+relations: { entails(hand on hip, touch) }","isa_wn(hand on hip, touch)",,"answer: entailment
+relations: { entails(hands on hips, touch oneself) }","isa_wn(hands on hips, touch oneself)",,"answer: entailment
+relations: { entails(hands touching hips, touching herself) }","isa_wn(hands touching hips, touching herself)",
+4876043682.jpg#2r1e,snli,dev,A boy rides on a camel in a crowded area while talking on his cellphone.,A boy is riding an animal.,entailment,2,TRUE,,"(camel, animal)","(camel, animal)","(camel, animal)",,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(camel, animal) }","isa_wn(camel, animal)",,"answer: entailment
+relations: { entails(camel, animal) }","isa_wn(camel, animal)",,"answer: entailment
+relations: { entails(camel, animal) }","isa_wn(camel, animal)",,"answer: entailment  
+relations: { entails(camel, animal) }","isa_wn(camel, animal)",,"answer: entailment  
+relations: { entails(camel, animal) }","isa_wn(camel, animal)",,"answer: entailment
+relations: { entails(camel, animal) }","isa_wn(camel, animal)",,"answer: entailment
+relations: { entails(camel, animal) }","isa_wn(camel, animal)",,"answer: entailment  
+relations: {entails(camel, animal), entails(riding, ride)}","isa_wn(camel, animal); isa_wn(riding, ride)",
+4894267064.jpg#3r1e,snli,dev,2 woman walking down the street next to graffiti,The woman are by grafitti.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(next to, by), entails(graffiti, grafitti) }","isa_wn(next to, by); isa_wn(graffiti, grafitti)",,"answer: entailment
+relations: { entails(walking down the street, by), entails(graffiti, grafitti) }
+
+Wait, let me reconsider. The second relation violates the rules - ""graffiti"" and ""grafitti"" are the same word with different spelling/typo, not a lexical entailment relation.
+
+Let me re-evaluate:
+
+The premise states ""2 woman walking down the street next to graffiti""
+The hypothesis states ""The woman are by grafitti""
+
+Key observations:
+- ""walking down the street next to graffiti"" → being ""by graffiti"" (this follows logically)
+- ""graffiti"" in premise vs ""grafitti"" in hypothesis is a spelling variation, not a lexical entailment
+
+The entailment follows from the spatial relationship: if someone is walking next to graffiti, they are by graffiti. This is a logical consequence without requiring a non-trivial lexical bridge.
+
+answer: entailment
+relations: { }","isa_wn(walking down the street, by); isa_wn(graffiti, grafitti)",,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(walking down the street next to, by), entails(graffiti, grafitti) }","isa_wn(walking down the street next to, by); isa_wn(graffiti, grafitti)",,"answer: entailment
+relations: { entails(walking down street, by), entails(graffiti, graffiti) }
+
+Actually, let me reconsider this more carefully.
+
+The premise states: ""2 woman walking down the street next to graffiti""
+The hypothesis states: ""The woman are by graffiti""
+
+Breaking down the entailment:
+- ""2 woman"" entails ""woman"" (the hypothesis refers to the woman mentioned)
+- ""next to graffiti"" entails ""by graffiti"" (next to and by are synonymous spatial relations)
+- ""walking down the street next to graffiti"" describes a location that is consistent with ""by graffiti""
+
+answer: entailment
+relations: { entails(next to, by) }","isa_wn(walking down street, by); isa_wn(graffiti, graffiti); isa_wn(next to, by)",,"answer: entailment
+relations: { entails(woman, woman), entails(walking down, by) }","isa_wn(woman, woman); isa_wn(walking down, by)",,"**answer:** entailment  
+**relations:** { }",NO_RELATION,
+4909669888.jpg#2r1e,snli,dev,A Black woman on the street is talking on her cellphone.,A black woman is on her phone.,entailment,2,TRUE,,"(cellphone, phone)","(cellphone, phone)",,"(cellphone, phone)",FALSE,,FALSE,,TRUE,,"answer: entailment
+relations: { entails(talking on cellphone, on phone) }","isa_wn(talking on cellphone, on phone)",,"answer: entailment
+relations: { entails(cellphone, phone) }","isa_wn(cellphone, phone)",,"answer: entailment
+relations: { entails(cellphone, phone) }","isa_wn(cellphone, phone)",,"**answer:** entailment  
+**relations:** {entails(cellphone, phone)}","isa_wn(cellphone, phone)",,"answer: entailment
+relations: { entails(cellphone, phone) }","isa_wn(cellphone, phone)",,"answer: entailment
+relations: { entails(cellphone, phone) }","isa_wn(cellphone, phone)",,"answer: entailment
+relations: { entails(cellphone, phone) }","isa_wn(cellphone, phone)",,"answer: entailment
+relations: { entails(cellphone, phone) }","isa_wn(cellphone, phone)",
+4938897545.jpg#4r1e,snli,dev,A motorcycle rider is making a sharp turn.,The motorcyclist is turning.,entailment,2,TRUE,,"(motorcycle rider, motorcyclist)","(motorcycle rider, motorcyclist)",,"(motorcycle rider, motorcyclist)",FALSE,,TRUE,,FALSE,,"answer: entailment
+relations: { entails(motorcycle rider, motorcyclist), entails(make a sharp turn, turn) }","isa_wn(motorcycle rider, motorcyclist); isa_wn(make a sharp turn, turn)",,"answer: entailment
+relations: { entails(motorcycle rider, motorcyclist) }","isa_wn(motorcycle rider, motorcyclist)",,"answer: entailment
+relations: { entails(motorcycle rider, motorcyclist) }","isa_wn(motorcycle rider, motorcyclist)",,"**answer:** entailment  
+**relations:** { entails(motorcycle rider, motorcyclist), entails(sharp turn, turn) }","isa_wn(motorcycle rider, motorcyclist); isa_wn(sharp turn, turn)",,"answer: entailment
+relations: { entails(motorcycle rider, motorcyclist), entails(make a sharp turn, turn) }","isa_wn(motorcycle rider, motorcyclist); isa_wn(make a sharp turn, turn)",,"answer: entailment
+relations: { entails(motorcycle rider, motorcyclist), entails(make a sharp turn, turn) }","isa_wn(motorcycle rider, motorcyclist); isa_wn(make a sharp turn, turn)",,"answer: entailment
+relations: { entails(motorcycle rider, motorcyclist) }","isa_wn(motorcycle rider, motorcyclist)",,"answer: entailment  
+relations: { entails(motorcycle rider, motorcyclist), entails(sharp turn, turn) }","isa_wn(motorcycle rider, motorcyclist); isa_wn(sharp turn, turn)",
+4974,sick,train,Someone is holding a hedgehog,Someone is holding a small animal,entailment,2,TRUE,,"(hedgehog, small animal)","(hedgehog, small animal)","(hedgehog, small animal)",,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(hedgehog, small animal) }","isa_wn(hedgehog, small animal)",,"answer: entailment
+relations: { entails(hedgehog, small animal) }","isa_wn(hedgehog, small animal)",,"answer: entailment
+relations: { entails(hedgehog, small animal) }","isa_wn(hedgehog, small animal)",,"answer: entailment  
+relations: { entails(hedgehog, small animal) }","isa_wn(hedgehog, small animal)",,"answer: entailment
+relations: { entails(hedgehog, small animal) }","isa_wn(hedgehog, small animal)",,"answer: entailment
+relations: { entails(hedgehog, small animal) }","isa_wn(hedgehog, small animal)",,"answer: entailment
+relations: { entails(hedgehog, small animal) }","isa_wn(hedgehog, small animal)",,"answer: entailment
+relations: { entails(hedgehog, small animal) }","isa_wn(hedgehog, small animal)",
+4985197970.jpg#0r1e,snli,dev,"A sunny street with a red building, parked cars, and a man walking down the road.",The sun is shining.,entailment,3,TRUE,,,NO_RELATION,NO_RELATION,NO_RELATION,,,,TRUE,TRUE,TRUE,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(sunny, sun shining) }","isa_wn(sunny, sun shining)",,"answer: entailment
+relations: { entails(sunny, sun shine) }","isa_wn(sunny, sun shine)",,"answer: entailment  
+relations: { entails(sunny, shining) }","isa_wn(sunny, shining)",,"answer: entailment
+relations: { entails(sunny, sun shining) }","isa_wn(sunny, sun shining)",,"answer: entailment
+relations: { entails(sunny, sun shine) }","isa_wn(sunny, sun shine)",,"answer: entailment
+relations: { entails(sunny street, sun shine) }","isa_wn(sunny street, sun shine)",,"answer: entailment  
+relations: { entails(sunny street, sun shines) }","isa_wn(sunny street, sun shines)",
+4985197970.jpg#3r1e,snli,dev,A person is walking down a cobblestone street.,The cobblestone street is not empty.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,FALSE,,FALSE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The premise states that a person is walking down a cobblestone street. This directly entails that the cobblestone street is not empty, since the presence of a person on the street means the street is occupied and therefore not empty. This logical inference follows without requiring any non-trivial lexical entailment relations between phrases.",NO_RELATION,,"answer: entailment
+relations: { entails(walk, not empty) }","isa_wn(walk, not empty)",,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(walk, not empty) }","isa_wn(walk, not empty)",,"answer: entailment
+
+relations: { entails(person walk down street, street not empty) }
+
+Wait, let me reconsider this more carefully following the rules.
+
+Actually, the relation I proposed violates the rules about prepositional phrases. Let me think about this differently.
+
+The premise states that a person is walking down a cobblestone street. This logically entails that there is at least one person on that street, which means the street is not empty. This is a logical entailment that doesn't require special lexical relations - it follows from the basic meaning of the sentences and logical reasoning.
+
+answer: entailment
+
+relations: { }","isa_wn(person walk down street, street not empty)",,"answer: entailment
+relations: { entails(walk, be present) }","isa_wn(walk, be present)",,"answer: entailment  
+relations: { }",NO_RELATION,
+5030,sick,dev,The man is talking on the telephone,The man is speaking on the telephone,entailment,2,TRUE,,"(talk, speak)","(talk, speak)",,"(talk, speak)",TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(talk, speak) }","isa_wn(talk, speak)",,"answer: entailment
+relations: { entails(talk, speak) }","isa_wn(talk, speak)",,"answer: entailment
+relations: { entails(talk, speak) }","isa_wn(talk, speak)",,"answer: entailment  
+relations: { entails(talking, speaking) }","isa_wn(talking, speaking)",,"answer: entailment
+relations: { entails(talk, speak) }","isa_wn(talk, speak)",,"answer: entailment
+relations: { entails(talk, speak) }","isa_wn(talk, speak)",,"answer: entailment
+relations: { entails(talk, speak) }","isa_wn(talk, speak)",,"answer: entailment  
+relations: { entails(talking, speaking) }","isa_wn(talking, speaking)",
+5113,sick,dev,Two sumo ringers are fighting,Two sumo wrestlers are fighting,entailment,3,TRUE,,,"(sumo ringer, sumo wrestler)","(sumo ringer, sumo wrestler)","(sumo ringer, sumo wrestler)",,,,FALSE,FALSE,FALSE,"answer: entailment
+relations: { entails(sumo ringer, sumo wrestler) }","isa_wn(sumo ringer, sumo wrestler)",,"answer: entailment
+relations: { entails(ringer, wrestler) }","isa_wn(ringer, wrestler)",,"answer: entailment
+relations: { entails(sumo ringer, sumo wrestler) }","isa_wn(sumo ringer, sumo wrestler)",,"answer: entailment  
+relations: { entails(ringer, wrestler) }","isa_wn(ringer, wrestler)",,"answer: entailment
+relations: { entails(ringer, wrestler) }","isa_wn(ringer, wrestler)",,"answer: entailment
+relations: { entails(ringer, wrestler) }","isa_wn(ringer, wrestler)",,"answer: entailment
+relations: { entails(sumo ringer, sumo wrestler) }","isa_wn(sumo ringer, sumo wrestler)",,"answer: entailment  
+relations: { entails(ringer, wrestler) }","isa_wn(ringer, wrestler)",
+51145797.jpg#4r1e,snli,dev,Two people are in a green forest.,The forest is not dead.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(green forest, not dead forest) }","isa_wn(green forest, not dead forest)",,"answer: entailment
+relations: { entails(green forest, not dead forest) }","isa_wn(green forest, not dead forest)",,"answer: entailment  
+relations: { entails(green forest, forest not dead) }","isa_wn(green forest, forest not dead)",,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(green forest, not dead forest) }","isa_wn(green forest, not dead forest)",,"answer: entailment
+relations: { entails(green forest, not dead forest) }","isa_wn(green forest, not dead forest)",,"answer: entailment  
+relations: {entails(green, alive), entails(alive, not dead)}","isa_wn(green, alive); isa_wn(alive, not dead)",
+5198,sick,train,A boy is saying a word,A child is talking,entailment,2,TRUE,,"(boy, child); (say, talk)","(boy, child); (say, talk)",,"(boy, child); (say, talk)",TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(boy, child), entails(say, talk) }","isa_wn(boy, child); isa_wn(say, talk)",,"answer: entailment
+relations: { entails(boy, child), entails(say, talk) }","isa_wn(boy, child); isa_wn(say, talk)",,"answer: entailment
+relations: { entails(boy, child), entails(say word, talk) }","isa_wn(boy, child); isa_wn(say word, talk)",,"answer: entailment  
+relations: { entails(boy, child), entails(say, talk) }","isa_wn(boy, child); isa_wn(say, talk)",,"answer: entailment
+relations: { entails(boy, child), entails(saying a word, talking) }","isa_wn(boy, child); isa_wn(saying a word, talking)",,"answer: entailment
+relations: { entails(boy, child), entails(say, talk) }","isa_wn(boy, child); isa_wn(say, talk)",,"answer: entailment
+relations: { entails(boy, child), entails(say word, talk) }","isa_wn(boy, child); isa_wn(say word, talk)",,"answer: entailment  
+relations: { entails(boy, child), entails(saying, talking) }","isa_wn(boy, child); isa_wn(saying, talking)",
+533601247.jpg#2r1e,snli,dev,A boy in sandals is looking at a camera in a busy street.,"A boy is in a busy street, wearing sandals, looking at a camera",entailment,2,TRUE,,NO_RELATION,,NO_RELATION,NO_RELATION,,TRUE,FALSE,,,FALSE,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is entailed by the premise without requiring any non-trivial lexical relations. The premise states that ""a boy in sandals is looking at a camera in a busy street,"" which directly conveys all the information in the hypothesis: the boy is in a busy street, he is wearing sandals, and he is looking at a camera. The hypothesis simply reorganizes and rephrases these same facts without introducing new semantic content or requiring different word meanings.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: {}",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is a reorganization of the same information presented in the premise. The premise states that a boy in sandals is looking at a camera in a busy street, which directly entails that a boy is in a busy street, wearing sandals, and looking at a camera. No non-trivial lexical entailment relations are needed to explain this entailment, as the hypothesis simply restates the facts from the premise in a different order without introducing any new predicates or requiring semantic bridging through word relations.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,
+5435,sick,train,Two baby pandas are playing,Two cubs are playing,entailment,3,TRUE,,,"(baby panda, cub)","(baby panda, cub)","(baby panda, cub)",,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(baby panda, cub) }","isa_wn(baby panda, cub)",,"answer: entailment
+relations: { entails(baby panda, cub) }","isa_wn(baby panda, cub)",,"answer: entailment
+relations: { entails(baby panda, cub) }","isa_wn(baby panda, cub)",,"answer: entailment  
+relations: { entails(baby panda, cub) }","isa_wn(baby panda, cub)",,"answer: entailment
+relations: { entails(baby panda, cub) }","isa_wn(baby panda, cub)",,"answer: entailment
+relations: { entails(baby panda, cub) }","isa_wn(baby panda, cub)",,"answer: entailment
+relations: { entails(baby panda, cub) }","isa_wn(baby panda, cub)",,"answer: entailment  
+relations: { entails(baby panda, cub) }","isa_wn(baby panda, cub)",
+5436986554.jpg#1r1e,snli,dev,Military men dressed in camouflage and white aim there weapons while out in the snowy weather.,men have weapons,entailment,3,TRUE,,,NO_RELATION,NO_RELATION,NO_RELATION,,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(aim, have), entails(there weapons, weapons) }","isa_wn(aim, have); isa_wn(there weapons, weapons)",,"answer: entailment
+relations: { entails(military man, man) }","isa_wn(military man, man)",,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { entails(aim weapon, have weapon) }","isa_wn(aim weapon, have weapon)",,"answer: entailment
+relations: { entails(military men, men), entails(aim, have) }","isa_wn(military men, men); isa_wn(aim, have)",,"answer: entailment
+relations: { entails(military man, man), entails(aim weapon, have weapon) }","isa_wn(military man, man); isa_wn(aim weapon, have weapon)",,"answer: entailment
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,
+5554,sick,train,The man is aiming a gun,The man is handling a gun,entailment,2,TRUE,,"(aim, handle)",,"(aim, handle)","(aim, handle)",,TRUE,FALSE,,,FALSE,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(aim, handle) }
+
+explanation: ""Aiming a gun"" is a specific form of handling a gun. When someone aims a gun, they are necessarily handling it. The lexical relation entails(aim, handle) captures this semantic relationship.","isa_wn(aim, handle); isa_wn(aim, handle)",,"answer: entailment
+relations: { entails(aim, handle) }","isa_wn(aim, handle)",,"answer: entailment  
+relations: { entails(aim, handle) }","isa_wn(aim, handle)",,"answer: entailment
+relations: { entails(aim, handle) }","isa_wn(aim, handle)",,"answer: entailment
+relations: { entails(aim, handle) }
+
+explanation: ""Aiming"" a gun is a specific form of handling a gun. When someone aims a gun, they are necessarily handling it (holding and directing it). Therefore, the premise entails the hypothesis through the lexical relation that ""aim"" is a type of ""handle"".","isa_wn(aim, handle)",,"answer: entailment
+relations: { entails(aim gun, handle gun) }","isa_wn(aim gun, handle gun)",,"answer: entailment
+relations: { entails(aiming gun, handling gun) }","isa_wn(aiming gun, handling gun)",
+5791070.jpg#3r1e,snli,dev,"Interior of the restaurant chain: Planet Hollywood, various movie memorabilia decorate the space.",The inside of a restaurant.,entailment,3,TRUE,,,"(interior, inside)","(interior, inside)","(interior, inside)",,,,FALSE,FALSE,TRUE,"answer: entailment
+relations: { entails(interior, inside), entails(restaurant chain, restaurant) }","isa_wn(interior, inside); isa_wn(restaurant chain, restaurant)",,"answer: entailment
+
+relations: { }
+
+explanation: The premise states ""Interior of the restaurant chain: Planet Hollywood"", which directly describes the inside of a restaurant. The hypothesis simply states ""The inside of a restaurant."" The entailment follows directly from the semantic content without requiring any non-trivial lexical relations. ""Interior"" is a standard way to refer to ""inside,"" and both the premise and hypothesis refer to a restaurant, so no lexical bridge is needed beyond basic semantic equivalence.",NO_RELATION,,"answer: entailment
+relations: { entails(interior, inside), entails(restaurant chain, restaurant) }","isa_wn(interior, inside); isa_wn(restaurant chain, restaurant)",,"answer: entailment  
+relations: { entails(interior, inside), entails(restaurant chain, restaurant) }","isa_wn(interior, inside); isa_wn(restaurant chain, restaurant)",,"answer: entailment
+relations: { entails(interior, inside), entails(restaurant chain, restaurant) }","isa_wn(interior, inside); isa_wn(restaurant chain, restaurant)",,"answer: entailment
+relations: { entails(interior, inside) }","isa_wn(interior, inside)",,"answer: entailment
+relations: { entails(interior, inside), entails(restaurant chain, restaurant) }","isa_wn(interior, inside); isa_wn(restaurant chain, restaurant)",,"answer: entailment  
+relations: { entails(interior, inside), entails(restaurant chain, restaurant) }","isa_wn(interior, inside); isa_wn(restaurant chain, restaurant)",
+6167481552.jpg#3r1e,snli,dev,A football team getting ready for the coin toss in a half empty stadium.,The stadium is not full.,entailment,2,TRUE,,"(half empty, not full)","(half empty, not full)",,"(half empty, not full)",FALSE,,FALSE,,FALSE,,"answer: entailment
+relations: { entails(half empty, not full) }","isa_wn(half empty, not full)",,"answer: entailment
+relations: { entails(half empty, not full) }","isa_wn(half empty, not full)",,"answer: entailment
+relations: { entails(half empty, not full) }","isa_wn(half empty, not full)",,"answer: entailment  
+relations: { entails(half empty, not full) }","isa_wn(half empty, not full)",,"answer: entailment
+relations: { entails(half empty, not full) }","isa_wn(half empty, not full)",,"answer: entailment
+relations: { entails(half empty, not full) }","isa_wn(half empty, not full)",,"answer: entailment
+relations: { entails(half empty, not full) }","isa_wn(half empty, not full)",,"**answer:** entailment  
+**relations:** { entails(half empty stadium, stadium not full) }","isa_wn(half empty stadium, stadium not full)",
+6167481552.jpg#3r1n,snli,dev,A football team getting ready for the coin toss in a half empty stadium.,There is a game about to be played.,entailment,2,TRUE,,NO_RELATION,,NO_RELATION,NO_RELATION,,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(football team, game), entails(getting ready, about to be played) }","isa_wn(football team, game); isa_wn(getting ready, about to be played)",,"answer: entailment
+relations: { entails(football team getting ready for coin toss, game about to be played) }","isa_wn(football team getting ready for coin toss, game about to be played)",,"answer: entailment
+relations: { entails(football team, game) }","isa_wn(football team, game)",,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(football team, game), entails(getting ready, about to be played) }","isa_wn(football team, game); isa_wn(getting ready, about to be played)",,"answer: entailment
+relations: { entails(football team getting ready for coin toss, game about to be played) }","isa_wn(football team getting ready for coin toss, game about to be played)",,"answer: entailment
+relations: { entails(football team, game) }","isa_wn(football team, game)",,"answer: entailment  
+relations: { entails(coin toss, game) }","isa_wn(coin toss, game)",
+6220789654.jpg#3r1e,snli,dev,A woman closes her eyes as she plays her cello.,A woman is making music.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,FALSE,TRUE,,FALSE,,,"answer: entailment
+relations: { entails(play cello, make music) }","isa_wn(play cello, make music)",,"answer: entailment
+relations: { entails(play cello, make music) }","isa_wn(play cello, make music)",,"answer: entailment
+relations: { entails(play cello, make music) }","isa_wn(play cello, make music)",,"answer: entailment  
+relations: { entails(play, make) }","isa_wn(play, make)",,"answer: entailment
+relations: { entails(play cello, make music) }","isa_wn(play cello, make music)",,"answer: entailment
+relations: { entails(play cello, make music) }","isa_wn(play cello, make music)",,"answer: entailment
+relations: { entails(play cello, make music) }","isa_wn(play cello, make music)",,"answer: entailment
+relations: { entails(play, make music) }","isa_wn(play, make music)",
+65847949.jpg#1r3e,snli,train,Four women sitting on green outdoor furniture on a patio with a small doghouse in the backdrop.,four women sitting outdoors,entailment,2,TRUE,,"(patio, outdoors)","(patio, outdoors)","(patio, outdoors)",,FALSE,TRUE,,FALSE,,,"answer: entailment
+relations: { entails(outdoor furniture, outdoors) }","isa_wn(outdoor furniture, outdoors)",,"answer: entailment
+relations: { entails(patio, outdoors), entails(green outdoor furniture, furniture) }","isa_wn(patio, outdoors); isa_wn(green outdoor furniture, furniture)",,"answer: entailment
+relations: { entails(patio, outdoors) }","isa_wn(patio, outdoors)",,"answer: entailment
+relations: { entails(patio, outdoors) }","isa_wn(patio, outdoors)",,"answer: entailment
+relations: { entails(outdoor furniture, outdoors) }","isa_wn(outdoor furniture, outdoors)",,"answer: entailment
+relations: { entails(green outdoor furniture, outdoors), entails(patio, outdoors) }","isa_wn(green outdoor furniture, outdoors); isa_wn(patio, outdoors)",,"answer: entailment
+relations: { entails(patio, outdoors) }","isa_wn(patio, outdoors)",,"answer: entailment  
+relations: { entails(patio, outdoor) }","isa_wn(patio, outdoor)",
+686293997.jpg#4r1e,snli,dev,"Dinner and decisions, with the crew.",the crew was having dinner,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: non-entailment
+
+explanation: The premise is a noun phrase listing items (""Dinner and decisions, with the crew"") without indicating any action or state. It does not specify that the crew was actually having dinner—it merely mentions dinner as one of the topics or elements present. The hypothesis makes a claim about an actual activity (the crew was having dinner), which is not entailed by the premise's mere mention of these elements.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: non-entailment
+
+explanation: The premise is a noun phrase that lists ""dinner and decisions"" occurring ""with the crew,"" but it does not assert that an action is taking place or that the crew is actively having dinner. The premise could describe a setting, a topic, or a context without necessarily implying that dinner is currently being consumed. The hypothesis, on the other hand, makes a specific claim that ""the crew was having dinner,"" which requires an active verb phrase indicating an ongoing or past action. The premise does not provide sufficient information to conclude that the crew was engaged in the act of having dinner.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,
+7123721879.jpg#0r1e,snli,dev,"A single runner, clothed in appropriate attire, jogging on a sidewalk next to a body of water, with buildings in the backdrop on the other side of the water.","A jogger, dressed for jogging, jogs on a sidewalk near water.",entailment,3,TRUE,,,"(runner, jogger); (next to, near); (clothed, dressed)","(next to, near); (runner, jogger); (clothed, dressed)","(clothed, dressed); (runner, jogger); (next to, near)",,,,FALSE,FALSE,FALSE,"answer: entailment
+relations: { entails(runner, jogger), entails(clothed in appropriate attire, dressed for jogging), entails(body of water, water) }","isa_wn(runner, jogger); isa_wn(clothed in appropriate attire, dressed for jogging); isa_wn(body of water, water)",,"answer: entailment
+relations: { entails(runner, jogger), entails(appropriate attire, dressed for jogging), entails(body of water, water) }","isa_wn(runner, jogger); isa_wn(appropriate attire, dressed for jogging); isa_wn(body of water, water)",,"answer: entailment
+relations: { entails(runner, jogger), entails(appropriate attire, dress for jog) }","isa_wn(runner, jogger); isa_wn(appropriate attire, dress for jog)",,"answer: entailment  
+relations: { entails(jogger, runner), entails(next to, near), entails(body of water, water) }","isa_wn(jogger, runner); isa_wn(next to, near); isa_wn(body of water, water)",,"answer: entailment
+relations: { entails(runner, jogger), entails(clothed in appropriate attire, dressed for jogging), entails(next to, near) }","isa_wn(runner, jogger); isa_wn(clothed in appropriate attire, dressed for jogging); isa_wn(next to, near)",,"answer: entailment
+relations: { entails(runner, jogger), entails(jogging, jog), entails(appropriate attire, dressed for jogging), entails(body of water, water) }","isa_wn(runner, jogger); isa_wn(jogging, jog); isa_wn(appropriate attire, dressed for jogging); isa_wn(body of water, water)",,"answer: entailment
+relations: { entails(runner, jogger), entails(clothed in appropriate attire, dressed for jog) }","isa_wn(runner, jogger); isa_wn(clothed in appropriate attire, dressed for jog)",,"answer: entailment  
+relations: { entails(runner, jogger) }","isa_wn(runner, jogger)",
+72010421.jpg#0r1e,snli,dev,"A young girl sitting on a white comforter on a bed covered with clothing, holding a yellow stuffed duck.",A yellow duck being held by a girl.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment  
+relations: { entails(stuffed duck, duck) }","isa_wn(stuffed duck, duck)",,"answer: entailment
+relations: { entails(yellow stuffed duck, yellow duck) }","isa_wn(yellow stuffed duck, yellow duck)",,"answer: entailment
+relations: { entails(stuffed duck, duck) }","isa_wn(stuffed duck, duck)",,"answer: entailment  
+relations: { entails(stuffed duck, duck) }","isa_wn(stuffed duck, duck)",,"answer: entailment
+relations: { entails(stuffed duck, duck) }","isa_wn(stuffed duck, duck)",,"answer: entailment
+relations: { entails(yellow stuffed duck, yellow duck), entails(girl, girl) }
+
+Wait, let me reconsider. The relation entails(girl, girl) is trivial and doesn't need to be stated.
+
+answer: entailment
+relations: { entails(stuffed duck, duck) }","isa_wn(yellow stuffed duck, yellow duck); isa_wn(girl, girl); isa_wn(girl, girl); isa_wn(stuffed duck, duck)",,"answer: entailment
+relations: { entails(stuffed duck, duck), entails(young girl, girl) }","isa_wn(stuffed duck, duck); isa_wn(young girl, girl)",,"answer: entailment  
+relations: { entails(stuffed duck, duck), entails(young girl, girl) }","isa_wn(stuffed duck, duck); isa_wn(young girl, girl)",
+7292157214.jpg#0r1e,snli,dev,A man wearing a white jacket and pink hat is speaking into a microphone while raising one arm above his head.,The man is wearing a hat.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(pink hat, hat) }","isa_wn(pink hat, hat)",,"answer: entailment
+relations: { }
+
+explanation: The hypothesis follows directly from the premise without requiring any non-trivial lexical entailment relations. The premise explicitly states that the man is wearing a pink hat, and the hypothesis simply asserts that the man is wearing a hat. This is a straightforward logical consequence where ""pink hat"" is a specific instance of ""hat,"" but this is a trivial modifier-dropping relation that should not be included.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { entails(pink hat, hat) }","isa_wn(pink hat, hat)",,"answer: entailment
+relations: { }
+
+explanation: The hypothesis ""The man is wearing a hat"" is directly entailed by the premise without requiring any non-trivial lexical relations. The premise explicitly states that the man is wearing a ""pink hat"", which directly supports the hypothesis that the man is wearing a hat. No lexical entailment relations are needed since ""pink hat"" contains ""hat"" and the entailment follows simply from the presence of this phrase in the premise.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment  
+relations: { entails(pink hat, hat) }","isa_wn(pink hat, hat)",
+7417714642.jpg#0r1e,snli,dev,A bride wearing her bridal gown is taking pictures with her colorful wedding bouquet in front of cows.,A bride is taking wedding pictures.,entailment,3,TRUE,,,NO_RELATION,NO_RELATION,NO_RELATION,,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(bridal gown, wedding picture) }","isa_wn(bridal gown, wedding picture)",,"answer: entailment
+relations: { entails(taking pictures, taking wedding pictures) }","isa_wn(taking pictures, taking wedding pictures)",,"answer: entailment
+relations: { entails(colorful wedding bouquet, wedding) }","isa_wn(colorful wedding bouquet, wedding)",,"**answer:** entailment  
+**relations:** { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(bridal gown, wedding attire), entails(take picture, take wedding picture) }
+
+Wait, let me reconsider this more carefully.
+
+The premise states: ""A bride wearing her bridal gown is taking pictures with her colorful wedding bouquet in front of cows.""
+
+The hypothesis states: ""A bride is taking wedding pictures.""
+
+Key analysis:
+- ""bride"" in premise → ""bride"" in hypothesis ✓
+- ""taking pictures"" in premise → ""taking wedding pictures"" in hypothesis
+  - The premise specifies she is taking pictures WITH her wedding bouquet (and wearing bridal gown, in front of cows)
+  - The context makes clear these are wedding pictures
+  - entails(take picture with wedding bouquet, take wedding picture) is too specific and contains a prepositional phrase
+
+Let me reconsider: The premise describes a bride taking pictures with a wedding bouquet. This context strongly suggests these are wedding pictures. The entailment should focus on what can be inferred.
+
+answer: entailment
+relations: { entails(picture with wedding bouquet, wedding picture) }
+
+Actually, this phrase contains a prepositional phrase ""with wedding bouquet"" which violates the rules.
+
+Let me reconsider once more: The core entailment is that if someone is taking pictures in a wedding context (bride, bridal gown, wedding bouquet), then they are taking wedding pictures. This doesn't require a special lexical entailment - it follows from the context.
+
+answer: entailment
+relations: { }","isa_wn(bridal gown, wedding attire); isa_wn(take picture, take wedding picture); isa_wn(take picture with wedding bouquet, take wedding picture); isa_wn(picture with wedding bouquet, wedding picture)",,"answer: entailment
+relations: { entails(colorful wedding bouquet, wedding) }","isa_wn(colorful wedding bouquet, wedding)",,"answer: entailment  
+relations: { entails(wedding bouquet, wedding) }","isa_wn(wedding bouquet, wedding)",
+7700959654.jpg#4r1e,snli,dev,A woman and a man are sword fighting.,Two people are opposing each other in a sword fight.,entailment,3,TRUE,,,NO_RELATION,NO_RELATION,NO_RELATION,,,,TRUE,TRUE,TRUE,"answer: entailment
+relations: { entails(woman, person), entails(man, person), entails(sword fighting, sword fight), entails(fighting, opposing each other) }","isa_wn(woman, person); isa_wn(man, person); isa_wn(sword fighting, sword fight); isa_wn(fighting, opposing each other)",,"answer: entailment
+relations: { entails(woman and man, people), entails(sword fighting, sword fight), entails(sword fighting, opposing each other) }","isa_wn(woman and man, people); isa_wn(sword fighting, sword fight); isa_wn(sword fighting, opposing each other)",,"answer: entailment
+relations: { entails(woman, person), entails(man, person), entails(sword fight, sword fight), entails(sword fighting, oppose) }","isa_wn(woman, person); isa_wn(man, person); isa_wn(sword fight, sword fight); isa_wn(sword fighting, oppose)",,"answer: entailment  
+relations: { entails(woman, person), entails(man, person), entails(sword fighting, sword fight) }","isa_wn(woman, person); isa_wn(man, person); isa_wn(sword fighting, sword fight)",,"answer: entailment
+relations: { entails(woman and man, two people), entails(sword fight, opposing each other) }","isa_wn(woman and man, two people); isa_wn(sword fight, opposing each other)",,"answer: entailment
+relations: { entails(woman and man, two people), entails(sword fighting, sword fight), entails(sword fight, oppose each other) }","isa_wn(woman and man, two people); isa_wn(sword fighting, sword fight); isa_wn(sword fight, oppose each other)",,"answer: entailment
+relations: { entails(woman, person), entails(man, person), entails(sword fighting, oppose in sword fight) }","isa_wn(woman, person); isa_wn(man, person); isa_wn(sword fighting, oppose in sword fight)",,"**answer:** entailment  
+
+**relations:** {entails(woman, person), entails(man, person), entails(sword fighting, sword fight), entails(sword fighting, opposing each other)}","isa_wn(woman, person); isa_wn(man, person); isa_wn(sword fighting, sword fight); isa_wn(sword fighting, opposing each other)",
+7764955218.jpg#4r1e,snli,dev,Two men in yellow jackets and black pants have medals.,The men have been given an award at some point.,entailment,2,TRUE,,"(medal, award)","(medal, award)","(medal, award)",,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(medal, award) }","isa_wn(medal, award)",,"answer: entailment
+relations: { entails(medal, award) }","isa_wn(medal, award)",,"answer: entailment
+relations: { entails(medal, award) }","isa_wn(medal, award)",,"answer: entailment  
+relations: { entails(medal, award) }","isa_wn(medal, award)",,"answer: entailment
+relations: { entails(medal, award) }","isa_wn(medal, award)",,"answer: entailment
+relations: { entails(medal, award) }
+
+Explanation: The premise states that two men have medals. A medal is a type of award given to recognize achievement or performance. Therefore, if the men have medals, they have been given an award at some point. The lexical entailment relation entails(medal, award) captures the semantic connection needed to derive the hypothesis from the premise.","isa_wn(medal, award); isa_wn(medal, award)",,"answer: entailment
+relations: { entails(medal, award) }","isa_wn(medal, award)",,"answer: entailment  
+relations: { entails(medal, award) }","isa_wn(medal, award)",
+8021,sick,train,A brown and white dog is playing on the grass,A brown and white dog is playing on the lawn,entailment,2,TRUE,,"(grass, lawn)",,"(grass, lawn)","(grass, lawn)",,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(grass, lawn) }","isa_wn(grass, lawn)",,"answer: entailment
+relations: { entails(grass, lawn) }","isa_wn(grass, lawn)",,"answer: entailment
+relations: { entails(grass, lawn) }","isa_wn(grass, lawn)",,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(grass, lawn) }","isa_wn(grass, lawn)",,"answer: entailment
+relations: { entails(grass, lawn) }","isa_wn(grass, lawn)",,"answer: entailment
+relations: { entails(grass, lawn) }","isa_wn(grass, lawn)",,answer: non-entailment,NO_RELATION,
+8159685316.jpg#1r1e,snli,dev,"Female runners from Japan, Germany and China are running side by side.",The runners are not from the US,entailment,3,TRUE,,,NO_RELATION,NO_RELATION,NO_RELATION,,,,TRUE,TRUE,TRUE,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The premise states that female runners are from Japan, Germany, and China. Since the runners are explicitly from these three countries (and not from the US), the hypothesis that ""the runners are not from the US"" necessarily follows. This entailment requires no non-trivial lexical relations—it follows directly from the logical structure of the premise and hypothesis.",NO_RELATION,,answer: non-entailment,NO_RELATION,,answer: non-entailment,NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The premise states that female runners are from Japan, Germany, and China. This directly entails that the runners are not from the US, since the runners' nationalities are explicitly specified as being from those three countries, which excludes the US. No lexical entailment relations are needed to establish this logical inference—it follows from the explicit information provided in the premise.",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,
+82945847.jpg#0r1n,snli,dev,"Three sisters, barefoot in pink dresses and who range in age from preschool to teenager are pictured on a beach as they look out at the Ocean.","Three sisters, barefoot in pretty pink dresses and who range in age from preschool to teenager",entailment,2,TRUE,,NO_RELATION,NO_RELATION,,NO_RELATION,TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: non-entailment
+
+explanation: The hypothesis is an incomplete sentence fragment that does not form a complete predicate. The premise states that the sisters ""are pictured on a beach as they look out at the Ocean,"" but the hypothesis lacks a main verb or predicate after describing the sisters. While the hypothesis shares the same descriptive opening as the premise, it cannot be evaluated as true or false because it is grammatically incomplete. Therefore, the premise does not entail the hypothesis.",NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { }",NO_RELATION,,"answer: entailment
+relations: { }
+
+explanation: The hypothesis is a truncated version of the premise that ends before ""are pictured on a beach as they look out at the Ocean."" The hypothesis describes the same three sisters with identical characteristics (barefoot, in pink dresses, age range from preschool to teenager). The word ""pretty"" added before ""pink dresses"" in the hypothesis does not negate the entailment—it is a natural elaboration consistent with the premise's description. All the core descriptive content of the hypothesis is explicitly stated in the premise, so the premise entails the hypothesis. No non-trivial lexical entailments are needed to explain this, as the phrases and their relationships are either identical or have transparent logical connections.",NO_RELATION,,"answer: entailment
+relations: { entails(pink dress, pretty pink dress) }","isa_wn(pink dress, pretty pink dress)",,answer: non-entailment,NO_RELATION,
+8343,sick,dev,A man in a motocross uniform is wearing a helmet and rides a red motorcycle,A person in a motocross uniform is wearing a helmet and rides a red motorcycle,entailment,2,TRUE,,"(man, person)",,"(man, person)","(man, person)",,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(man, person) }","isa_wn(man, person)",,"answer: entailment
+relations: { entails(man, person) }","isa_wn(man, person)",,"answer: entailment
+relations: { entails(man, person) }","isa_wn(man, person)",,"**answer:** entailment  
+**relations:** `{ entails(man, person) }`","isa_wn(man, person)",,"answer: entailment
+relations: { entails(man, person) }","isa_wn(man, person)",,"answer: entailment
+relations: { entails(man, person) }","isa_wn(man, person)",,"answer: entailment
+relations: { entails(man, person) }","isa_wn(man, person)",,"answer: entailment  
+relations: { entails(man, person) }","isa_wn(man, person)",
+86112925.jpg#0r1e,snli,dev,"A woman in a patterned shirt hands a plate of food to another woman in an apron, while two women work in the background.",Several women collaborate to hand out food.,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,answer: non-entailment,NO_RELATION,,"answer: entailment
+
+relations: { entails(hand, hand out), entails(plate of food, food), entails(work, collaborate) }","isa_wn(hand, hand out); isa_wn(plate of food, food); isa_wn(work, collaborate)",,"answer: entailment
+relations: { entails(work, collaborate) }","isa_wn(work, collaborate)",,answer: non-entailment,NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(hand, hand out), entails(plate of food, food), entails(woman, woman) }
+
+Wait, let me reconsider this more carefully.
+
+The premise states:
+- A woman in a patterned shirt hands a plate of food to another woman in an apron
+- Two women work in the background
+
+The hypothesis states:
+- Several women collaborate to hand out food
+
+For entailment to hold:
+1. ""Several women"" - the premise mentions at least 4 women total (one in patterned shirt, one in apron, two in background), so ""several women"" is satisfied
+2. ""collaborate"" - the premise shows women working together (one handing food to another, two working in background), which constitutes collaboration
+3. ""hand out food"" - the premise explicitly states a woman ""hands a plate of food"" to another woman
+
+The key lexical relations needed:
+- ""hand"" entails ""hand out"" (to hand something to someone is to hand it out)
+- ""work together"" entails ""collaborate"" (implicitly understood from the scenario)
+
+answer: entailment
+relations: { entails(hand, hand out) }","isa_wn(hand, hand out); isa_wn(plate of food, food); isa_wn(woman, woman); isa_wn(hand, hand out)",,answer: non-entailment,NO_RELATION,,"**answer:** entailment  
+**relations:** { entails(plate of food, food), entails(hand plate of food, hand out food), entails(work, collaborate) }","isa_wn(plate of food, food); isa_wn(hand plate of food, hand out food); isa_wn(work, collaborate)",
+8633,sick,dev,"A man is rock climbing, pausing and calculating the route","A man is rock climbing, stopping and calculating the route",entailment,2,TRUE,,"(pause, stop)","(pause, stop)",,"(pause, stop)",TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(pause, stop) }","isa_wn(pause, stop)",,"answer: entailment
+relations: { entails(pause, stop) }","isa_wn(pause, stop)",,"answer: entailment
+relations: { entails(pause, stop) }","isa_wn(pause, stop)",,"answer: entailment  
+relations: { entails(pausing, stopping) }","isa_wn(pausing, stopping)",,"answer: entailment
+relations: { entails(pause, stop) }","isa_wn(pause, stop)",,"answer: entailment
+relations: { entails(pause, stop) }","isa_wn(pause, stop)",,"answer: entailment
+relations: { entails(pause, stop) }","isa_wn(pause, stop)",,"answer: entailment
+relations: { entails(pause, stop) }","isa_wn(pause, stop)",
+89332423.jpg#4r1e,snli,dev,A man holding a large swordfish.,There is a person with a fish.,entailment,2,TRUE,,"(man, person); (swordfish, fish)","(swordfish, fish); (man, person)","(man, person); (swordfish, fish)",,FALSE,FALSE,,FALSE,,,"answer: entailment
+relations: { entails(man, person), entails(swordfish, fish) }","isa_wn(man, person); isa_wn(swordfish, fish)",,"answer: entailment
+relations: { entails(man, person), entails(swordfish, fish) }","isa_wn(man, person); isa_wn(swordfish, fish)",,"answer: entailment
+relations: { entails(man, person), entails(swordfish, fish) }","isa_wn(man, person); isa_wn(swordfish, fish)",,"answer: entailment  
+relations: { entails(man, person), entails(swordfish, fish) }","isa_wn(man, person); isa_wn(swordfish, fish)",,"answer: entailment
+relations: { entails(man, person), entails(swordfish, fish) }","isa_wn(man, person); isa_wn(swordfish, fish)",,"answer: entailment
+relations: { entails(man, person), entails(swordfish, fish) }","isa_wn(man, person); isa_wn(swordfish, fish)",,"answer: entailment
+relations: { entails(man, person), entails(swordfish, fish) }","isa_wn(man, person); isa_wn(swordfish, fish)",,"answer: entailment  
+relations: { entails(man, person), entails(swordfish, fish) }","isa_wn(man, person); isa_wn(swordfish, fish)",
+9433,sick,dev,The black and white dog is running in a green yard,A black and white dog is running outdoors,entailment,2,TRUE,,"(yard, outdoors)","(yard, outdoors)","(yard, outdoors)",,FALSE,FALSE,,TRUE,,,"answer: entailment
+relations: { entails(yard, outdoors) }","isa_wn(yard, outdoors)",,"answer: entailment
+relations: { entails(yard, outdoors) }","isa_wn(yard, outdoors)",,"answer: entailment
+relations: { entails(yard, outdoors) }","isa_wn(yard, outdoors)",,"answer: entailment
+relations: { entails(yard, outdoors) }","isa_wn(yard, outdoors)",,"answer: entailment
+relations: { entails(yard, outdoors) }","isa_wn(yard, outdoors)",,"answer: entailment
+relations: { entails(yard, outdoors) }","isa_wn(yard, outdoors)",,"answer: entailment
+relations: { entails(yard, outdoors) }","isa_wn(yard, outdoors)",,"answer: entailment  
+relations: { entails( green yard, outdoors ) }","isa_wn(green yard, outdoors)",
+9668,sick,train,A shirtless man is escorting a horse that is pulling a carriage along a paved road,A shirtless man is leading a horse that is pulling a carriage,entailment,2,TRUE,,"(escort, lead)",,"(escort, lead)","(escort, lead)",,TRUE,TRUE,,,TRUE,"answer: entailment
+relations: { entails(escort, lead) }","isa_wn(escort, lead)",,"answer: entailment
+relations: { entails(escort, lead) }","isa_wn(escort, lead)",,"answer: entailment
+relations: { entails(escort, lead) }","isa_wn(escort, lead)",,"answer: entailment  
+relations: { entails(escort, lead) }","isa_wn(escort, lead)",,"answer: entailment
+relations: { entails(escort, lead) }","isa_wn(escort, lead)",,"answer: entailment
+relations: { entails(escort, lead) }","isa_wn(escort, lead)",,"answer: entailment
+relations: { entails(escort, lead) }","isa_wn(escort, lead)",,"answer: entailment  
+relations: { entails(escort, lead) }","isa_wn(escort, lead)",
+vg_len66r1e,snli,train,The cup is shiny.,The cup glitters,entailment,2,TRUE,,NO_RELATION,NO_RELATION,NO_RELATION,,TRUE,TRUE,,TRUE,,,"answer: entailment
+relations: { entails(shiny, glitter) }","isa_wn(shiny, glitter)",,"answer: non-entailment
+
+explanation: While ""shiny"" and ""glitters"" are related concepts, they do not have a strict entailment relationship. A cup being shiny (reflective) does not necessarily mean it glitters (sparkles with flashing light). Shininess is a reflective quality, while glittering implies active sparkling or twinkling, which are distinct phenomena. The premise does not provide sufficient information to conclude that the cup glitters.",NO_RELATION,,"answer: entailment
+relations: { entails(shiny, glitter) }","isa_wn(shiny, glitter)",,answer: non-entailment,NO_RELATION,,"answer: entailment
+relations: { entails(shiny, glitter) }","isa_wn(shiny, glitter)",,"answer: non-entailment
+
+explanation: While ""shiny"" and ""glitters"" are related concepts, they are not synonymous in a way that guarantees entailment. ""Shiny"" describes a reflective surface quality, whereas ""glitters"" implies a sparkling or twinkling effect with discrete points of light. A cup can be shiny (smooth and reflective) without necessarily glittering (sparkling with visible points of light). For example, a cup with a matte reflective coating could be shiny but not glitter. Therefore, the premise does not entail the hypothesis.
+
+relations: { }",NO_RELATION,,answer: non-entailment,NO_RELATION,,"answer: entailment  
+relations: { entails(shiny, glitter) }","isa_wn(shiny, glitter)",
+vg_len84r1e,snli,train,The bus is gleaming,The bus is bright.,entailment,2,TRUE,,"(gleaming, bright)","(gleaming, bright)",,"(gleaming, bright)",TRUE,,TRUE,,TRUE,,"answer: entailment
+relations: { entails(gleaming, bright) }","isa_wn(gleaming, bright)",,"answer: entailment
+relations: { entails(gleam, bright) }","isa_wn(gleam, bright)",,"answer: entailment
+relations: { entails(gleaming, bright) }","isa_wn(gleaming, bright)",,"answer: entailment
+relations: { entails(gleaming, bright) }","isa_wn(gleaming, bright)",,"answer: entailment
+relations: { entails(gleaming, bright) }","isa_wn(gleaming, bright)",,"answer: entailment
+relations: { entails(gleam, bright) }","isa_wn(gleam, bright)",,"answer: entailment
+relations: { entails(gleam, bright) }","isa_wn(gleam, bright)",,"answer: entailment
+relations: { entails(gleam, bright) }","isa_wn(gleam, bright)",

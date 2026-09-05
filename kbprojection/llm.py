@@ -170,21 +170,27 @@ class AsyncGenericAIClient:
         model: Optional[str],
         response_model: Any = None,
         max_tokens: Optional[int] = None,
+        temperature: Optional[float] = None,
     ) -> Any:
         model = model or DEFAULT_MODELS[self.provider]
 
         if self.provider in {"openai", "openrouter"}:
+            completion_kwargs: dict[str, Any] = {}
+            if temperature is not None:
+                completion_kwargs["temperature"] = temperature
             if response_model:
                 response = await self.client.beta.chat.completions.parse(
                     model=model,
                     messages=[{"role": "user", "content": prompt}],
                     response_format=response_model,
+                    **completion_kwargs,
                 )
                 return response.choices[0].message.parsed
 
             response = await self.client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
+                **completion_kwargs,
             )
             return response.choices[0].message.content
 
@@ -297,18 +303,34 @@ def _parse_response_model_text(text: str, response_model: Any) -> Any:
 
 
 KB_PATTERN = re.compile(r"^\s*(isa_wn|disj)\s*\(\s*[^,]+\s*,\s*[^)]+\s*\)\s*$", re.MULTILINE)
-KB_RELATION_PREFIX = re.compile(r"^\s*(isa_wn|disj)\s*\(")
 LASHA_ANSWER_PATTERN = re.compile(r"^\s*answer:\s*(entailment|non-entailment)\s*$", re.IGNORECASE | re.MULTILINE)
 LASHA_RELATION_PATTERN = re.compile(r"entails\(\s*([^,()]+?)\s*,\s*([^()]+?)\s*\)", re.IGNORECASE)
+KB_RELATION_PREFIX = re.compile(r"^\s*(isa_wn|disj|entails)\s*\(")
+RELATION_PATTERN = re.compile(
+    r"\b(isa_wn|disj|entails)\s*\(\s*([^,{}()]+?)\s*,\s*([^{}()]+?)\s*\)"
+)
+
+
+def _normalize_relation(predicate: str, arg1: str, arg2: str) -> str:
+    normalized_predicate = "isa_wn" if predicate == "entails" else predicate
+    return f"{normalized_predicate}({arg1.strip()}, {arg2.strip()})"
+
+
+def _extract_relations_from_line(line: str) -> List[str]:
+    return [
+        _normalize_relation(match.group(1), match.group(2), match.group(3))
+        for match in RELATION_PATTERN.finditer(line)
+    ]
 
 
 def extract_kb_from_output(llm_output: str) -> List[str]:
     """
     Extract KB injection lines from LLM output.
 
-    Supports two formats:
+    Supports three formats:
     1. New delimited format with [KB_START] ... [KB_END] markers
     2. Legacy format: lines starting with isa_wn( or disj(
+    3. Entailment-decision format: relations: { entails(a, b), ... }
     """
     start_marker = "[KB_START]"
     end_marker = "[KB_END]"
@@ -328,8 +350,9 @@ def extract_kb_from_output(llm_output: str) -> List[str]:
         if not line:
             continue
 
-        if KB_PATTERN.match(line):
-            kb_injections.append(line)
+        relations = _extract_relations_from_line(line)
+        if relations:
+            kb_injections.extend(relations)
         elif line.startswith(("isa_wn(", "disj(")) and "(" in line and ")" in line:
             kb_injections.append(line)
 
@@ -355,8 +378,9 @@ def _extract_validated_kb_from_output(llm_output: str) -> List[str]:
         if not line:
             continue
 
-        if KB_PATTERN.match(line):
-            kb_injections.append(line)
+        relations = _extract_relations_from_line(line)
+        if relations:
+            kb_injections.extend(relations)
         elif KB_RELATION_PREFIX.match(line):
             raise ValueError(f"Malformed KB relation from LLM: {line}")
 
@@ -406,7 +430,7 @@ def _best_effort_kb_from_output(prompt_style: str, llm_output: Any) -> List[str]
             return kb_relations
         return []
 
-    if prompt_style == "lasha":
+    if prompt_style in {"lasha", "lasha_uncalibrated"}:
         return [
             f"isa_wn({left.strip()}, {right.strip()})"
             for left, right in LASHA_RELATION_PATTERN.findall(llm_output)
@@ -428,7 +452,7 @@ async def call_llm(
     Unified LLM call using GenericAIClient.
     """
     is_legacy = prompt_style.startswith("legacy_")
-    is_lasha = prompt_style == "lasha"
+    is_lasha = prompt_style in {"lasha", "lasha_uncalibrated"}
     prompt = fill_prompt(prompt_style, prob.premises, prob.hypothesis)
 
     response_model = None
