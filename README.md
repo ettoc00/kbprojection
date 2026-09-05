@@ -477,26 +477,33 @@ rule.
 
 ### Calculate inter-annotator agreement
 
-The authoritative assignment files are tracked in
-[`data/annotator_assignments`](data/annotator_assignments): the original JSON
-submissions from Ettore, Jorryt, Lasha, and Stefan. The files retain each
-annotator's submitted rows; duplicate IDs are reported and collapsed only for
-ID-aligned comparisons.
+The paper's Table 2 reports post-adjudication agreement, not the initial JSON
+submissions. Its source is the tracked export of the edited project sheet:
+[`data/annotator_agreement/iaa_overview_edit.csv`](data/annotator_agreement/iaa_overview_edit.csv).
+The raw individual submissions remain available in
+[`data/annotator_assignments`](data/annotator_assignments), but they represent
+the pre-adjudication stage and do not reproduce the Table 2 scores.
 
-Rebuild the per-item agreement overview without network or API calls with:
+Recompute Table 2 without network or API calls with:
 
 ```bash
 mkdir -p /tmp/kbprojection-iaa
-.venv/bin/python calculate_inter_annotator_agreement.py \
-  data/annotator_assignments \
-  --csv /tmp/kbprojection-iaa/inter_annotator_agreement_overview.csv \
-  --tsv /tmp/kbprojection-iaa/inter_annotator_agreement_overview.tsv
+.venv/bin/python scripts/experiments/recompute_paper_iaa_scores.py \
+  --iaa-csv data/annotator_agreement/iaa_overview_edit.csv \
+  --final-items-csv data/all_usable_items_362.csv \
+  --summary-csv /tmp/kbprojection-iaa/paper_table2_iaa_scores.csv
+
+diff -u experiment_results/iaa/paper_table2_iaa_scores.csv \
+  /tmp/kbprojection-iaa/paper_table2_iaa_scores.csv
 ```
 
-The report includes pairwise exact KB-set agreement, linear-weighted Cohen's
-kappa over the number of relations, pairwise relation-level micro-F1,
-all-annotator exact agreement, and nominal Krippendorff's alpha. It recreates
-the agreement values from the JSONs alone. If the optional original SICK and
-SNLI source datasets are also present under `data/`, the overview additionally
-populates dataset, split, and gold-label metadata; those fields do not affect
-the agreement calculations.
+For every annotator, the script filters to the final 362 IDs, selects the
+best-matching KB from the other three original annotators, and reports exact
+match and relation-level micro-F1. `Alternative_KB` is excluded because it is
+an adjudication-created fourth valid variant rather than an independent
+annotator submission. The recomputed micro-F1 values match Table 2. Ettore's
+exact rate is 205/271 = 75.645...%, which displays as 75.6% at one decimal
+place; Table 2 prints 75.7%.
+
+To analyze the initial, pre-adjudication submissions separately, run
+`calculate_inter_annotator_agreement.py data/annotator_assignments`.

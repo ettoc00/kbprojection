@@ -152,6 +152,8 @@ data/*
 !data/all_usable_items_362.csv
 !data/annotator_assignments/
 !data/annotator_assignments/*_assignments.json
+!data/annotator_agreement/
+!data/annotator_agreement/iaa_overview_edit.csv
 
 # Notebooks
 *.ipynb
