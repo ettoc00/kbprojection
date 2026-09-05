@@ -8,11 +8,12 @@ This library is designed to facilitate the use of Large Language Models (LLMs) t
 # Using uv (recommended)
 uv sync
 
-# Or install in development mode
+# Or install the project into an existing environment
 uv pip install -e .
 ```
 
-Use Python 3.10 or newer. The repository's type annotations require it.
+`uv sync` installs the project and its dependencies into `.venv`. Use Python
+3.10 or newer; the repository's type annotations require it.
 
 ## Runtime configuration: local or Google Colab
 
@@ -403,18 +404,40 @@ supported, temperature zero does not guarantee identical hosted-model output.
 A completed five-run experiment is available in
 [`experiment_results/lasha_all362_5runs`](experiment_results/lasha_all362_5runs).
 
-### Calculate multi-reference micro-F1
+### Reproduce the committed LEX prediction scores (no API calls)
 
-Evaluate every generated `LLM__*_KB` column against the human references:
+The saved long-format raw responses for all 5 runs, the 362 annotated items,
+and the expected score files are committed. Reparse the raw responses and
+recompute the set-based and position-sensitive scores with:
 
 ```bash
-.venv/bin/python calculate_multi_reference_f1.py \
-  --csv "llm_outputs_sonnet45_gpt54_gemini35flash_all_usable.csv" \
-  --reference-columns \
-    Alternative_KB Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
-  --summary-csv \
-    "multi_reference_f1_sonnet45_gpt54_gemini35flash_all_usable_summary.csv"
+mkdir -p /tmp/kbprojection-lex-replay
+.venv/bin/python scripts/experiments/recompute_repeated_no_filter_scores.py \
+  --input-csv experiment_results/lasha_all362_5runs/small_medium_lasha_all362_5runs_outputs.csv \
+  --sample-csv data/all_usable_items_362.csv \
+  --output-csv /tmp/kbprojection-lex-replay/no_filter_outputs.csv \
+  --metrics-csv /tmp/kbprojection-lex-replay/no_filter_stability.csv \
+  --f1-metrics-csv /tmp/kbprojection-lex-replay/no_filter_f1_by_run.csv \
+  --f1-summary-csv /tmp/kbprojection-lex-replay/no_filter_f1_summary.csv \
+  --filtered-f1-summary-csv experiment_results/lasha_all362_5runs/small_medium_lasha_all362_5runs_f1_summary.csv \
+  --comparison-csv /tmp/kbprojection-lex-replay/filtered_vs_no_filter.csv \
+  --repeats 5
+
+diff -u \
+  experiment_results/lasha_all362_5runs/small_medium_lasha_all362_5runs_no_filter_f1_by_run.csv \
+  /tmp/kbprojection-lex-replay/no_filter_f1_by_run.csv
+diff -u \
+  experiment_results/lasha_all362_5runs/small_medium_lasha_all362_5runs_no_filter_f1_summary.csv \
+  /tmp/kbprojection-lex-replay/no_filter_f1_summary.csv
 ```
+
+Both `diff` commands should produce no output and exit with status 0. The
+committed `*_no_filter_f1_by_run.csv` contains the precision, recall,
+micro-F1, exact-best-match, and position-sensitive scores for every model and
+repeat; `*_no_filter_f1_summary.csv` contains their five-run mean and sample
+standard deviation. This procedure makes no network or model API calls.
+
+### Multi-reference scoring method
 
 The evaluator works item by item:
 
@@ -445,19 +468,8 @@ Reference:  (entails, cat, sleeps); (isa, cat, animal)
 With position-sensitive scoring, neither relation is in the same position, so
 this example has `TP=0`, `FP=2`, and `FN=2`.
 
-Add `--position-sensitive` to calculate both metrics in one run:
-
-```bash
-.venv/bin/python calculate_multi_reference_f1.py \
-  --csv "llm_outputs_sonnet45_gpt54_gemini35flash_all_usable.csv" \
-  --reference-columns \
-    Alternative_KB Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
-  --position-sensitive \
-  --summary-csv \
-    "multi_reference_f1_sonnet45_gpt54_gemini35flash_all_usable_position_sensitive_summary.csv"
-```
-
-The summary retains the default `micro_f1` columns and adds
+The replay procedure above calculates both metrics in one run. Its summaries
+retain the default `micro_f1` columns and add
 `position_sensitive_precision`, `position_sensitive_recall`, and
 `position_sensitive_micro_f1`. The position-sensitive metric independently
 selects the best available human reference per item under the ordered scoring
