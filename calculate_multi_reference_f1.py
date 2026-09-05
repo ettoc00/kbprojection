@@ -57,6 +57,7 @@ class EvaluationResult:
     exact_best_matches: int = 0
     no_relation_best_matches: int = 0
     position_sensitive_counts: Counts | None = None
+    argument_order_agnostic_counts: Counts | None = None
 
 
 def is_blank(value: object) -> bool:
@@ -97,6 +98,34 @@ def relation_counts(
         fp=len(prediction - reference),
         fn=len(reference - prediction),
     )
+
+
+def canonicalize_relation_arguments(
+    relation: tuple[str, ...],
+) -> tuple[str, ...]:
+    """Make a two-argument relation insensitive to its argument direction.
+
+    This is a diagnostic comparison only.  The primary metric keeps relation
+    direction intact because it is semantically meaningful for lexical
+    entailment relations such as ``isa_wn(dog, animal)``.
+    """
+    if len(relation) != 2:
+        return relation
+    return tuple(sorted(relation))
+
+
+def argument_order_agnostic_relation_counts(
+    prediction: frozenset[tuple[str, ...]],
+    reference: frozenset[tuple[str, ...]],
+) -> Counts:
+    """Compare relation sets after canonicalizing the two arguments."""
+    canonical_prediction = frozenset(
+        canonicalize_relation_arguments(relation) for relation in prediction
+    )
+    canonical_reference = frozenset(
+        canonicalize_relation_arguments(relation) for relation in reference
+    )
+    return relation_counts(canonical_prediction, canonical_reference)
 
 
 def position_sensitive_relation_counts(
@@ -166,6 +195,7 @@ def evaluate_prediction_column(
     *,
     empty_prediction_is_no_relation: bool,
     calculate_position_sensitive: bool = False,
+    calculate_argument_order_agnostic: bool = False,
     details_path: Path | None = None,
 ) -> EvaluationResult:
     result = EvaluationResult(
@@ -176,6 +206,8 @@ def evaluate_prediction_column(
     detail_rows: list[dict[str, object]] = []
     if calculate_position_sensitive:
         result.position_sensitive_counts = Counts()
+    if calculate_argument_order_agnostic:
+        result.argument_order_agnostic_counts = Counts()
 
     for row in rows:
         raw_prediction = row.get(prediction_column, "")
@@ -209,6 +241,37 @@ def evaluate_prediction_column(
             ),
         )
         result.selected_counts.add(best_counts)
+
+        argument_order_agnostic_best_column = ""
+        argument_order_agnostic_best_score = float("nan")
+        argument_order_agnostic_best_counts: Counts | None = None
+        if calculate_argument_order_agnostic:
+            argument_order_agnostic_scored_references = []
+            for column, reference in references:
+                counts = argument_order_agnostic_relation_counts(
+                    prediction, reference
+                )
+                argument_order_agnostic_scored_references.append(
+                    (item_selection_score(counts), column, counts)
+                )
+            (
+                argument_order_agnostic_best_score,
+                argument_order_agnostic_best_column,
+                argument_order_agnostic_best_counts,
+            ) = max(
+                argument_order_agnostic_scored_references,
+                key=lambda entry: (
+                    entry[0],
+                    entry[2].tp,
+                    -entry[2].fp,
+                    -entry[2].fn,
+                    entry[1],
+                ),
+            )
+            assert result.argument_order_agnostic_counts is not None
+            result.argument_order_agnostic_counts.add(
+                argument_order_agnostic_best_counts
+            )
 
         position_best_column = ""
         position_best_score = float("nan")
@@ -258,6 +321,11 @@ def evaluate_prediction_column(
                 "position_sensitive_tp": position_best_counts.tp if position_best_counts else "",
                 "position_sensitive_fp": position_best_counts.fp if position_best_counts else "",
                 "position_sensitive_fn": position_best_counts.fn if position_best_counts else "",
+                "argument_order_agnostic_best_reference_column": argument_order_agnostic_best_column,
+                "argument_order_agnostic_best_item_f1": argument_order_agnostic_best_score,
+                "argument_order_agnostic_tp": argument_order_agnostic_best_counts.tp if argument_order_agnostic_best_counts else "",
+                "argument_order_agnostic_fp": argument_order_agnostic_best_counts.fp if argument_order_agnostic_best_counts else "",
+                "argument_order_agnostic_fn": argument_order_agnostic_best_counts.fn if argument_order_agnostic_best_counts else "",
             }
         )
 
@@ -280,6 +348,11 @@ def evaluate_prediction_column(
                     "position_sensitive_tp",
                     "position_sensitive_fp",
                     "position_sensitive_fn",
+                    "argument_order_agnostic_best_reference_column",
+                    "argument_order_agnostic_best_item_f1",
+                    "argument_order_agnostic_tp",
+                    "argument_order_agnostic_fp",
+                    "argument_order_agnostic_fn",
                 ],
             )
             writer.writeheader()
@@ -345,6 +418,17 @@ def print_result(result: EvaluationResult) -> None:
             f"(TP={position_counts.tp}, FP={position_counts.fp}, "
             f"FN={position_counts.fn})"
         )
+    if result.argument_order_agnostic_counts is not None:
+        argument_order_agnostic_counts = result.argument_order_agnostic_counts
+        print(
+            "  argument_order_agnostic_relation_set_micro_f1 "
+            f"P={format_score(argument_order_agnostic_counts.precision)} "
+            f"R={format_score(argument_order_agnostic_counts.recall)} "
+            f"F1={format_score(argument_order_agnostic_counts.f1)} "
+            f"(TP={argument_order_agnostic_counts.tp}, "
+            f"FP={argument_order_agnostic_counts.fp}, "
+            f"FN={argument_order_agnostic_counts.fn})"
+        )
 
 
 def print_global_reference_results(
@@ -387,12 +471,19 @@ def write_summary(path: Path, results: list[EvaluationResult]) -> None:
                 "position_sensitive_tp",
                 "position_sensitive_fp",
                 "position_sensitive_fn",
+                "argument_order_agnostic_precision",
+                "argument_order_agnostic_recall",
+                "argument_order_agnostic_micro_f1",
+                "argument_order_agnostic_tp",
+                "argument_order_agnostic_fp",
+                "argument_order_agnostic_fn",
             ],
         )
         writer.writeheader()
         for result in results:
             counts = result.selected_counts
             position_counts = result.position_sensitive_counts
+            argument_order_agnostic_counts = result.argument_order_agnostic_counts
             exact_rate = result.exact_best_matches / result.evaluated_items if result.evaluated_items else float("nan")
             writer.writerow(
                 {
@@ -416,6 +507,12 @@ def write_summary(path: Path, results: list[EvaluationResult]) -> None:
                     "position_sensitive_tp": position_counts.tp if position_counts else "",
                     "position_sensitive_fp": position_counts.fp if position_counts else "",
                     "position_sensitive_fn": position_counts.fn if position_counts else "",
+                    "argument_order_agnostic_precision": argument_order_agnostic_counts.precision if argument_order_agnostic_counts else "",
+                    "argument_order_agnostic_recall": argument_order_agnostic_counts.recall if argument_order_agnostic_counts else "",
+                    "argument_order_agnostic_micro_f1": argument_order_agnostic_counts.f1 if argument_order_agnostic_counts else "",
+                    "argument_order_agnostic_tp": argument_order_agnostic_counts.tp if argument_order_agnostic_counts else "",
+                    "argument_order_agnostic_fp": argument_order_agnostic_counts.fp if argument_order_agnostic_counts else "",
+                    "argument_order_agnostic_fn": argument_order_agnostic_counts.fn if argument_order_agnostic_counts else "",
                 }
             )
 
@@ -454,6 +551,14 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "Also calculate position-sensitive relation-sequence micro-F1. "
             "Relations only match when they occur at the same sequence position."
+        ),
+    )
+    parser.add_argument(
+        "--argument-order-agnostic",
+        action="store_true",
+        help=(
+            "Also calculate a diagnostic relation-set micro-F1 that treats "
+            "the two arguments in each relation as interchangeable."
         ),
     )
     parser.add_argument(
@@ -511,6 +616,7 @@ def main() -> None:
             reference_columns,
             empty_prediction_is_no_relation=args.empty_prediction_is_no_relation,
             calculate_position_sensitive=args.position_sensitive,
+            calculate_argument_order_agnostic=args.argument_order_agnostic,
             details_path=details_path,
         )
         all_results.append(result)

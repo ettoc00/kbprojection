@@ -446,6 +446,42 @@ The summary retains the default `micro_f1` columns and adds
 selects the best available human reference per item under the ordered scoring
 rule.
 
+### Argument-order-agnostic relation micro-F1
+
+The primary relation-set metric keeps the direction of each lexical relation:
+`isa_wn(apple, fruit)` and `isa_wn(fruit, apple)` are different, because the
+direction carries entailment meaning. Use the argument-order-agnostic metric as
+a diagnostic sensitivity analysis when you instead want a reversed pair to
+count as a match.
+
+For example, the following prediction and reference do not match under the
+primary metric but do match under this diagnostic:
+
+```text
+Prediction: isa_wn(fruit, apple)
+Reference:  isa_wn(apple, fruit)
+```
+
+Add `--argument-order-agnostic` to calculate both the directed primary score
+and the relaxed diagnostic in one run:
+
+```bash
+.venv/bin/python calculate_multi_reference_f1.py \
+  --csv "llm_outputs_sonnet45_gpt54_gemini35flash_all_usable.csv" \
+  --reference-columns \
+    Alternative_KB Ettore_KB Jorryt_KB Lasha_KB Stefan_KB \
+  --argument-order-agnostic \
+  --summary-csv \
+    "multi_reference_f1_argument_order_agnostic_summary.csv"
+```
+
+The summary retains the directed `micro_f1` fields and adds
+`argument_order_agnostic_precision`, `argument_order_agnostic_recall`, and
+`argument_order_agnostic_micro_f1`. The best available human reference is
+selected independently under the relaxed rule. Repeated-run reports include
+the corresponding per-run counts and mean, standard deviation, minimum, and
+maximum fields automatically.
+
 ### Calculate inter-annotator agreement
 
 Rebuild the agreement overview from the assignment JSON files with:

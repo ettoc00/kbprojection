@@ -504,10 +504,13 @@ def write_f1_metrics(
             reference_columns,
             empty_prediction_is_no_relation=False,
             calculate_position_sensitive=True,
+            calculate_argument_order_agnostic=True,
         )
         counts = result.selected_counts
         position_counts = result.position_sensitive_counts
+        argument_order_agnostic_counts = result.argument_order_agnostic_counts
         assert position_counts is not None
+        assert argument_order_agnostic_counts is not None
         exact_rate = (
             result.exact_best_matches / result.evaluated_items
             if result.evaluated_items
@@ -537,6 +540,12 @@ def write_f1_metrics(
                 "position_sensitive_precision": position_counts.precision,
                 "position_sensitive_recall": position_counts.recall,
                 "position_sensitive_micro_f1": position_counts.f1,
+                "argument_order_agnostic_tp": argument_order_agnostic_counts.tp,
+                "argument_order_agnostic_fp": argument_order_agnostic_counts.fp,
+                "argument_order_agnostic_fn": argument_order_agnostic_counts.fn,
+                "argument_order_agnostic_precision": argument_order_agnostic_counts.precision,
+                "argument_order_agnostic_recall": argument_order_agnostic_counts.recall,
+                "argument_order_agnostic_micro_f1": argument_order_agnostic_counts.f1,
                 "exact_best_matches": result.exact_best_matches,
                 "exact_best_match_rate": exact_rate,
                 "no_relation_best_matches": result.no_relation_best_matches,
@@ -566,6 +575,12 @@ def write_f1_metrics(
         "position_sensitive_precision",
         "position_sensitive_recall",
         "position_sensitive_micro_f1",
+        "argument_order_agnostic_tp",
+        "argument_order_agnostic_fp",
+        "argument_order_agnostic_fn",
+        "argument_order_agnostic_precision",
+        "argument_order_agnostic_recall",
+        "argument_order_agnostic_micro_f1",
         "exact_best_matches",
         "exact_best_match_rate",
         "no_relation_best_matches",
@@ -587,6 +602,11 @@ def write_f1_metrics(
             float(row["position_sensitive_micro_f1"])
             for row in rows
             if not math.isnan(float(row["position_sensitive_micro_f1"]))
+        ]
+        argument_order_agnostic_f1_values = [
+            float(row["argument_order_agnostic_micro_f1"])
+            for row in rows
+            if not math.isnan(float(row["argument_order_agnostic_micro_f1"]))
         ]
         summary_rows.append(
             {
@@ -618,6 +638,29 @@ def write_f1_metrics(
                 ),
                 "max_position_sensitive_micro_f1": (
                     max(position_f1_values) if position_f1_values else math.nan
+                ),
+                "repeats_with_argument_order_agnostic_f1": len(
+                    argument_order_agnostic_f1_values
+                ),
+                "mean_argument_order_agnostic_micro_f1": (
+                    statistics.mean(argument_order_agnostic_f1_values)
+                    if argument_order_agnostic_f1_values
+                    else math.nan
+                ),
+                "sample_stddev_argument_order_agnostic_micro_f1": (
+                    statistics.stdev(argument_order_agnostic_f1_values)
+                    if len(argument_order_agnostic_f1_values) > 1
+                    else math.nan
+                ),
+                "min_argument_order_agnostic_micro_f1": (
+                    min(argument_order_agnostic_f1_values)
+                    if argument_order_agnostic_f1_values
+                    else math.nan
+                ),
+                "max_argument_order_agnostic_micro_f1": (
+                    max(argument_order_agnostic_f1_values)
+                    if argument_order_agnostic_f1_values
+                    else math.nan
                 ),
                 "total_evaluated_items": sum(int(row["evaluated_items"]) for row in rows),
                 "total_error_runs": sum(int(row["error_runs"]) for row in rows),
@@ -652,6 +695,11 @@ def write_f1_metrics(
         "sample_stddev_position_sensitive_micro_f1",
         "min_position_sensitive_micro_f1",
         "max_position_sensitive_micro_f1",
+        "repeats_with_argument_order_agnostic_f1",
+        "mean_argument_order_agnostic_micro_f1",
+        "sample_stddev_argument_order_agnostic_micro_f1",
+        "min_argument_order_agnostic_micro_f1",
+        "max_argument_order_agnostic_micro_f1",
         "total_evaluated_items",
         "total_error_runs",
         "total_missing_predictions",
