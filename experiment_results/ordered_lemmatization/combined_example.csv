@@ -1,0 +1,11 @@
+ID,arm,mode,premise,hypothesis,KB,reference,item_f1,recall
+2898,baseline,unique_position,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights)","(barbell, weight)",0.0,0.0
+2898,baseline,set,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights)","(barbell, weight)",0.0,0.0
+2898,additive_verbs,unique_position,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights); isa_wn(barbells, weight)","(barbell, weight)",0.0,0.0
+2898,additive_verbs,set,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights); isa_wn(barbells, weight)","(barbell, weight)",0.0,0.0
+2898,all_verbs,unique_position,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weight)","(barbell, weight)",0.0,0.0
+2898,all_verbs,set,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weight)","(barbell, weight)",0.0,0.0
+2898,context_pos,unique_position,The man is lifting barbells,The man is lifting weights,"isa_wn(barbell, weight)","(barbell, weight)",1.0,1.0
+2898,context_pos,set,The man is lifting barbells,The man is lifting weights,"isa_wn(barbell, weight)","(barbell, weight)",1.0,1.0
+2898,additive_pos,unique_position,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights); isa_wn(barbell, weight)","(barbell, weight)",0.0,0.0
+2898,additive_pos,set,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights); isa_wn(barbell, weight)","(barbell, weight)",0.6666666666666666,1.0

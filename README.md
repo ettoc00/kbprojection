@@ -677,3 +677,50 @@ This is an exploratory full-data comparison, not held-out validation.
 Run `python -m pytest tests/test_lemmatization.py` from the repository root
 with `NLTK_DATA` pointing to the installed resources to check morphology,
 context alignment, additive preservation and legacy candidate behavior.
+
+## Joint lemmatization and order-agnostic evaluation
+
+The [ordered lemmatization comparison](experiment_results/ordered_lemmatization/REPORT.txt)
+crosses the same five frozen KB variants with positional and order-agnostic
+scoring. Order-agnostic scoring is the existing default; the new experiment
+measures its interaction with lemmatization, without generating or retagging
+any predictions and without calling LangPro.
+
+```bash
+python scripts/experiments/evaluate_ordered_lemmatization.py \
+  --output /path/to/ordered_lemma_replay
+python -m pytest tests/test_ordered_lemmatization.py
+```
+
+The default predictions are the first comparison's tracked
+`experiment_results/lemmatization/paired_items.csv`. The default references
+remain `data/all_usable_items_362.csv`; `--predictions` and `--references`
+override these paths. Use a new, empty output directory for replay.
+
+Both scoring rules remove duplicate directed argument pairs. Positional
+scoring preserves first occurrence and requires equal sequence positions;
+set scoring ignores relation-list order. This controlled positional metric
+(`unique_position`) differs from the existing raw positional diagnostic,
+which retains duplicates. Predicate names are ignored by the inherited
+scorer; reversing the arguments of a pair remains an error.
+
+F1 selects the best reference independently for each variant and rule. Exact
+match accepts any available reference. Fixed-reference recall uses the
+original output's set-selected reference across all variants and both rules.
+All metrics share the same missing-output exclusions.
+
+For Gemma, generation run 1, the pair `(barbells, weights)` initially has F1 0.
+Adding `(barbell, weight)` yields positional F1 0 and set F1 0.67 against the
+single reference pair `(barbell, weight)`; fixed recall is 0 and 1 respectively.
+Replacing the original with the POS pair yields F1 1 under both rules. Thus an
+appended correct pair can improve coverage while still leaving an extra false
+positive. These scores measure the generated KBs against annotations, not
+the order in which LangPro searches for a proof.
+
+`metrics_by_run.csv` has 400 rows: eight models, five generation runs, five
+variants and two scoring rules. `summary.csv` has 80 rows and reports means
+and sample standard deviations in percent for micro-F1, fixed-reference
+micro-recall and exact match. `combined_example.csv` includes premise,
+hypothesis, KBs and scores. `manifest.json` records source hashes and the
+actual replay timestamp. The order-agnostic columns reproduce the earlier
+lemmatization results; they are not an additional gain to add to those scores.

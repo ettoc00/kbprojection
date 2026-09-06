@@ -2,3 +2,5 @@
 experiment_results/lemmatization/** -text
 kbprojection/filtering.py text eol=lf
 scripts/experiments/evaluate_lemmatization.py text eol=lf
+experiment_results/ordered_lemmatization/** -text
+scripts/experiments/evaluate_ordered_lemmatization.py text eol=lf

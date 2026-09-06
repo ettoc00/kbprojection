@@ -1,0 +1,35 @@
+{
+  "completed_utc": "2026-09-08T09:36:14.566015+00:00",
+  "source_sha256": {
+    "experiment_results/lemmatization/paired_items.csv": "ba0fb2f698ae8499b73a1d6aa0125aaf3ef909d776624d7430fcb50596bc700c",
+    "data/all_usable_items_362.csv": "7be06d326bdaff587368b06c86e4b28ee0d8e642fda3cbf676a5baffd816e77e",
+    "scripts/experiments/evaluate_ordered_lemmatization.py": "70cb25c828348faa9b5b877d0d222bcaaafc17f6f566abedcc24af0fd8fe0af1",
+    "calculate_multi_reference_f1.py": "f28b44a0b2b9e36bc306b17c4768bc57ce7ee30905ccedd5298004f325c1f077",
+    "calculate_inter_annotator_agreement.py": "1da0b92c86950920d685eea56a0cee6c4b86101377fcd5a37a573622f30fffd7"
+  },
+  "source_path_base": "repository root",
+  "prediction_slots": 14480,
+  "reference_items": 362,
+  "evaluated_output_slots": 14442,
+  "conditions": [
+    "baseline",
+    "additive_verbs",
+    "all_verbs",
+    "context_pos",
+    "additive_pos"
+  ],
+  "scoring_rules": [
+    "unique_position",
+    "set"
+  ],
+  "model_run_condition_scoring_rows": 400,
+  "summary_rows": 80,
+  "fixed_reference_selection": "baseline set F1, TP, -FP, -FN, reference column",
+  "network_requests": 0,
+  "artifact_sha256": {
+    "metrics_by_run.csv": "8ad2773945ba9b22ede633d4dd7d4583d00ab4ed083d685d60662927d49e3fc9",
+    "summary.csv": "14ba3eab7b6cd9a749c65d85da948cc149eb03b8cc63b6c7288ee898060794cb",
+    "combined_example.csv": "59c419fe98ac84468db66eac7df68236e581729f43468a1ca7836b7c15ecec80",
+    "REPORT.txt": "d0ff3816ec89588d947bf5a49faad728a1bbfbc5901ceb7d69bbbb1468eece36"
+  }
+}
