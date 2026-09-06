@@ -1,0 +1,52 @@
+LEMMATIZATION: FIVE-CONDITION OFFLINE COMPARISON
+
+362 problems; 14480 saved output slots.
+Micro-F1 is computed from accumulated TP/FP/FN within each run.
+Tables report percentages, averaged across generation runs.
+References are unchanged. Missing outputs are excluded; NO_RELATION is evaluated.
+Additive variants retain original relations. No filters, swaps or diff-only variants.
+POS alignment uses arg1 in premise and arg2 in hypothesis; ambiguous/absent spans are preserved.
+Fixed-reference recall uses the baseline-selected reference for every variant.
+This exploratory full-data comparison is not held-out validation.
+
+Model                              Condition         Micro-F1  Fixed recall
+anthropic/claude-haiku-4.5         baseline             70.56         81.76
+anthropic/claude-haiku-4.5         additive_verbs       66.35         82.35
+anthropic/claude-haiku-4.5         all_verbs            67.76         77.94
+anthropic/claude-haiku-4.5         context_pos          69.37         79.71
+anthropic/claude-haiku-4.5         additive_pos         68.61         82.65
+anthropic/claude-sonnet-4.5        baseline             75.92         84.25
+anthropic/claude-sonnet-4.5        additive_verbs       72.33         84.25
+anthropic/claude-sonnet-4.5        all_verbs            71.32         78.75
+anthropic/claude-sonnet-4.5        context_pos          73.41         81.07
+anthropic/claude-sonnet-4.5        additive_pos         73.79         84.54
+google/gemini-3.1-flash-lite       baseline             76.19         82.58
+google/gemini-3.1-flash-lite       additive_verbs       72.99         82.58
+google/gemini-3.1-flash-lite       all_verbs            72.09         77.74
+google/gemini-3.1-flash-lite       context_pos          73.99         79.99
+google/gemini-3.1-flash-lite       additive_pos         74.54         82.58
+google/gemini-3.5-flash            baseline             73.40         82.59
+google/gemini-3.5-flash            additive_verbs       69.83         82.59
+google/gemini-3.5-flash            all_verbs            69.74         78.28
+google/gemini-3.5-flash            context_pos          71.61         80.38
+google/gemini-3.5-flash            additive_pos         71.26         82.59
+google/gemma-3-4b-it               baseline             31.16         53.82
+google/gemma-3-4b-it               additive_verbs       34.05         68.69
+google/gemma-3-4b-it               all_verbs            39.28         63.23
+google/gemma-3-4b-it               context_pos          40.71         65.65
+google/gemma-3-4b-it               additive_pos         34.97         69.90
+openai/gpt-5.4                     baseline             74.05         80.17
+openai/gpt-5.4                     additive_verbs       71.47         80.17
+openai/gpt-5.4                     all_verbs            70.50         75.95
+openai/gpt-5.4                     context_pos          71.64         77.34
+openai/gpt-5.4                     additive_pos         72.62         80.35
+openai/gpt-5.4-mini                baseline             59.25         71.00
+openai/gpt-5.4-mini                additive_verbs       56.64         77.08
+openai/gpt-5.4-mini                all_verbs            61.24         71.81
+openai/gpt-5.4-mini                context_pos          64.27         75.63
+openai/gpt-5.4-mini                additive_pos         58.60         78.93
+openai/gpt-oss-20b                 baseline             61.51         63.02
+openai/gpt-oss-20b                 additive_verbs       60.09         66.51
+openai/gpt-oss-20b                 all_verbs            62.52         62.90
+openai/gpt-oss-20b                 context_pos          64.02         64.10
+openai/gpt-oss-20b                 additive_pos         61.74         66.75

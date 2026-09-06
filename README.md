@@ -614,3 +614,66 @@ credentials and may vary because hosted model outputs can change.
 * `scripts/evaluate_sick_dataset.py` to run one model/prompt across the full SICK dataset with resumable JSON output.
 * `scripts/evaluate_snli_dataset.py` to run one model/prompt across the full SNLI dataset with resumable JSON output.
 * `scripts/build_local_langpro_corpus.py` to generate preparsed `*_sen.pl` and `*_eccg.pl` corpora for `SNLI` or `SICK` inside a local LangPro checkout so repeated local runs can skip raw-text parsing.
+
+## POS-aware lemmatization evaluation
+
+The original candidate generator adds verb-lemma variants while retaining the
+original relations. The offline comparison isolates this operation from the
+other filters, argument swaps and diff-only candidates. It evaluates five
+conditions on the same saved generations: original, original + verb variant,
+verb replacement, contextual POS replacement, and original + POS variant.
+
+The reusable helpers are in `kbprojection/filtering.py`. Contextual POS uses
+an exact token span in the premise for argument 1 and in the hypothesis for
+argument 2. Penn tags J/V/N/R map to WordNet adjective/verb/noun/adverb.
+Absent spans or conflicting tags across repeated occurrences leave the
+argument unchanged. Addition preserves original relations and appends distinct
+derived relations; neither transformation consults the annotations. The
+existing production candidate generator retains its default verb behavior.
+
+For example, `(barbells, weights)` becomes `(barbells, weight)` with the verb
+rule and `(barbell, weight)` with contextual POS. The context sentences are
+"The man is lifting barbells." and "The man is lifting weights." Addition
+keeps the original pair as well as the new pair.
+
+Install the package dependencies first, then prepare the NLP resources once:
+
+```bash
+python -m pip install "nltk==3.10.3"
+python -m nltk.downloader -d /path/to/nltk_data wordnet punkt_tab averaged_perceptron_tagger_eng
+```
+
+From the repository root, replay into a new, empty output directory:
+
+```bash
+python scripts/experiments/evaluate_lemmatization.py \
+  --nltk-data /path/to/nltk_data \
+  --output /path/to/lemma_replay
+```
+
+The default input is the tracked `small_medium_lasha_all362_5runs_no_filter_outputs.csv`
+under `experiment_results/lasha_all362_5runs/`; references come from
+`data/all_usable_items_362.csv`. `--input` and `--references` can override them.
+The evaluation performs no downloads, LLM calls or LangPro calls. Its manifest
+records input/code hashes, NLTK resource hashes, versions and actual replay time.
+
+The [saved results](experiment_results/lemmatization/REPORT.txt) cover 362
+problems, eight models and five generation runs: 14,480 output slots, 14,442
+evaluated and 38 missing. `paired_items.csv` retains all slots and all five
+predictions. `metrics_by_run.csv` contains 200 model/run/condition rows;
+`fixed_reference_by_run.csv` records coverage against each original prediction's
+selected reference. `summary.csv` contains means and sample standard deviations
+in the 0-to-1 scale; `REPORT.txt` presents percentages.
+
+Micro-F1 accumulates TP/FP/FN across problems within each run, after selecting
+the best available reference per item. Reported values average the five run
+micro-F1 scores, not the individual problem F1 scores. Fixed-reference recall
+keeps the baseline-selected reference across transformations. These are
+different reference-selection procedures. The inherited scorer ignores
+predicate names and duplicate pairs, but preserves argument direction.
+Blank predictions are excluded; explicit `NO_RELATION` remains evaluable.
+This is an exploratory full-data comparison, not held-out validation.
+
+Run `python -m pytest tests/test_lemmatization.py` from the repository root
+with `NLTK_DATA` pointing to the installed resources to check morphology,
+context alignment, additive preservation and legacy candidate behavior.

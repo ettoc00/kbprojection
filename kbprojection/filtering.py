@@ -98,6 +98,111 @@ def normalize_premises(premises: Union[str, List[str]]) -> str:
 
 ALLOWED_PREDICATES = {"isa_wn", "disj"}
 
+_KB_RELATION = re.compile(r"(?P<predicate>\w+)\((?P<args>[^()]*)\)")
+
+
+@lru_cache(maxsize=16384)
+def _tag_context(sentence: str):
+    # Preserve sentence casing for the tagger; lowercase only for alignment.
+    return tuple(nltk.pos_tag(nltk.word_tokenize(sentence)))
+
+
+def lemmatize_argument(
+    text: str, *, mode: str = "verb", sentence: str = "", lemmatizer=None
+) -> str:
+    """Normalize an argument using verbs or its POS in the source sentence.
+
+    Context mode requires an exact token span and consistent tags across all
+    occurrences. Unaligned/ambiguous arguments remain unchanged. Supplying a
+    lemmatizer permits offline use with resources installed by the caller.
+    """
+    if mode not in {"verb", "context_pos"}:
+        raise ValueError(f"Unknown lemmatization mode: {mode}")
+    if lemmatizer is None:
+        lemmatizer = get_lemmatizer()
+    tokens = nltk.word_tokenize(text)
+    lower = [token.lower() for token in tokens]
+    if mode == "verb":
+        return " ".join(lemmatizer.lemmatize(t, pos="v") for t in lower)
+    tagged = _tag_context(sentence)
+    words = [word.lower() for word, _ in tagged]
+    matches = {
+        tuple(tag for _, tag in tagged[i:i + len(tokens)])
+        for i in range(len(tagged) - len(tokens) + 1)
+        if words[i:i + len(tokens)] == lower
+    }
+    if not tokens or len(matches) != 1:
+        return text
+    tags = next(iter(matches))
+    mapping = {"J": "a", "V": "v", "N": "n", "R": "r"}
+    return " ".join(
+        lemmatizer.lemmatize(token, pos=mapping[tag[0]])
+        if tag[0] in mapping else token
+        for token, tag in zip(lower, tags)
+    )
+
+
+def _kb_matches(kb: str):
+    matches = list(_KB_RELATION.finditer(kb))
+    if not matches or _KB_RELATION.sub("", kb).strip(" ;\n\r\t"):
+        raise ValueError(f"Unsupported KB syntax: {kb!r}")
+    return matches
+
+
+def add_lemma_variants(original: str, transformed: str) -> str:
+    """Keep original relations and append distinct derived relations in order."""
+    if not original.strip() or original.strip().upper() == "NO_RELATION":
+        if original != transformed:
+            raise ValueError("An empty/missing KB cannot acquire lemma variants")
+        return original
+
+    def key(match):
+        return match["predicate"], tuple(
+            arg.strip().lower() for arg in match["args"].split(",")
+        )
+
+    seen = {key(match) for match in _kb_matches(original)}
+    extra = []
+    for match in _kb_matches(transformed):
+        if key(match) not in seen:
+            extra.append(match[0])
+            seen.add(key(match))
+    if not extra:
+        return original
+    return original.rstrip().rstrip(";") + "; " + "; ".join(extra)
+
+
+def lemmatize_kb(
+    kb: str, premise: str = "", hypothesis: str = "", *,
+    mode: str = "verb", additive: bool = False, lemmatizer=None,
+) -> str:
+    """Transform only KB lemmas, without filtering, swapping or diff variants.
+
+    References are never consulted. Preserve malformed arity and missing KBs
+    for the evaluator rather than silently repairing or dropping predictions.
+    """
+    if mode not in {"verb", "context_pos"}:
+        raise ValueError(f"Unknown lemmatization mode: {mode}")
+    if not kb.strip() or kb.strip().upper() == "NO_RELATION":
+        return kb
+    _kb_matches(kb)
+
+    def replace(match):
+        args = [arg.strip() for arg in match["args"].split(",")]
+        if len(args) != 2 or not all(args):
+            return match[0]
+        normalized = [
+            lemmatize_argument(arg, mode=mode, sentence=sentence,
+                               lemmatizer=lemmatizer)
+            for arg, sentence in zip(args, (premise, hypothesis))
+        ]
+        if normalized == args:
+            return match[0]
+        return create_rel(match["predicate"], *normalized)
+
+    transformed = _KB_RELATION.sub(replace, kb)
+    return add_lemma_variants(kb, transformed) if additive else transformed
+
 
 # =============================================================================
 # Phase 1: Candidate Generation
@@ -143,8 +248,9 @@ def generate_all_candidates(
     variants.append((pred, arg1, arg2, provenance))
     
     # 2. Lemmatized version
-    lemma_a1 = " ".join([lemmatizer.lemmatize(t, pos='v') for t in tokenize(arg1)])
-    lemma_a2 = " ".join([lemmatizer.lemmatize(t, pos='v') for t in tokenize(arg2)])
+    check_nltk('punkt_tab')
+    lemma_a1 = lemmatize_argument(arg1, lemmatizer=lemmatizer)
+    lemma_a2 = lemmatize_argument(arg2, lemmatizer=lemmatizer)
     
     if lemma_a1 != arg1.lower() or lemma_a2 != arg2.lower():
         variants.append((pred, lemma_a1, lemma_a2, "derived_lemma"))

@@ -1,0 +1,4 @@
+# Preserve replay artifact bytes and code hashes across Windows/Linux checkouts.
+experiment_results/lemmatization/** -text
+kbprojection/filtering.py text eol=lf
+scripts/experiments/evaluate_lemmatization.py text eol=lf

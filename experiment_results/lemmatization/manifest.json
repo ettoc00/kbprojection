@@ -1,0 +1,68 @@
+{
+  "completed_utc": "2026-09-08T09:28:18.141130+00:00",
+  "inputs": [
+    {
+      "path": "experiment_results/lasha_all362_5runs/small_medium_lasha_all362_5runs_no_filter_outputs.csv",
+      "sha256": "ae6d542942660ff44d317b3c2311a5b50ffad60a9a0fc8dcf6a46fa5711e34fb"
+    },
+    {
+      "path": "data/all_usable_items_362.csv",
+      "sha256": "7be06d326bdaff587368b06c86e4b28ee0d8e642fda3cbf676a5baffd816e77e"
+    }
+  ],
+  "code": [
+    {
+      "path": "scripts/experiments/evaluate_lemmatization.py",
+      "sha256": "5915f7bdbc467dace27dde06f4d0b0c58264c26a7b706ac2d2c1f327b51e18ad"
+    },
+    {
+      "path": "kbprojection/filtering.py",
+      "sha256": "3f5cd62a47e4b68543abd76f560ba4837fd186f73d181b5b295aadcf4630dac7"
+    },
+    {
+      "path": "calculate_multi_reference_f1.py",
+      "sha256": "f28b44a0b2b9e36bc306b17c4768bc57ce7ee30905ccedd5298004f325c1f077"
+    },
+    {
+      "path": "calculate_inter_annotator_agreement.py",
+      "sha256": "1da0b92c86950920d685eea56a0cee6c4b86101377fcd5a37a573622f30fffd7"
+    }
+  ],
+  "python_version": "3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)]",
+  "nltk_version": "3.10.3",
+  "resources": {
+    "corpora/wordnet.zip": {
+      "sha256": "cbda5ea6eef7f36a97a43d4a75f85e07fccbb4f23657d27b4ccbc93e2646ab59"
+    },
+    "tokenizers/punkt_tab/english/": {
+      "abbrev_types.txt": "92a3e070f43d9b4c5534758ca40ad7343b04e7e29bfe0c2eb658a39445a4f779",
+      "collocations.tab": "8e2da1225e4dd2cc9dba261ee231ccb134859e21b46006e7f472c5ee269af0cf",
+      "ortho_context.tab": "4bbcca25ed3d3f06c02402abf8419b9f033b8adc06e7b482eca4e45f81a5dc4c",
+      "sent_starters.txt": "f3f8535483e1dba487241b764945168123bca3209a9645e59acd1225dc76edac"
+    },
+    "taggers/averaged_perceptron_tagger_eng/": {
+      "averaged_perceptron_tagger_eng.classes.json": "d152ffa69d45b8357276341a3d592c6c025911d52ec0d9068d4f382560dd48b6",
+      "averaged_perceptron_tagger_eng.tagdict.json": "4c713731cb06727736962bc8cd94ad919217a040e76691059af99bc0c2c9c246",
+      "averaged_perceptron_tagger_eng.weights.json": "789e8e35f6fac656d9b7eccea29ba4e8a137cbb5b525dd31f39e4291a9e80832"
+    }
+  },
+  "output_slots": 14480,
+  "evaluated_output_slots": 14442,
+  "conditions": [
+    "baseline",
+    "additive_verbs",
+    "all_verbs",
+    "context_pos",
+    "additive_pos"
+  ],
+  "model_run_condition_rows": 200,
+  "network_requests": 0,
+  "artifact_sha256": {
+    "examples.csv": "b0c30f06c8433d64427014a922b5d85b74709e237fc267978c82efaee2ebcbb9",
+    "fixed_reference_by_run.csv": "944b387bcf0dd21a2261eb4fe04cb78c214a617d452a65755e92cc453f704f6a",
+    "metrics_by_run.csv": "e3be8fe8a60c9ca0780b4efd3fad0776c667f5407f018817bdbe92188f5271bb",
+    "paired_items.csv": "ba0fb2f698ae8499b73a1d6aa0125aaf3ef909d776624d7430fcb50596bc700c",
+    "REPORT.txt": "8a012d10ab69dde4284521690014e8d6dd8055a32274392658ceb3a655283d90",
+    "summary.csv": "468ff0ae14fd1f4a34a2a2933fa52f17229b0639d6f90f731990c124394d87e3"
+  }
+}

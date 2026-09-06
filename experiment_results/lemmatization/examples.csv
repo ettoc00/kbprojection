@@ -1,0 +1,6 @@
+ID,model,repeat,arm,premise,hypothesis,original_KB,KB,reference,item_f1
+2898,google/gemma-3-4b-it,1,baseline,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights)","isa_wn(barbells, weights)","(barbell, weight)",0.0
+2898,google/gemma-3-4b-it,1,additive_verbs,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights)","isa_wn(barbells, weights); isa_wn(barbells, weight)","(barbell, weight)",0.0
+2898,google/gemma-3-4b-it,1,all_verbs,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights)","isa_wn(barbells, weight)","(barbell, weight)",0.0
+2898,google/gemma-3-4b-it,1,context_pos,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights)","isa_wn(barbell, weight)","(barbell, weight)",1.0
+2898,google/gemma-3-4b-it,1,additive_pos,The man is lifting barbells,The man is lifting weights,"isa_wn(barbells, weights)","isa_wn(barbells, weights); isa_wn(barbell, weight)","(barbell, weight)",0.6666666666666666
